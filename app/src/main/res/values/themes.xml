@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.Clicks" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <style name="Theme.Clicks.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/clicks_splash_background</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/image4</item>
+        <item name="postSplashScreenTheme">@style/Theme.Clicks</item>
+    </style>
+</resources>
