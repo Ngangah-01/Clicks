@@ -102,25 +102,25 @@ fun RegisterScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 // Top Bar with Back Button
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    IconButton(
-                        onClick = onBackClick,
-                        modifier = Modifier
-                            .size(40.dp)
-                            .background(Color(0xFFF3F4F6), CircleShape)
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
-                            tint = brandGreen
-                        )
-                    }
-                }
+//                Row(
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .padding(bottom = 8.dp),
+//                    verticalAlignment = Alignment.CenterVertically
+//                ) {
+//                    IconButton(
+//                        onClick = onBackClick,
+//                        modifier = Modifier
+//                            .size(40.dp)
+//                            .background(Color(0xFFF3F4F6), CircleShape)
+//                    ) {
+//                        Icon(
+//                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+//                            contentDescription = "Back",
+//                            tint = brandGreen
+//                        )
+//                    }
+//                }
 
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -136,13 +136,13 @@ fun RegisterScreen(
                             painter = painterResource(id = R.drawable.image2),
                             contentDescription = "Clicks Logo",
                             modifier = Modifier
-                                .size(40.dp)
+                                .size(50.dp)
                                 .clip(CircleShape)
                         )
                         Spacer(modifier = Modifier.width(10.dp))
                         Text(
                             text = "Clicks",
-                            fontSize = 30.sp,
+                            fontSize = 40.sp,
                             fontWeight = FontWeight.Bold,
                             color = textDark,
                             letterSpacing = 0.5.sp
@@ -166,14 +166,14 @@ fun RegisterScreen(
                 ) {
                     Text(
                         text = "Create An Account",
-                        fontSize = 26.sp,
+                        fontSize = 30.sp,
                         fontWeight = FontWeight.Bold,
                         color = textDark
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
                         text = "Lorem Ipsum Dolor Sit Amet, Consectetur Adipiscing Elit, Sed Do Eiusmod Tempor",
-                        fontSize = 13.sp,
+                        fontSize = 15.sp,
                         color = textMuted,
                         lineHeight = 18.sp
                     )
@@ -185,7 +185,7 @@ fun RegisterScreen(
                 Column(modifier = Modifier.fillMaxWidth()) {
                     Text(
                         text = "Username",
-                        fontSize = 13.sp,
+                        fontSize = 15.sp,
                         color = labelColor,
                         fontWeight = FontWeight.Medium
                     )
@@ -224,7 +224,7 @@ fun RegisterScreen(
                         Text(
                             text = usernameError ?: "",
                             color = Color(0xFFEF4444),
-                            fontSize = 12.sp,
+                            fontSize = 13.sp,
                             modifier = Modifier.padding(top = 4.dp)
                         )
                     }
@@ -236,7 +236,7 @@ fun RegisterScreen(
                 Column(modifier = Modifier.fillMaxWidth()) {
                     Text(
                         text = "Email",
-                        fontSize = 13.sp,
+                        fontSize = 15.sp,
                         color = labelColor,
                         fontWeight = FontWeight.Medium
                     )
@@ -275,7 +275,7 @@ fun RegisterScreen(
                         Text(
                             text = emailError ?: "",
                             color = Color(0xFFEF4444),
-                            fontSize = 12.sp,
+                            fontSize = 13.sp,
                             modifier = Modifier.padding(top = 4.dp)
                         )
                     }
@@ -287,7 +287,7 @@ fun RegisterScreen(
                 Column(modifier = Modifier.fillMaxWidth()) {
                     Text(
                         text = "Password",
-                        fontSize = 13.sp,
+                        fontSize = 15.sp,
                         color = labelColor,
                         fontWeight = FontWeight.Medium
                     )
@@ -418,12 +418,12 @@ fun RegisterScreen(
                     Text(
                         text = "Already have an account? ",
                         color = textMuted,
-                        fontSize = 14.sp
+                        fontSize = 15.sp
                     )
                     Text(
                         text = "Sign in",
                         color = brandGreen,
-                        fontSize = 14.sp,
+                        fontSize = 15.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.clickable { onLoginClick() }
                     )

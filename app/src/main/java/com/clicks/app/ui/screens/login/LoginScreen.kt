@@ -96,28 +96,6 @@ fun LoginScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 // Top Back Button (if provided)
-                if (onBackClick != null) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        IconButton(
-                            onClick = onBackClick,
-                            modifier = Modifier
-                                .size(40.dp)
-                                .background(Color(0xFFF3F4F6), CircleShape)
-                        ) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Back",
-                                tint = brandGreen
-                            )
-                        }
-                    }
-                }
-
                 Spacer(modifier = Modifier.height(16.dp))
 
                 // Logo Section (Clicks Logo + Clicks + Accent bar)
@@ -132,13 +110,13 @@ fun LoginScreen(
                             painter = painterResource(id = R.drawable.image2),
                             contentDescription = "Clicks Logo",
                             modifier = Modifier
-                                .size(40.dp)
+                                .size(50.dp)
                                 .clip(CircleShape)
                         )
                         Spacer(modifier = Modifier.width(10.dp))
                         Text(
                             text = "Clicks",
-                            fontSize = 30.sp,
+                            fontSize = 40.sp,
                             fontWeight = FontWeight.Bold,
                             color = textDark,
                             letterSpacing = 0.5.sp
@@ -162,14 +140,15 @@ fun LoginScreen(
                 ) {
                     Text(
                         text = "Sign In",
-                        fontSize = 26.sp,
+                        fontSize = 30.sp,
                         fontWeight = FontWeight.Bold,
                         color = textDark
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
                         text = "Welcome back! Enter your details to access your account",
-                        fontSize = 13.sp,
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Medium,
                         color = textMuted,
                         lineHeight = 18.sp
                     )
@@ -181,7 +160,7 @@ fun LoginScreen(
                 Column(modifier = Modifier.fillMaxWidth()) {
                     Text(
                         text = "Username",
-                        fontSize = 13.sp,
+                        fontSize = 15.sp,
                         color = labelColor,
                         fontWeight = FontWeight.Medium
                     )
@@ -232,7 +211,7 @@ fun LoginScreen(
                 Column(modifier = Modifier.fillMaxWidth()) {
                     Text(
                         text = "Password",
-                        fontSize = 13.sp,
+                        fontSize = 15.sp,
                         color = labelColor,
                         fontWeight = FontWeight.Medium
                     )
@@ -342,13 +321,16 @@ fun LoginScreen(
                     Text(
                         text = "Forgot Password? ",
                         color = textMuted,
-                        fontSize = 14.sp
+                        fontSize = 15.sp,
+                        letterSpacing = 1.sp
+
                     )
                     Text(
                         text = "Reset Password",
                         color = brandGreen,
-                        fontSize = 14.sp,
+                        fontSize = 15.sp,
                         fontWeight = FontWeight.Bold,
+                        letterSpacing = 1.sp,
                         modifier = Modifier.clickable { onForgotPasswordClick() }
                     )
                 }
@@ -357,9 +339,11 @@ fun LoginScreen(
 
                 // Don't have any account?
                 Text(
-                    text = "Dont have any account?",
+                    text = "Don't have any account?",
                     color = textMuted,
-                    fontSize = 14.sp
+                    fontSize = 15.sp,
+                    letterSpacing = 1.sp
+
                 )
 
                 Spacer(modifier = Modifier.height(12.dp))

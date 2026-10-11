@@ -5,6 +5,13 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.material3.Surface
+import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.clicks.app.ui.navigation.NavGraph
 import com.clicks.app.ui.screens.splash.SplashState
@@ -26,7 +33,11 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ClicksTheme {
-                NavGraph()
+                Surface(Modifier.fillMaxSize()) {
+                    Box(Modifier.windowInsetsPadding(WindowInsets.safeDrawing)) {
+                        NavGraph()
+                    }
+                }
             }
         }
     }
