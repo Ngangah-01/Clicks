@@ -1,9 +1,11 @@
 package com.clicks.app.ui.screens.home
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
@@ -23,10 +25,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.clicks.app.R
 import kotlinx.coroutines.delay
 
 private val ClicksGreen = Color(0xFF07865B)
@@ -149,10 +153,14 @@ fun HomeScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 22.dp, end = 22.dp, top = 18.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    modifier = Modifier.weight(1f),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Start
+                ) {
                     IconButton(onClick = onCartClick) {
                         Icon(
                             imageVector = Icons.Outlined.Menu,
@@ -160,16 +168,34 @@ fun HomeScreen(
                             tint = ClicksGreen
                         )
                     }
+                }
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.image2),
+                        contentDescription = "Clicks Logo",
+                        modifier = Modifier
+                            .size(35.dp)
+                            .clip(CircleShape)
+                    )
+                    Spacer(modifier = Modifier.width(5.dp))
                     Text(
                         text = "Clicks",
-                        fontSize = 29.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = ClicksGreen
+                        fontSize = 35.sp,
+                        fontWeight = FontWeight.W800,
+                        color = ClicksGreen,
+                        letterSpacing = 0.5.sp
                     )
                 }
 
-                Row(verticalAlignment = Alignment.CenterVertically) {
-
+                Row(
+                    modifier = Modifier.weight(1f),
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     IconButton(onClick = onNotificationClick) {
                         Icon(
                             imageVector = Icons.Outlined.Notifications,
