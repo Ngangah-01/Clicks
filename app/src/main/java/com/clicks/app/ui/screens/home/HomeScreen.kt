@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
@@ -30,8 +29,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.clicks.app.R
 import kotlinx.coroutines.delay
+import com.clicks.app.R
+import com.clicks.app.ui.viewmodel.StoreViewModel
 
 private val ClicksGreen = Color(0xFF07865B)
 private val ClicksGreenDark = Color(0xFF07533F)
@@ -48,6 +48,7 @@ private data class ShopCategory(
 )
 
 private data class ShopProduct(
+    val id: Int,
     val name: String,
     val price: String,
     val image: String
@@ -90,40 +91,27 @@ private val promoBanners = listOf(
 )
 
 private val products = listOf(
-    ShopProduct(
-        "Classic Leather Bag",
-        "$2,190",
-        "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=700"
-    ),
-    ShopProduct(
-        "Everyday Sneakers",
-        "$1,450",
-        "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=700"
-    ),
-    ShopProduct(
-        "Modern Sunglasses",
-        "$890",
-        "https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=700"
-    ),
-    ShopProduct(
-        "Minimal Shoulder Bag",
-        "$1,650",
-        "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=700"
-    )
+    ShopProduct(1, "Classic Leather Bag", "$2,190", "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=700"),
+    ShopProduct(5, "Everyday Sneakers", "$1,450", "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=700"),
+    ShopProduct(7, "Modern Sunglasses", "$890", "https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=700"),
+    ShopProduct(9, "Minimal Shoulder Bag", "$1,650", "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=700")
 )
 
 @Composable
 fun HomeScreen(
+    storeViewModel: StoreViewModel,
     onFavoritesClick: () -> Unit = {},
     onCartClick: () -> Unit = {},
     onProfileClick: () -> Unit = {},
     onNotificationClick: () -> Unit = {},
-    onProductClick: (String) -> Unit = {},
+    onProductClick: (Int) -> Unit = {},
+    onCategoryClick: (String) -> Unit = {},
+    onViewAllClick: () -> Unit = {},
     onDiscoverClick: () -> Unit = {}
 ) {
     var searchText by remember { mutableStateOf("") }
     var selectedTab by remember { mutableStateOf("Home") }
-    val favorites = remember { mutableStateListOf<String>() }
+    val cartCount = storeViewModel.cartItemCount
 
     Scaffold(
         containerColor = Color.White,
@@ -145,6 +133,7 @@ fun HomeScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
+                .statusBarsPadding()
                 .verticalScroll(rememberScrollState())
                 .background(Color.White)
         ) {
@@ -196,12 +185,27 @@ fun HomeScreen(
                     horizontalArrangement = Arrangement.End,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    IconButton(onClick = onNotificationClick) {
-                        Icon(
-                            imageVector = Icons.Outlined.Notifications,
-                            contentDescription = "Notifications",
-                            tint = ClicksGreen
-                        )
+                    // Cart icon with badge in header
+                    Box(
+                        modifier = Modifier.clickable { onCartClick() }
+                    ) {
+                        IconButton(onClick = onCartClick) {
+                            Icon(
+                                imageVector = Icons.Outlined.ShoppingCart,
+                                contentDescription = "Cart",
+                                tint = ClicksGreen
+                            )
+                        }
+                        if (cartCount > 0) {
+                            Box(
+                                modifier = Modifier
+                                    .align(Alignment.TopEnd)
+                                    .offset(x = (-4).dp, y = 4.dp)
+                                    .size(10.dp)
+                                    .clip(CircleShape)
+                                    .background(Color(0xFFEF4444))
+                            )
+                        }
                     }
                 }
             }
@@ -246,7 +250,6 @@ fun HomeScreen(
             // Promotional Hero Carousel
             val pagerState = rememberPagerState(pageCount = { promoBanners.size })
 
-            // Auto-advance carousel every 4 seconds
             LaunchedEffect(pagerState) {
                 while (true) {
                     delay(4000L)
@@ -279,7 +282,6 @@ fun HomeScreen(
                                 modifier = Modifier.fillMaxSize()
                             )
 
-                            // Soft overlay
                             Box(
                                 modifier = Modifier
                                     .fillMaxSize()
@@ -328,7 +330,6 @@ fun HomeScreen(
                         }
                     }
 
-                    // Pager Indicators
                     Row(
                         modifier = Modifier
                             .align(Alignment.TopEnd)
@@ -351,16 +352,15 @@ fun HomeScreen(
 
             Spacer(Modifier.height(28.dp))
 
-            // Categories heading
             SectionHeading(
                 title = "Categories",
                 action = "View all",
+                onActionClick = onViewAllClick,
                 modifier = Modifier.padding(horizontal = 22.dp)
             )
 
             Spacer(Modifier.height(14.dp))
 
-            // Horizontally scrollable categories with high quality images
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -370,7 +370,9 @@ fun HomeScreen(
             ) {
                 categories.forEach { category ->
                     Column(
-                        modifier = Modifier.width(88.dp),
+                        modifier = Modifier
+                            .width(88.dp)
+                            .clickable { onCategoryClick(category.name) },
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Box(
@@ -403,16 +405,15 @@ fun HomeScreen(
 
             Spacer(Modifier.height(28.dp))
 
-            // Popular heading
             SectionHeading(
                 title = "Popular",
                 action = "View all",
+                onActionClick = onViewAllClick,
                 modifier = Modifier.padding(horizontal = 22.dp)
             )
 
             Spacer(Modifier.height(14.dp))
 
-            // Two-column product grid
             Column(
                 modifier = Modifier.padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(14.dp)
@@ -423,17 +424,14 @@ fun HomeScreen(
                         horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         rowProducts.forEach { product ->
+                            val isFavorite = storeViewModel.isFavorite(product.id)
                             ProductCard(
                                 product = product,
-                                isFavorite = product.name in favorites,
+                                isFavorite = isFavorite,
                                 onFavoriteClick = {
-                                    if (product.name in favorites) {
-                                        favorites.remove(product.name)
-                                    } else {
-                                        favorites.add(product.name)
-                                    }
+                                    storeViewModel.toggleFavorite(product.id)
                                 },
-                                onClick = { onProductClick(product.name) },
+                                onClick = { onProductClick(product.id) },
                                 modifier = Modifier.weight(1f)
                             )
                         }
@@ -454,6 +452,7 @@ fun HomeScreen(
 private fun SectionHeading(
     title: String,
     action: String,
+    onActionClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -471,7 +470,7 @@ private fun SectionHeading(
             text = "$action  ›",
             fontSize = 13.sp,
             color = ClicksGreen,
-            modifier = Modifier.clickable { }
+            modifier = Modifier.clickable { onActionClick() }
         )
     }
 }
