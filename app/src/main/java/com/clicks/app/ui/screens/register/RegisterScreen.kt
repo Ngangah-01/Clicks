@@ -6,41 +6,17 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.outlined.VisibilityOff
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -56,20 +32,22 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.clicks.app.R
 
+
 @Composable
 fun RegisterScreen(
-    onRegisterSubmit: (String, String, String) -> Unit,
-    onLoginClick: () -> Unit,
-    onBackClick: () -> Unit
+    onRegisterSubmit: (String, String, String, String) -> Unit,
+    onLoginClick: () -> Unit
 ) {
-    var username by rememberSaveable { mutableStateOf("williamsmith") }
+    var firstName by rememberSaveable { mutableStateOf("William") }
+    var lastName by rememberSaveable { mutableStateOf("Smith") }
     var email by rememberSaveable { mutableStateOf("info@examplegmail.com") }
     var password by rememberSaveable { mutableStateOf("password123") }
 
     var passwordVisible by rememberSaveable { mutableStateOf(false) }
     var isLoading by rememberSaveable { mutableStateOf(false) }
 
-    var usernameError by rememberSaveable { mutableStateOf<String?>(null) }
+    var firstNameError by rememberSaveable { mutableStateOf<String?>(null) }
+    var lastNameError by rememberSaveable { mutableStateOf<String?>(null) }
     var emailError by rememberSaveable { mutableStateOf<String?>(null) }
     var passwordError by rememberSaveable { mutableStateOf<String?>(null) }
 
@@ -101,27 +79,6 @@ fun RegisterScreen(
                     .padding(horizontal = 28.dp, vertical = 24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Top Bar with Back Button
-//                Row(
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .padding(bottom = 8.dp),
-//                    verticalAlignment = Alignment.CenterVertically
-//                ) {
-//                    IconButton(
-//                        onClick = onBackClick,
-//                        modifier = Modifier
-//                            .size(40.dp)
-//                            .background(Color(0xFFF3F4F6), CircleShape)
-//                    ) {
-//                        Icon(
-//                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-//                            contentDescription = "Back",
-//                            tint = brandGreen
-//                        )
-//                    }
-//                }
-
                 Spacer(modifier = Modifier.height(16.dp))
 
                 // Logo Section (Clicks Logo + Clicks + Accent bar)
@@ -179,26 +136,78 @@ fun RegisterScreen(
                     )
                 }
 
-                Spacer(modifier = Modifier.height(32.dp))
+                Spacer(modifier = Modifier.height(20.dp))
 
-                // Username Field
+                    // First Name Field
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        Text(
+                            text = "First Name",
+                            fontSize = 15.sp,
+                            color = labelColor,
+                            fontWeight = FontWeight.Medium
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        OutlinedTextField(
+                            value = firstName,
+                            onValueChange = {
+                                firstName = it
+                                firstNameError = null
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            singleLine = true,
+                            isError = firstNameError != null,
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedContainerColor = Color.Transparent,
+                                unfocusedContainerColor = Color.Transparent,
+                                disabledContainerColor = Color.Transparent,
+                                errorContainerColor = Color.Transparent,
+                                focusedBorderColor = Color.Transparent,
+                                unfocusedBorderColor = Color.Transparent,
+                                errorBorderColor = Color.Transparent,
+                                focusedTextColor = textDark,
+                                unfocusedTextColor = textDark
+                            ),
+                            textStyle = androidx.compose.ui.text.TextStyle(
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = textDark
+                            )
+                        )
+                        HorizontalDivider(
+                            thickness = 1.dp,
+                            color = if (firstNameError != null) Color(0xFFEF4444) else borderColor
+                        )
+                        if (firstNameError != null) {
+                            Text(
+                                text = firstNameError ?: "",
+                                color = Color(0xFFEF4444),
+                                fontSize = 12.sp,
+                                modifier = Modifier.padding(top = 4.dp)
+                            )
+                        }
+                    }
+
+
+                Spacer(modifier = Modifier.height(18.dp))
+
+                // lastname Field
                 Column(modifier = Modifier.fillMaxWidth()) {
                     Text(
-                        text = "Username",
+                        text = "Last Name",
                         fontSize = 15.sp,
                         color = labelColor,
                         fontWeight = FontWeight.Medium
                     )
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(2.dp))
                     OutlinedTextField(
-                        value = username,
+                        value = lastName,
                         onValueChange = {
-                            username = it
-                            usernameError = null
+                            lastName = it
+                            lastNameError = null
                         },
                         modifier = Modifier.fillMaxWidth(),
                         singleLine = true,
-                        isError = usernameError != null,
+                        isError = lastNameError != null,
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedContainerColor = Color.Transparent,
                             unfocusedContainerColor = Color.Transparent,
@@ -218,11 +227,11 @@ fun RegisterScreen(
                     )
                     HorizontalDivider(
                         thickness = 1.dp,
-                        color = if (usernameError != null) Color(0xFFEF4444) else borderColor
+                        color = if (lastNameError != null) Color(0xFFEF4444) else borderColor
                     )
-                    if (usernameError != null) {
+                    if (lastNameError != null) {
                         Text(
-                            text = usernameError ?: "",
+                            text = lastNameError ?: "",
                             color = Color(0xFFEF4444),
                             fontSize = 13.sp,
                             modifier = Modifier.padding(top = 4.dp)
@@ -230,7 +239,8 @@ fun RegisterScreen(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(24.dp))
+
+                Spacer(modifier = Modifier.height(18.dp))
 
                 // Email Field
                 Column(modifier = Modifier.fillMaxWidth()) {
@@ -240,7 +250,7 @@ fun RegisterScreen(
                         color = labelColor,
                         fontWeight = FontWeight.Medium
                     )
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(2.dp))
                     OutlinedTextField(
                         value = email,
                         onValueChange = {
@@ -281,7 +291,7 @@ fun RegisterScreen(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(18.dp))
 
                 // Password Field
                 Column(modifier = Modifier.fillMaxWidth()) {
@@ -291,7 +301,7 @@ fun RegisterScreen(
                         color = labelColor,
                         fontWeight = FontWeight.Medium
                     )
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(2.dp))
                     OutlinedTextField(
                         value = password,
                         onValueChange = {
@@ -347,8 +357,11 @@ fun RegisterScreen(
                 // SIGN UP Button
                 Button(
                     onClick = {
-                        if (username.isBlank()) {
-                            usernameError = "Username is required"
+                        if (firstName.isBlank()) {
+                            firstNameError = "First name is required"
+                        }
+                        if (lastName.isBlank()) {
+                            lastNameError = "Last name is required"
                         }
                         if (email.isBlank()) {
                             emailError = "Email is required"
@@ -356,9 +369,9 @@ fun RegisterScreen(
                         if (password.isBlank()) {
                             passwordError = "Password is required"
                         }
-                        if (username.isNotBlank() && email.isNotBlank() && password.isNotBlank()) {
+                        if (firstName.isNotBlank() && lastName.isNotBlank() && email.isNotBlank() && password.isNotBlank()) {
                             isLoading = true
-                            onRegisterSubmit(username.trim(), email.trim(), password)
+                            onRegisterSubmit(firstName.trim(), lastName.trim(), email.trim(), password)
                         }
                     },
                     modifier = Modifier
@@ -418,12 +431,12 @@ fun RegisterScreen(
                     Text(
                         text = "Already have an account? ",
                         color = textMuted,
-                        fontSize = 15.sp
+                        fontSize = 14.sp
                     )
                     Text(
                         text = "Sign in",
                         color = brandGreen,
-                        fontSize = 15.sp,
+                        fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.clickable { onLoginClick() }
                     )

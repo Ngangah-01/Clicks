@@ -53,14 +53,16 @@ fun NavGraph() {
                 onForgotPasswordClick = {
                     // Handle forgot password
                 },
-                onBackClick = {
+                onBackClick = {6
                     // Back handler from login if needed
                 }
             )
         }
+
         composable(Routes.Register.route) {
             RegisterScreen(
-                onRegisterSubmit = { _, _, _ ->
+                onRegisterSubmit = { firstName, lastName, email, _ ->
+                    storeViewModel.updateProfile("$firstName $lastName", email, storeViewModel.userPhone)
                     navController.navigate(Routes.Home.route) {
                         popUpTo(Routes.Login.route) {
                             inclusive = true
@@ -68,9 +70,6 @@ fun NavGraph() {
                     }
                 },
                 onLoginClick = {
-                    navController.popBackStack()
-                },
-                onBackClick = {
                     navController.popBackStack()
                 }
             )
