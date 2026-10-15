@@ -6,8 +6,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.clicks.app.ui.screens.login.LoginScreen
+import com.clicks.app.ui.screens.login.LoginViewModel
 import com.clicks.app.ui.screens.onboarding.OnboardingContainerScreen
 import com.clicks.app.ui.screens.register.RegisterScreen
+import com.clicks.app.ui.screens.register.RegisterViewModel
 import com.clicks.app.ui.screens.home.HomeScreen
 import com.clicks.app.ui.screens.products.CategoryProductsScreen
 import com.clicks.app.ui.screens.products.ProductDetailsScreen
@@ -17,7 +19,6 @@ import com.clicks.app.ui.screens.checkout.CheckoutScreen
 import com.clicks.app.ui.screens.profile.ProfileScreen
 import com.clicks.app.ui.screens.orders.OrdersScreen
 import com.clicks.app.ui.viewmodel.StoreViewModel
-import com.clicks.app.ui.screens.register.RegisterViewModel
 
 @Composable
 fun NavGraph() {
@@ -40,8 +41,10 @@ fun NavGraph() {
             )
         }
         composable(Routes.Login.route) {
+            val loginViewModel: LoginViewModel = viewModel()
             LoginScreen(
-                onLoginClick = { _, _ ->
+                viewModel = loginViewModel,
+                onLoginSuccess = {
                     navController.navigate(Routes.Home.route) {
                         popUpTo(Routes.Login.route) {
                             inclusive = true
@@ -54,20 +57,18 @@ fun NavGraph() {
                 onForgotPasswordClick = {
                     // Handle forgot password
                 },
-                onBackClick = {6
+                onBackClick = {
                     // Back handler from login if needed
                 }
             )
         }
 
         composable(Routes.Register.route) {
-
             val registerViewModel: RegisterViewModel = viewModel()
-
             RegisterScreen(
                 viewModel = registerViewModel,
                 onLoginClick = {
-                    navController.navigate(Routes.Login.route)
+                    navController.popBackStack()
                 }
             )
         }

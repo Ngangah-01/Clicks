@@ -1,46 +1,28 @@
 package com.clicks.app.ui.screens.login
 
+import android.util.Patterns
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideInVertically
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.outlined.CheckCircle
+import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.outlined.VisibilityOff
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -51,19 +33,23 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import com.clicks.app.R
+import kotlinx.coroutines.delay
 
 @Composable
 fun LoginScreen(
-    onLoginClick: (String, String) -> Unit,
+    viewModel: LoginViewModel,
+    onLoginSuccess: () -> Unit,
     onRegisterClick: () -> Unit,
     onForgotPasswordClick: () -> Unit,
     onBackClick: (() -> Unit)? = null
 ) {
-    var email by rememberSaveable { mutableStateOf("williamsmith") }
+    val uiState by viewModel.uiState
+    var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("password123") }
     var passwordVisible by rememberSaveable { mutableStateOf(false) }
-    var isLoading by rememberSaveable { mutableStateOf(false) }
+
     var emailError by rememberSaveable { mutableStateOf<String?>(null) }
     var passwordError by rememberSaveable { mutableStateOf<String?>(null) }
     var isVisible by remember { mutableStateOf(false) }
@@ -73,7 +59,6 @@ fun LoginScreen(
     }
 
     val brandGreen = Color(0xFF0B6638)
-    val brandBeige = Color(0xFFF7E2C6)
     val textDark = Color(0xFF111111)
     val textMuted = Color(0xFF6B7280)
     val labelColor = Color(0xFF9CA3AF)
@@ -84,9 +69,28 @@ fun LoginScreen(
             .fillMaxSize()
             .background(Color.White)
     ) {
+        // Floating Toast Banner for Error
+        uiState.errorMessage?.let { error ->
+            ToastBanner(
+                message = error,
+                isError = true,
+                onDismiss = { viewModel.clearMessages() }
+            )
+        }
+
+        // Floating Toast Banner for Success
+        uiState.successMessage?.let { success ->
+            ToastBanner(
+                message = success,
+                isError = false,
+                onDismiss = { viewModel.clearMessages() }
+            )
+        }
+
         AnimatedVisibility(
             visible = isVisible,
-            enter = fadeIn() + slideInVertically(initialOffsetY = { it / 6 })
+            enter = fadeIn() + slideInVertically(initialOffsetY = { it / 6 }),
+            modifier = Modifier.fillMaxSize()
         ) {
             Column(
                 modifier = Modifier
@@ -96,6 +100,28 @@ fun LoginScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 // Top Back Button (if provided)
+                if (onBackClick != null) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        IconButton(
+                            onClick = onBackClick,
+                            modifier = Modifier
+                                .size(40.dp)
+                                .background(Color(0xFFF3F4F6), CircleShape)
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "Back",
+                                tint = brandGreen
+                            )
+                        }
+                    }
+                }
+
                 Spacer(modifier = Modifier.height(16.dp))
 
                 // Logo Section (Clicks Logo + Clicks + Accent bar)
@@ -110,13 +136,13 @@ fun LoginScreen(
                             painter = painterResource(id = R.drawable.image2),
                             contentDescription = "Clicks Logo",
                             modifier = Modifier
-                                .size(50.dp)
+                                .size(40.dp)
                                 .clip(CircleShape)
                         )
                         Spacer(modifier = Modifier.width(10.dp))
                         Text(
                             text = "Clicks",
-                            fontSize = 40.sp,
+                            fontSize = 30.sp,
                             fontWeight = FontWeight.Bold,
                             color = textDark,
                             letterSpacing = 0.5.sp
@@ -140,15 +166,14 @@ fun LoginScreen(
                 ) {
                     Text(
                         text = "Sign In",
-                        fontSize = 30.sp,
+                        fontSize = 26.sp,
                         fontWeight = FontWeight.Bold,
                         color = textDark
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
                         text = "Welcome back! Enter your details to access your account",
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Medium,
+                        fontSize = 13.sp,
                         color = textMuted,
                         lineHeight = 18.sp
                     )
@@ -156,11 +181,11 @@ fun LoginScreen(
 
                 Spacer(modifier = Modifier.height(32.dp))
 
-                // Username Field
+                // Username / Email Field
                 Column(modifier = Modifier.fillMaxWidth()) {
                     Text(
-                        text = "Username",
-                        fontSize = 15.sp,
+                        text = "Email",
+                        fontSize = 13.sp,
                         color = labelColor,
                         fontWeight = FontWeight.Medium
                     )
@@ -171,6 +196,11 @@ fun LoginScreen(
                             email = it
                             emailError = null
                         },
+                        placeholder = {
+                            Text(text = "ngashhillary@gmail.com",
+                                color = Color(0xFF9CA3AF),
+                                fontSize = 16.sp,
+                                ) },
                         modifier = Modifier.fillMaxWidth(),
                         singleLine = true,
                         isError = emailError != null,
@@ -211,7 +241,7 @@ fun LoginScreen(
                 Column(modifier = Modifier.fillMaxWidth()) {
                     Text(
                         text = "Password",
-                        fontSize = 15.sp,
+                        fontSize = 13.sp,
                         color = labelColor,
                         fontWeight = FontWeight.Medium
                     )
@@ -271,21 +301,27 @@ fun LoginScreen(
                 // LOGIN Button
                 Button(
                     onClick = {
-                        if (email.isBlank()) {
-                            emailError = "Username is required"
+                        var valid = true
+                        if (email.isBlank() || !Patterns.EMAIL_ADDRESS.matcher(email.trim()).matches()) {
+                            emailError = "Valid email is required"
+                            valid = false
                         }
                         if (password.isBlank()) {
                             passwordError = "Password is required"
+                            valid = false
                         }
-                        if (email.isNotBlank() && password.isNotBlank()) {
-                            isLoading = true
-                            onLoginClick(email.trim(), password)
+                        if (valid) {
+                            viewModel.login(
+                                email = email.trim(),
+                                password = password,
+                                onSuccess = onLoginSuccess
+                            )
                         }
                     },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp),
-                    enabled = !isLoading,
+                    enabled = !uiState.isLoading,
                     shape = RoundedCornerShape(26.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = brandGreen,
@@ -294,7 +330,7 @@ fun LoginScreen(
                         disabledContentColor = Color.White
                     )
                 ) {
-                    if (isLoading) {
+                    if (uiState.isLoading) {
                         CircularProgressIndicator(
                             modifier = Modifier.size(24.dp),
                             color = Color.White,
@@ -321,16 +357,13 @@ fun LoginScreen(
                     Text(
                         text = "Forgot Password? ",
                         color = textMuted,
-                        fontSize = 15.sp,
-                        letterSpacing = 1.sp
-
+                        fontSize = 14.sp
                     )
                     Text(
                         text = "Reset Password",
                         color = brandGreen,
-                        fontSize = 15.sp,
+                        fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
-                        letterSpacing = 1.sp,
                         modifier = Modifier.clickable { onForgotPasswordClick() }
                     )
                 }
@@ -339,11 +372,9 @@ fun LoginScreen(
 
                 // Don't have any account?
                 Text(
-                    text = "Don't have any account?",
+                    text = "Dont have any account?",
                     color = textMuted,
-                    fontSize = 15.sp,
-                    letterSpacing = 1.sp
-
+                    fontSize = 14.sp
                 )
 
                 Spacer(modifier = Modifier.height(12.dp))
@@ -356,7 +387,7 @@ fun LoginScreen(
                         .height(52.dp),
                     shape = RoundedCornerShape(26.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = brandBeige,
+                        containerColor = Color(0xFFF7E2C6),
                         contentColor = textDark
                     )
                 ) {
@@ -370,6 +401,66 @@ fun LoginScreen(
                 }
 
                 Spacer(modifier = Modifier.height(24.dp))
+            }
+        }
+    }
+}
+
+@Composable
+private fun ToastBanner(
+    message: String,
+    isError: Boolean,
+    onDismiss: () -> Unit
+) {
+    LaunchedEffect(message) {
+        delay(4000L)
+        onDismiss()
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp, vertical = 16.dp)
+            .zIndex(10f),
+        contentAlignment = Alignment.TopCenter
+    ) {
+        Surface(
+            shape = RoundedCornerShape(16.dp),
+            color = if (isError) Color(0xFFFEF2F2) else Color(0xFFF0FDF4),
+            border = BorderStroke(1.dp, if (isError) Color(0xFFFCA5A5) else Color(0xFF86EFAC)),
+            shadowElevation = 8.dp
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 14.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = if (isError) Icons.Outlined.ErrorOutline else Icons.Outlined.CheckCircle,
+                    contentDescription = null,
+                    tint = if (isError) Color(0xFFDC2626) else Color(0xFF16A34A),
+                    modifier = Modifier.size(22.dp)
+                )
+                Spacer(Modifier.width(12.dp))
+                Text(
+                    text = message,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = if (isError) Color(0xFF991B1B) else Color(0xFF166534),
+                    modifier = Modifier.weight(1f)
+                )
+                IconButton(
+                    onClick = onDismiss,
+                    modifier = Modifier.size(24.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Close,
+                        contentDescription = "Close",
+                        tint = if (isError) Color(0xFFDC2626) else Color(0xFF16A34A),
+                        modifier = Modifier.size(16.dp)
+                    )
+                }
             }
         }
     }

@@ -46,7 +46,7 @@ class RegisterViewModel(
                 is ApiResult.Success -> {
                     uiState.value = RegisterUiState(
                         successMessage = result.message.ifBlank {
-                            "Registration successful."
+                            "Registration succcessful."
                         }
                     )
                 }

@@ -1,8 +1,10 @@
 package com.clicks.app.ui.screens.register
 
+import android.util.Patterns
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideInVertically
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -12,6 +14,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.CheckCircle
+import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.outlined.VisibilityOff
 import androidx.compose.material3.*
@@ -30,9 +35,9 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import android.util.Patterns
+import androidx.compose.ui.zIndex
 import com.clicks.app.R
-
+import kotlinx.coroutines.delay
 
 @Composable
 fun RegisterScreen(
@@ -69,9 +74,28 @@ fun RegisterScreen(
             .fillMaxSize()
             .background(Color.White)
     ) {
+        // Floating Toast Banner for Error
+        uiState.errorMessage?.let { error ->
+            ToastBanner(
+                message = error,
+                isError = true,
+                onDismiss = { viewModel.clearMessages() }
+            )
+        }
+
+        // Floating Toast Banner for Success
+        uiState.successMessage?.let { success ->
+            ToastBanner(
+                message = success,
+                isError = false,
+                onDismiss = { viewModel.clearMessages() }
+            )
+        }
+
         AnimatedVisibility(
             visible = isVisible,
-            enter = fadeIn() + slideInVertically(initialOffsetY = { it / 6 })
+            enter = fadeIn() + slideInVertically(initialOffsetY = { it / 6 }),
+            modifier = Modifier.fillMaxSize()
         ) {
             Column(
                 modifier = Modifier
@@ -137,10 +161,15 @@ fun RegisterScreen(
                     )
                 }
 
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(32.dp))
 
+                // First Name & Last Name Row
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
                     // First Name Field
-                    Column(modifier = Modifier.fillMaxWidth()) {
+                    Column(modifier = Modifier.weight(1f)) {
                         Text(
                             text = "First Name",
                             fontSize = 15.sp,
@@ -188,60 +217,57 @@ fun RegisterScreen(
                         }
                     }
 
-
-                Spacer(modifier = Modifier.height(18.dp))
-
-                // lastname Field
-                Column(modifier = Modifier.fillMaxWidth()) {
-                    Text(
-                        text = "Last Name",
-                        fontSize = 15.sp,
-                        color = labelColor,
-                        fontWeight = FontWeight.Medium
-                    )
-                    Spacer(modifier = Modifier.height(2.dp))
-                    OutlinedTextField(
-                        value = lastName,
-                        onValueChange = {
-                            lastName = it
-                            lastNameError = null
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                        singleLine = true,
-                        isError = lastNameError != null,
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedContainerColor = Color.Transparent,
-                            unfocusedContainerColor = Color.Transparent,
-                            disabledContainerColor = Color.Transparent,
-                            errorContainerColor = Color.Transparent,
-                            focusedBorderColor = Color.Transparent,
-                            unfocusedBorderColor = Color.Transparent,
-                            errorBorderColor = Color.Transparent,
-                            focusedTextColor = textDark,
-                            unfocusedTextColor = textDark
-                        ),
-                        textStyle = androidx.compose.ui.text.TextStyle(
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = textDark
-                        )
-                    )
-                    HorizontalDivider(
-                        thickness = 1.dp,
-                        color = if (lastNameError != null) Color(0xFFEF4444) else borderColor
-                    )
-                    if (lastNameError != null) {
+                    // Last Name Field
+                    Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = lastNameError ?: "",
-                            color = Color(0xFFEF4444),
-                            fontSize = 13.sp,
-                            modifier = Modifier.padding(top = 4.dp)
+                            text = "Last Name",
+                            fontSize = 15.sp,
+                            color = labelColor,
+                            fontWeight = FontWeight.Medium
                         )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        OutlinedTextField(
+                            value = lastName,
+                            onValueChange = {
+                                lastName = it
+                                lastNameError = null
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            singleLine = true,
+                            isError = lastNameError != null,
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedContainerColor = Color.Transparent,
+                                unfocusedContainerColor = Color.Transparent,
+                                disabledContainerColor = Color.Transparent,
+                                errorContainerColor = Color.Transparent,
+                                focusedBorderColor = Color.Transparent,
+                                unfocusedBorderColor = Color.Transparent,
+                                errorBorderColor = Color.Transparent,
+                                focusedTextColor = textDark,
+                                unfocusedTextColor = textDark
+                            ),
+                            textStyle = androidx.compose.ui.text.TextStyle(
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = textDark
+                            )
+                        )
+                        HorizontalDivider(
+                            thickness = 1.dp,
+                            color = if (lastNameError != null) Color(0xFFEF4444) else borderColor
+                        )
+                        if (lastNameError != null) {
+                            Text(
+                                text = lastNameError ?: "",
+                                color = Color(0xFFEF4444),
+                                fontSize = 12.sp,
+                                modifier = Modifier.padding(top = 4.dp)
+                            )
+                        }
                     }
                 }
 
-
-                Spacer(modifier = Modifier.height(18.dp))
+                Spacer(modifier = Modifier.height(24.dp))
 
                 // Email Field
                 Column(modifier = Modifier.fillMaxWidth()) {
@@ -251,7 +277,7 @@ fun RegisterScreen(
                         color = labelColor,
                         fontWeight = FontWeight.Medium
                     )
-                    Spacer(modifier = Modifier.height(2.dp))
+                    Spacer(modifier = Modifier.height(4.dp))
                     OutlinedTextField(
                         value = email,
                         onValueChange = {
@@ -292,7 +318,7 @@ fun RegisterScreen(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(18.dp))
+                Spacer(modifier = Modifier.height(24.dp))
 
                 // Password Field
                 Column(modifier = Modifier.fillMaxWidth()) {
@@ -302,7 +328,7 @@ fun RegisterScreen(
                         color = labelColor,
                         fontWeight = FontWeight.Medium
                     )
-                    Spacer(modifier = Modifier.height(2.dp))
+                    Spacer(modifier = Modifier.height(4.dp))
                     OutlinedTextField(
                         value = password,
                         onValueChange = {
@@ -355,76 +381,35 @@ fun RegisterScreen(
 
                 Spacer(modifier = Modifier.height(36.dp))
 
-//              Backend registration response
-                uiState.errorMessage?.let{ message ->
-                    Text(
-                        text = message,
-                        color = Color(0xFFDC2626),
-                        fontSize = 14.sp,
-                        modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp)
-                    )
-                }
-                uiState.successMessage?.let{ message ->
-                    Text(
-                        text = message,
-                        color = brandGreen,
-                        fontSize = 14.sp,
-                        modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp)
-                    )
-                }
-
                 // SIGN UP Button
                 Button(
                     onClick = {
-                        // Clear previous validation errors.
-                        firstNameError = null
-                        lastNameError = null
-                        emailError = null
-                        passwordError = null
-
-                        // Validate first name.
+                        var valid = true
                         if (firstName.isBlank()) {
                             firstNameError = "First name is required"
+                            valid = false
                         }
-
-                        // Validate last name.
                         if (lastName.isBlank()) {
                             lastNameError = "Last name is required"
+                            valid = false
                         }
-
-                        // Validate email.
-                        if (email.isBlank()) {
-                            emailError = "Email is required"
-                        } else if (!Patterns.EMAIL_ADDRESS.matcher(email.trim()).matches()) {
-                            emailError = "Enter a valid email address"
+                        if (email.isBlank() || !Patterns.EMAIL_ADDRESS.matcher(email.trim()).matches()) {
+                            emailError = "Valid email is required"
+                            valid = false
                         }
-
-                        // Validate password.
-                        if (password.isBlank()) {
-                            passwordError = "Password is required"
-                        } else if (password.length < 8) {
+                        if (password.isBlank() || password.length < 8) {
                             passwordError = "Password must be at least 8 characters"
+                            valid = false
                         }
-
-                        // Submit only when every field is valid.
-                        val isFormValid =
-                            firstNameError == null &&
-                                    lastNameError == null &&
-                                    emailError == null &&
-                                    passwordError == null
-
-                        if (isFormValid && !uiState.isLoading) {
-
+                        if (valid) {
                             viewModel.register(
-                                firstName.trim(),
-                                lastName.trim(),
-                                email.trim(),
-                                password
+                                firstName = firstName.trim(),
+                                lastName = lastName.trim(),
+                                email = email.trim(),
+                                password = password
                             )
                         }
                     },
-
-
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp),
@@ -494,6 +479,66 @@ fun RegisterScreen(
                 }
 
                 Spacer(modifier = Modifier.height(24.dp))
+            }
+        }
+    }
+}
+
+@Composable
+fun ToastBanner(
+    message: String,
+    isError: Boolean,
+    onDismiss: () -> Unit
+) {
+    LaunchedEffect(message) {
+        delay(4000L)
+        onDismiss()
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp, vertical = 16.dp)
+            .zIndex(10f),
+        contentAlignment = Alignment.TopCenter
+    ) {
+        Surface(
+            shape = RoundedCornerShape(16.dp),
+            color = if (isError) Color(0xFFFEF2F2) else Color(0xFFF0FDF4),
+            border = BorderStroke(1.dp, if (isError) Color(0xFFFCA5A5) else Color(0xFF86EFAC)),
+            shadowElevation = 8.dp
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 14.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = if (isError) Icons.Outlined.ErrorOutline else Icons.Outlined.CheckCircle,
+                    contentDescription = null,
+                    tint = if (isError) Color(0xFFDC2626) else Color(0xFF16A34A),
+                    modifier = Modifier.size(22.dp)
+                )
+                Spacer(Modifier.width(12.dp))
+                Text(
+                    text = message,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = if (isError) Color(0xFF991B1B) else Color(0xFF166534),
+                    modifier = Modifier.weight(1f)
+                )
+                IconButton(
+                    onClick = onDismiss,
+                    modifier = Modifier.size(24.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Close,
+                        contentDescription = "Close",
+                        tint = if (isError) Color(0xFFDC2626) else Color(0xFF16A34A),
+                        modifier = Modifier.size(16.dp)
+                    )
+                }
             }
         }
     }
