@@ -44,6 +44,7 @@ suspend fun <T> safeApiCall(
     } catch (exception: HttpException) {
         exception.toApiError()
     } catch (exception: IOException) {
+        Log.e(TAG, "Network error", exception)
         ApiResult.Error(
             message = "Unable to connect to the server. Check your connection and try again.",
             type = ApiErrorType.Network

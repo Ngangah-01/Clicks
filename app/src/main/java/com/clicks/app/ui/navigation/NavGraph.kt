@@ -17,6 +17,7 @@ import com.clicks.app.ui.screens.checkout.CheckoutScreen
 import com.clicks.app.ui.screens.profile.ProfileScreen
 import com.clicks.app.ui.screens.orders.OrdersScreen
 import com.clicks.app.ui.viewmodel.StoreViewModel
+import com.clicks.app.ui.screens.register.RegisterViewModel
 
 @Composable
 fun NavGraph() {
@@ -60,17 +61,13 @@ fun NavGraph() {
         }
 
         composable(Routes.Register.route) {
+
+            val registerViewModel: RegisterViewModel = viewModel()
+
             RegisterScreen(
-                onRegisterSubmit = { firstName, lastName, email, _ ->
-                    storeViewModel.updateProfile("$firstName $lastName", email, storeViewModel.userPhone)
-                    navController.navigate(Routes.Home.route) {
-                        popUpTo(Routes.Login.route) {
-                            inclusive = true
-                        }
-                    }
-                },
+                viewModel = registerViewModel,
                 onLoginClick = {
-                    navController.popBackStack()
+                    navController.navigate(Routes.Login.route)
                 }
             )
         }

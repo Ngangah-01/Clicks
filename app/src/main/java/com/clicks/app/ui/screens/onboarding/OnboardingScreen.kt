@@ -3,6 +3,7 @@ package com.clicks.app.ui.screens.onboarding
 import androidx.compose.animation.*
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -32,12 +33,11 @@ data class OnboardingStep(
     val imageUrl: String
 )
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun OnboardingScreen(
     onFinished: () -> Unit
 ) {
-    var currentStep by remember { mutableStateOf(0) }
+    var currentStep by remember { mutableIntStateOf(0) }
 
     val steps = listOf(
         OnboardingStep(
@@ -95,12 +95,14 @@ fun OnboardingScreen(
             AnimatedContent(
                 targetState = currentStep,
                 transitionSpec = {
-                    fadeIn(animationSpec = tween(400)) + slideInHorizontally(
+                    (fadeIn(animationSpec = tween(400)) + slideInHorizontally(
                         initialOffsetX = { it / 3 },
                         animationSpec = tween(400)
-                    ) with fadeOut(animationSpec = tween(300)) + slideOutHorizontally(
-                        targetOffsetX = { -it / 3 },
-                        animationSpec = tween(300)
+                    )).togetherWith(
+                        fadeOut(animationSpec = tween(300)) + slideOutHorizontally(
+                            targetOffsetX = { -it / 3 },
+                            animationSpec = tween(300)
+                        )
                     )
                 },
                 label = "onboardingAnimation"

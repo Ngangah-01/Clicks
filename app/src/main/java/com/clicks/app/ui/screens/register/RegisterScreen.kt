@@ -30,21 +30,22 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import android.util.Patterns
 import com.clicks.app.R
 
 
 @Composable
 fun RegisterScreen(
-    onRegisterSubmit: (String, String, String, String) -> Unit,
+    viewModel: RegisterViewModel,
     onLoginClick: () -> Unit
 ) {
-    var firstName by rememberSaveable { mutableStateOf("William") }
-    var lastName by rememberSaveable { mutableStateOf("Smith") }
-    var email by rememberSaveable { mutableStateOf("info@examplegmail.com") }
-    var password by rememberSaveable { mutableStateOf("password123") }
+    val uiState by viewModel.uiState
+    var firstName by rememberSaveable { mutableStateOf("") }
+    var lastName by rememberSaveable { mutableStateOf("") }
+    var email by rememberSaveable { mutableStateOf("") }
+    var password by rememberSaveable { mutableStateOf("") }
 
     var passwordVisible by rememberSaveable { mutableStateOf(false) }
-    var isLoading by rememberSaveable { mutableStateOf(false) }
 
     var firstNameError by rememberSaveable { mutableStateOf<String?>(null) }
     var lastNameError by rememberSaveable { mutableStateOf<String?>(null) }
@@ -354,30 +355,80 @@ fun RegisterScreen(
 
                 Spacer(modifier = Modifier.height(36.dp))
 
+//              Backend registration response
+                uiState.errorMessage?.let{ message ->
+                    Text(
+                        text = message,
+                        color = Color(0xFFDC2626),
+                        fontSize = 14.sp,
+                        modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp)
+                    )
+                }
+                uiState.successMessage?.let{ message ->
+                    Text(
+                        text = message,
+                        color = brandGreen,
+                        fontSize = 14.sp,
+                        modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp)
+                    )
+                }
+
                 // SIGN UP Button
                 Button(
                     onClick = {
+                        // Clear previous validation errors.
+                        firstNameError = null
+                        lastNameError = null
+                        emailError = null
+                        passwordError = null
+
+                        // Validate first name.
                         if (firstName.isBlank()) {
                             firstNameError = "First name is required"
                         }
+
+                        // Validate last name.
                         if (lastName.isBlank()) {
                             lastNameError = "Last name is required"
                         }
+
+                        // Validate email.
                         if (email.isBlank()) {
                             emailError = "Email is required"
+                        } else if (!Patterns.EMAIL_ADDRESS.matcher(email.trim()).matches()) {
+                            emailError = "Enter a valid email address"
                         }
+
+                        // Validate password.
                         if (password.isBlank()) {
                             passwordError = "Password is required"
+                        } else if (password.length < 8) {
+                            passwordError = "Password must be at least 8 characters"
                         }
-                        if (firstName.isNotBlank() && lastName.isNotBlank() && email.isNotBlank() && password.isNotBlank()) {
-                            isLoading = true
-                            onRegisterSubmit(firstName.trim(), lastName.trim(), email.trim(), password)
+
+                        // Submit only when every field is valid.
+                        val isFormValid =
+                            firstNameError == null &&
+                                    lastNameError == null &&
+                                    emailError == null &&
+                                    passwordError == null
+
+                        if (isFormValid && !uiState.isLoading) {
+
+                            viewModel.register(
+                                firstName.trim(),
+                                lastName.trim(),
+                                email.trim(),
+                                password
+                            )
                         }
                     },
+
+
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp),
-                    enabled = !isLoading,
+                    enabled = !uiState.isLoading,
                     shape = RoundedCornerShape(26.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = brandGreen,
@@ -386,7 +437,7 @@ fun RegisterScreen(
                         disabledContentColor = Color.White
                     )
                 ) {
-                    if (isLoading) {
+                    if (uiState.isLoading) {
                         CircularProgressIndicator(
                             modifier = Modifier.size(24.dp),
                             color = Color.White,
