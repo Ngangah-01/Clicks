@@ -69,6 +69,13 @@ fun NavGraph() {
                 viewModel = registerViewModel,
                 onLoginClick = {
                     navController.popBackStack()
+                },
+                onRegisterSuccess = {
+                    navController.navigate(Routes.Home.route) {
+                        popUpTo(Routes.Login.route) {
+                            inclusive = true
+                        }
+                    }
                 }
             )
         }

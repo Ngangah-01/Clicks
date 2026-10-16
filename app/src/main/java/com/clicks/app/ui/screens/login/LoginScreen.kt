@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.clicks.app.R
 import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun LoginScreen(
@@ -47,7 +48,7 @@ fun LoginScreen(
 ) {
     val uiState by viewModel.uiState
     var email by rememberSaveable { mutableStateOf("") }
-    var password by rememberSaveable { mutableStateOf("password123") }
+    var password by rememberSaveable { mutableStateOf("") }
     var passwordVisible by rememberSaveable { mutableStateOf(false) }
 
     var emailError by rememberSaveable { mutableStateOf<String?>(null) }
@@ -197,7 +198,7 @@ fun LoginScreen(
                             emailError = null
                         },
                         placeholder = {
-                            Text(text = "ngashhillary@gmail.com",
+                            Text(text = "johndoe@gmail.com",
                                 color = Color(0xFF9CA3AF),
                                 fontSize = 16.sp,
                                 ) },
@@ -252,6 +253,11 @@ fun LoginScreen(
                             password = it
                             passwordError = null
                         },
+                        placeholder = {
+                            Text(text = "••••••••",
+                                color = Color(0xFF9CA3AF),
+                                fontSize = 16.sp,
+                            ) },
                         modifier = Modifier.fillMaxWidth(),
                         visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                         singleLine = true,
@@ -372,7 +378,7 @@ fun LoginScreen(
 
                 // Don't have any account?
                 Text(
-                    text = "Dont have any account?",
+                    text = "Don't have an account?",
                     color = textMuted,
                     fontSize = 14.sp
                 )
@@ -413,7 +419,7 @@ private fun ToastBanner(
     onDismiss: () -> Unit
 ) {
     LaunchedEffect(message) {
-        delay(4000L)
+        delay(4000L.milliseconds)
         onDismiss()
     }
 
