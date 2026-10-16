@@ -19,6 +19,9 @@ import com.clicks.app.ui.screens.checkout.CheckoutScreen
 import com.clicks.app.ui.screens.profile.ProfileScreen
 import com.clicks.app.ui.screens.orders.OrdersScreen
 import com.clicks.app.ui.viewmodel.StoreViewModel
+import androidx.compose.ui.platform.LocalContext
+import com.clicks.app.ui.screens.login.LoginViewModelFactory
+import com.clicks.app.ui.screens.register.RegisterViewModelFactory
 
 @Composable
 fun NavGraph() {
@@ -41,7 +44,10 @@ fun NavGraph() {
             )
         }
         composable(Routes.Login.route) {
-            val loginViewModel: LoginViewModel = viewModel()
+            val context = LocalContext.current
+            val loginViewModel: LoginViewModel = viewModel(
+                factory = LoginViewModelFactory(context.applicationContext as android.app.Application)
+            )
             LoginScreen(
                 viewModel = loginViewModel,
                 onLoginSuccess = {
@@ -64,7 +70,10 @@ fun NavGraph() {
         }
 
         composable(Routes.Register.route) {
-            val registerViewModel: RegisterViewModel = viewModel()
+            val context = LocalContext.current
+            val registerViewModel: RegisterViewModel = viewModel(
+                factory = RegisterViewModelFactory(context.applicationContext as android.app.Application)
+            )
             RegisterScreen(
                 viewModel = registerViewModel,
                 onLoginClick = {
@@ -100,6 +109,14 @@ fun NavGraph() {
                 },
                 onProfileClick = {
                     navController.navigate(Routes.Profile.route)
+                },
+                onOrdersClick = {
+                    navController.navigate(Routes.Orders.route)
+                },
+                onLogoutClick = {
+                    navController.navigate(Routes.Login.route) {
+                        popUpTo(Routes.Onboarding.route) { inclusive = true }
+                    }
                 },
                 onNotificationClick = {
                     // Notification action
@@ -138,6 +155,11 @@ fun NavGraph() {
                 onBackClick = { navController.popBackStack() },
                 onProceedToBuy = {
                     navController.navigate(Routes.Checkout.route)
+                },
+                onStartShopping = {
+                    navController.navigate(Routes.Home.route) {
+                        popUpTo(Routes.Home.route) { inclusive = true }
+                    }
                 }
             )
         }

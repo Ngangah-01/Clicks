@@ -1,6 +1,5 @@
 package com.clicks.app.ui.screens.cart
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -39,7 +38,8 @@ private val ClicksMuted = Color(0xFF789087)
 fun CartScreen(
     storeViewModel: StoreViewModel,
     onBackClick: () -> Unit = {},
-    onProceedToBuy: () -> Unit = {}
+    onProceedToBuy: () -> Unit = {},
+    onStartShopping: () -> Unit
 ) {
     val cartItems = storeViewModel.cartItems
     val subtotal = storeViewModel.cartSubtotal
@@ -114,27 +114,13 @@ fun CartScreen(
                             color = ClicksText
                         )
                         Text(
-                            text = "$totalItems Items • Deliver To: London",
+                            text = "$totalItems Items in cart",
                             fontSize = 13.sp,
                             color = ClicksMuted
                         )
                     }
                 }
-
-                OutlinedButton(
-                    onClick = { /* Change location */ },
-                    shape = RoundedCornerShape(20.dp),
-                    border = BorderStroke(1.dp, ClicksGreen),
-                    contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp)
-                ) {
-                    Text(
-                        text = "Change",
-                        fontSize = 13.sp,
-                        color = ClicksGreen,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                }
-            }
+                            }
 
             HorizontalDivider(color = Color(0xFFE5E7EB), thickness = 1.dp)
 
@@ -200,12 +186,14 @@ fun CartScreen(
                             fontWeight = FontWeight.Bold,
                             color = ClicksText
                         )
-                        Spacer(Modifier.height(8.dp))
-                        Text(
-                            text = "Explore our store and add items to your cart",
-                            fontSize = 14.sp,
-                            color = ClicksMuted
-                        )
+                        Spacer(Modifier.height(16.dp))
+                        Button(
+                            onClick = onStartShopping,
+                            colors = ButtonDefaults
+                                .buttonColors(containerColor = Color(0xFF07865B))
+                        ) {
+                            Text(text = "Start Shopping", color = Color.White)
+                        }
                     }
                 }
             } else {

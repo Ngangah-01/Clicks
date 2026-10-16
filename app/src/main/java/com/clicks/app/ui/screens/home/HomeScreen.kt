@@ -13,6 +13,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.HelpOutline
+import androidx.compose.material.icons.automirrored.outlined.Logout
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
@@ -23,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -30,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import com.clicks.app.R
 import com.clicks.app.ui.viewmodel.StoreViewModel
 
@@ -103,6 +107,8 @@ fun HomeScreen(
     onFavoritesClick: () -> Unit = {},
     onCartClick: () -> Unit = {},
     onProfileClick: () -> Unit = {},
+    onOrdersClick: () -> Unit = {},
+    onLogoutClick: () -> Unit = {},
     onNotificationClick: () -> Unit = {},
     onProductClick: (Int) -> Unit = {},
     onCategoryClick: (String) -> Unit = {},
@@ -113,338 +119,548 @@ fun HomeScreen(
     var selectedTab by remember { mutableStateOf("Home") }
     val cartCount = storeViewModel.cartItemCount
 
-    Scaffold(
-        containerColor = Color.White,
-        bottomBar = {
-            ClicksBottomBar(
-                selectedTab = selectedTab,
-                onTabSelected = { tab ->
-                    selectedTab = tab
-                    when (tab) {
-                        "Favorites" -> onFavoritesClick()
-                        "Cart" -> onCartClick()
-                        "Profile" -> onProfileClick()
-                    }
-                }
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
+
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            ClicksDrawerSheet(
+                userName = storeViewModel.userName,
+                userEmail = storeViewModel.userEmail,
+                onProfileClick = onProfileClick,
+                onOrdersClick = onOrdersClick,
+                onFavoritesClick = onFavoritesClick,
+                onCartClick = onCartClick,
+                onLogoutClick = onLogoutClick,
+                onCloseDrawer = { scope.launch { drawerState.close() } }
             )
         }
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .statusBarsPadding()
-                .verticalScroll(rememberScrollState())
-                .background(Color.White)
-        ) {
-            // Header
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 22.dp, end = 22.dp, top = 18.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Row(
-                    modifier = Modifier.weight(1f),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Start
-                ) {
-                    IconButton(onClick = onCartClick) {
-                        Icon(
-                            imageVector = Icons.Outlined.Menu,
-                            contentDescription = "Menu",
-                            tint = ClicksGreen
-                        )
+    ) {
+        Scaffold(
+            containerColor = Color.White,
+            bottomBar = {
+                ClicksBottomBar(
+                    selectedTab = selectedTab,
+                    onTabSelected = { tab ->
+                        selectedTab = tab
+                        when (tab) {
+                            "Favorites" -> onFavoritesClick()
+                            "Cart" -> onCartClick()
+                            "Profile" -> onProfileClick()
+                        }
                     }
-                }
-
+                )
+            }
+        ) { innerPadding ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+                    .statusBarsPadding()
+                    .verticalScroll(rememberScrollState())
+                    .background(Color.White)
+            ) {
+                // Header
                 Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 22.dp, end = 22.dp, top = 18.dp),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.image2),
-                        contentDescription = "Clicks Logo",
-                        modifier = Modifier
-                            .size(35.dp)
-                            .clip(CircleShape)
-                    )
-                    Spacer(modifier = Modifier.width(5.dp))
-                    Text(
-                        text = "Clicks",
-                        fontSize = 35.sp,
-                        fontWeight = FontWeight.W800,
-                        color = ClicksGreen,
-                        letterSpacing = 0.5.sp
-                    )
-                }
-
-                Row(
-                    modifier = Modifier.weight(1f),
-                    horizontalArrangement = Arrangement.End,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    // Cart icon with badge in header
-                    Box(
-                        modifier = Modifier.clickable { onCartClick() }
+                    Row(
+                        modifier = Modifier.weight(1f),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Start
                     ) {
-                        IconButton(onClick = onCartClick) {
+                        IconButton(onClick = { scope.launch { drawerState.open() } }) {
                             Icon(
-                                imageVector = Icons.Outlined.ShoppingCart,
-                                contentDescription = "Cart",
+                                imageVector = Icons.Outlined.Menu,
+                                contentDescription = "Menu",
                                 tint = ClicksGreen
                             )
                         }
-                        if (cartCount > 0) {
+                    }
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.image2),
+                            contentDescription = "Clicks Logo",
+                            modifier = Modifier
+                                .size(35.dp)
+                                .clip(CircleShape)
+                        )
+                        Spacer(modifier = Modifier.width(5.dp))
+                        Text(
+                            text = "Clicks",
+                            fontSize = 35.sp,
+                            fontWeight = FontWeight.W800,
+                            color = ClicksGreen,
+                            letterSpacing = 0.5.sp
+                        )
+                    }
+
+                    Row(
+                        modifier = Modifier.weight(1f),
+                        horizontalArrangement = Arrangement.End,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        // Cart icon with badge in header
+                        Box(
+                            modifier = Modifier.clickable { onCartClick() }
+                        ) {
+                            IconButton(onClick = onCartClick) {
+                                Icon(
+                                    imageVector = Icons.Outlined.ShoppingCart,
+                                    contentDescription = "Cart",
+                                    tint = ClicksGreen
+                                )
+                            }
+                            if (cartCount > 0) {
+                                Box(
+                                    modifier = Modifier
+                                        .align(Alignment.TopEnd)
+                                        .offset(x = (-4).dp, y = 4.dp)
+                                        .size(10.dp)
+                                        .clip(CircleShape)
+                                        .background(Color(0xFFEF4444))
+                                )
+                            }
+                        }
+                    }
+                }
+
+                // Search field
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 22.dp, vertical = 18.dp)
+                        .clip(RoundedCornerShape(18.dp))
+                        .background(ClicksMint)
+                        .padding(horizontal = 16.dp, vertical = 14.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Search,
+                        contentDescription = "Search",
+                        tint = ClicksGreen
+                    )
+                    Spacer(Modifier.width(12.dp))
+                    Box(Modifier.weight(1f)) {
+                        if (searchText.isEmpty()) {
+                            Text(
+                                "Search products",
+                                color = ClicksMuted,
+                                fontSize = 14.sp
+                            )
+                        }
+                        BasicTextField(
+                            value = searchText,
+                            onValueChange = { searchText = it },
+                            singleLine = true,
+                            textStyle = androidx.compose.ui.text.TextStyle(
+                                color = ClicksText,
+                                fontSize = 14.sp
+                            ),
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                }
+
+                // Promotional Hero Carousel
+                val pagerState = rememberPagerState(pageCount = { promoBanners.size })
+
+                LaunchedEffect(pagerState) {
+                    while (true) {
+                        delay(4000L)
+                        val nextPage = (pagerState.currentPage + 1) % promoBanners.size
+                        pagerState.animateScrollToPage(nextPage)
+                    }
+                }
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 22.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(300.dp)
+                            .clip(RoundedCornerShape(22.dp))
+                    ) {
+                        HorizontalPager(
+                            state = pagerState,
+                            modifier = Modifier.fillMaxSize()
+                        ) { page ->
+                            val banner = promoBanners[page]
+                            Box(modifier = Modifier.fillMaxSize()) {
+                                AsyncImage(
+                                    model = banner.image,
+                                    contentDescription = banner.tag,
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier.fillMaxSize()
+                                )
+
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .background(Color(0x55333D32))
+                                )
+
+                                Column(
+                                    modifier = Modifier
+                                        .align(Alignment.BottomStart)
+                                        .padding(22.dp)
+                                ) {
+                                    Text(
+                                        text = banner.tag,
+                                        fontSize = 10.sp,
+                                        letterSpacing = 3.sp,
+                                        color = Color.White,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                    Spacer(Modifier.height(12.dp))
+                                    Text(
+                                        text = banner.title,
+                                        fontSize = 25.sp,
+                                        lineHeight = 31.sp,
+                                        fontWeight = FontWeight.Medium,
+                                        color = Color.White
+                                    )
+                                    Spacer(Modifier.height(18.dp))
+                                    Button(
+                                        onClick = onDiscoverClick,
+                                        colors = ButtonDefaults.buttonColors(
+                                            containerColor = ClicksCream,
+                                            contentColor = ClicksText
+                                        ),
+                                        shape = RoundedCornerShape(4.dp),
+                                        contentPadding = PaddingValues(
+                                            horizontal = 24.dp,
+                                            vertical = 12.dp
+                                        )
+                                    ) {
+                                        Text(
+                                            "Discover",
+                                            fontWeight = FontWeight.SemiBold
+                                        )
+                                    }
+                                }
+                            }
+                        }
+
+                        Row(
+                            modifier = Modifier
+                                .align(Alignment.TopEnd)
+                                .padding(16.dp),
+                            horizontalArrangement = Arrangement.spacedBy(6.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            repeat(promoBanners.size) { iteration ->
+                                val indicatorColor = if (pagerState.currentPage == iteration) Color.White else Color.White.copy(alpha = 0.5f)
+                                Box(
+                                    modifier = Modifier
+                                        .size(if (pagerState.currentPage == iteration) 8.dp else 6.dp)
+                                        .clip(CircleShape)
+                                        .background(indicatorColor)
+                                )
+                            }
+                        }
+                    }
+                }
+
+                Spacer(Modifier.height(28.dp))
+
+                SectionHeading(
+                    title = "Categories",
+                    action = "View all",
+                    onActionClick = onViewAllClick,
+                    modifier = Modifier.padding(horizontal = 22.dp)
+                )
+
+                Spacer(Modifier.height(14.dp))
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState())
+                        .padding(horizontal = 22.dp),
+                    horizontalArrangement = Arrangement.spacedBy(14.dp)
+                ) {
+                    categories.forEach { category ->
+                        Column(
+                            modifier = Modifier
+                                .width(88.dp)
+                                .clickable { onCategoryClick(category.name) },
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
                             Box(
                                 modifier = Modifier
-                                    .align(Alignment.TopEnd)
-                                    .offset(x = (-4).dp, y = 4.dp)
-                                    .size(10.dp)
+                                    .size(76.dp)
                                     .clip(CircleShape)
-                                    .background(Color(0xFFEF4444))
+                                    .background(ClicksMint),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                AsyncImage(
+                                    model = category.imageUrl,
+                                    contentDescription = category.name,
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier
+                                        .size(70.dp)
+                                        .clip(CircleShape)
+                                )
+                            }
+                            Spacer(Modifier.height(8.dp))
+                            Text(
+                                text = category.name,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = ClicksText,
+                                maxLines = 1
                             )
                         }
                     }
                 }
-            }
 
-            // Search field
+                Spacer(Modifier.height(28.dp))
+
+                SectionHeading(
+                    title = "Popular",
+                    action = "View all",
+                    onActionClick = onViewAllClick,
+                    modifier = Modifier.padding(horizontal = 22.dp)
+                )
+
+                Spacer(Modifier.height(14.dp))
+
+                Column(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(14.dp)
+                ) {
+                    products.chunked(2).forEach { rowProducts ->
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            rowProducts.forEach { product ->
+                                val isFavorite = storeViewModel.isFavorite(product.id)
+                                ProductCard(
+                                    product = product,
+                                    isFavorite = isFavorite,
+                                    onFavoriteClick = {
+                                        storeViewModel.toggleFavorite(product.id)
+                                    },
+                                    onClick = { onProductClick(product.id) },
+                                    modifier = Modifier.weight(1f)
+                                )
+                            }
+
+                            if (rowProducts.size == 1) {
+                                Spacer(Modifier.weight(1f))
+                            }
+                        }
+                    }
+                }
+
+                Spacer(Modifier.height(22.dp))
+            }
+        }
+    }
+}
+
+@Composable
+private fun ClicksDrawerSheet(
+    userName: String,
+    userEmail: String,
+    onProfileClick: () -> Unit,
+    onOrdersClick: () -> Unit,
+    onFavoritesClick: () -> Unit,
+    onCartClick: () -> Unit,
+    onLogoutClick: () -> Unit,
+    onCloseDrawer: () -> Unit
+) {
+    ModalDrawerSheet(
+        drawerContainerColor = Color.White,
+        modifier = Modifier.width(300.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .statusBarsPadding()
+                .padding(24.dp)
+        ) {
+            // Header
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 22.dp, vertical = 18.dp)
-                    .clip(RoundedCornerShape(18.dp))
-                    .background(ClicksMint)
-                    .padding(horizontal = 16.dp, vertical = 14.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(
-                    imageVector = Icons.Outlined.Search,
-                    contentDescription = "Search",
-                    tint = ClicksGreen
-                )
-                Spacer(Modifier.width(12.dp))
-                Box(Modifier.weight(1f)) {
-                    if (searchText.isEmpty()) {
-                        Text(
-                            "Search products",
-                            color = ClicksMuted,
-                            fontSize = 14.sp
-                        )
-                    }
-                    BasicTextField(
-                        value = searchText,
-                        onValueChange = { searchText = it },
-                        singleLine = true,
-                        textStyle = androidx.compose.ui.text.TextStyle(
-                            color = ClicksText,
-                            fontSize = 14.sp
-                        ),
-                        modifier = Modifier.fillMaxWidth()
+                Box(
+                    modifier = Modifier
+                        .size(56.dp)
+                        .clip(CircleShape)
+                        .background(ClicksGreen),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = userName.take(2).uppercase(),
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+                }
+                Spacer(Modifier.width(14.dp))
+                Column {
+                    Text(
+                        text = userName,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = ClicksText
+                    )
+                    Spacer(Modifier.height(2.dp))
+                    Text(
+                        text = userEmail,
+                        fontSize = 12.sp,
+                        color = ClicksMuted
                     )
                 }
             }
 
-            // Promotional Hero Carousel
-            val pagerState = rememberPagerState(pageCount = { promoBanners.size })
-
-            LaunchedEffect(pagerState) {
-                while (true) {
-                    delay(4000L)
-                    val nextPage = (pagerState.currentPage + 1) % promoBanners.size
-                    pagerState.animateScrollToPage(nextPage)
-                }
-            }
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 22.dp)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(300.dp)
-                        .clip(RoundedCornerShape(22.dp))
-                ) {
-                    HorizontalPager(
-                        state = pagerState,
-                        modifier = Modifier.fillMaxSize()
-                    ) { page ->
-                        val banner = promoBanners[page]
-                        Box(modifier = Modifier.fillMaxSize()) {
-                            AsyncImage(
-                                model = banner.image,
-                                contentDescription = banner.tag,
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier.fillMaxSize()
-                            )
-
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .background(Color(0x55333D32))
-                            )
-
-                            Column(
-                                modifier = Modifier
-                                    .align(Alignment.BottomStart)
-                                    .padding(22.dp)
-                            ) {
-                                Text(
-                                    text = banner.tag,
-                                    fontSize = 10.sp,
-                                    letterSpacing = 3.sp,
-                                    color = Color.White,
-                                    fontWeight = FontWeight.Bold
-                                )
-                                Spacer(Modifier.height(12.dp))
-                                Text(
-                                    text = banner.title,
-                                    fontSize = 25.sp,
-                                    lineHeight = 31.sp,
-                                    fontWeight = FontWeight.Medium,
-                                    color = Color.White
-                                )
-                                Spacer(Modifier.height(18.dp))
-                                Button(
-                                    onClick = onDiscoverClick,
-                                    colors = ButtonDefaults.buttonColors(
-                                        containerColor = ClicksCream,
-                                        contentColor = ClicksText
-                                    ),
-                                    shape = RoundedCornerShape(4.dp),
-                                    contentPadding = PaddingValues(
-                                        horizontal = 24.dp,
-                                        vertical = 12.dp
-                                    )
-                                ) {
-                                    Text(
-                                        "Discover",
-                                        fontWeight = FontWeight.SemiBold
-                                    )
-                                }
-                            }
-                        }
-                    }
-
-                    Row(
-                        modifier = Modifier
-                            .align(Alignment.TopEnd)
-                            .padding(16.dp),
-                        horizontalArrangement = Arrangement.spacedBy(6.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        repeat(promoBanners.size) { iteration ->
-                            val indicatorColor = if (pagerState.currentPage == iteration) Color.White else Color.White.copy(alpha = 0.5f)
-                            Box(
-                                modifier = Modifier
-                                    .size(if (pagerState.currentPage == iteration) 8.dp else 6.dp)
-                                    .clip(CircleShape)
-                                    .background(indicatorColor)
-                            )
-                        }
-                    }
-                }
-            }
-
             Spacer(Modifier.height(28.dp))
+            HorizontalDivider(color = Color(0xFFE5E7EB), thickness = 1.dp)
+            Spacer(Modifier.height(20.dp))
 
-            SectionHeading(
-                title = "Categories",
-                action = "View all",
-                onActionClick = onViewAllClick,
-                modifier = Modifier.padding(horizontal = 22.dp)
-            )
+            // Menu Items
+            DrawerMenuItem(
+                icon = Icons.Outlined.PersonOutline,
+                title = "My Account"
+            ) {
+                onCloseDrawer()
+                onProfileClick()
+            }
 
-            Spacer(Modifier.height(14.dp))
+            DrawerMenuItem(
+                icon = Icons.Outlined.ShoppingBag,
+                title = "My Orders & History"
+            ) {
+                onCloseDrawer()
+                onOrdersClick()
+            }
 
+            DrawerMenuItem(
+                icon = Icons.Outlined.LocalShipping,
+                title = "Track Orders"
+            ) {
+                onCloseDrawer()
+                onOrdersClick()
+            }
+
+            DrawerMenuItem(
+                icon = Icons.Outlined.FavoriteBorder,
+                title = "Favorites & Wishlist"
+            ) {
+                onCloseDrawer()
+                onFavoritesClick()
+            }
+
+            DrawerMenuItem(
+                icon = Icons.Outlined.ShoppingCart,
+                title = "Shopping Cart"
+            ) {
+                onCloseDrawer()
+                onCartClick()
+            }
+
+            DrawerMenuItem(
+                icon = Icons.Outlined.Settings,
+                title = "Settings"
+            ) {
+                onCloseDrawer()
+                onProfileClick()
+            }
+
+            DrawerMenuItem(
+                icon = Icons.AutoMirrored.Outlined.HelpOutline,
+                title = "Help & FAQs"
+            ) {
+                onCloseDrawer()
+            }
+
+            Spacer(Modifier.weight(1f))
+
+            HorizontalDivider(color = Color(0xFFE5E7EB), thickness = 1.dp)
+            Spacer(Modifier.height(16.dp))
+
+            // Logout button
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .horizontalScroll(rememberScrollState())
-                    .padding(horizontal = 22.dp),
-                horizontalArrangement = Arrangement.spacedBy(14.dp)
-            ) {
-                categories.forEach { category ->
-                    Column(
-                        modifier = Modifier
-                            .width(88.dp)
-                            .clickable { onCategoryClick(category.name) },
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(76.dp)
-                                .clip(CircleShape)
-                                .background(ClicksMint),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            AsyncImage(
-                                model = category.imageUrl,
-                                contentDescription = category.name,
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier
-                                    .size(70.dp)
-                                    .clip(CircleShape)
-                            )
-                        }
-                        Spacer(Modifier.height(8.dp))
-                        Text(
-                            text = category.name,
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = ClicksText,
-                            maxLines = 1
-                        )
+                    .clip(RoundedCornerShape(12.dp))
+                    .clickable {
+                        onCloseDrawer()
+                        onLogoutClick()
                     }
-                }
+                    .padding(vertical = 12.dp, horizontal = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Outlined.Logout,
+                    contentDescription = "Log out",
+                    tint = Color(0xFFEF4444),
+                    modifier = Modifier.size(20.dp)
+                )
+                Spacer(Modifier.width(12.dp))
+                Text(
+                    text = "Log Out",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFFEF4444)
+                )
             }
 
-            Spacer(Modifier.height(28.dp))
+            Spacer(Modifier.height(8.dp))
 
-            SectionHeading(
-                title = "Popular",
-                action = "View all",
-                onActionClick = onViewAllClick,
-                modifier = Modifier.padding(horizontal = 22.dp)
+            // App Version at bottom
+            Text(
+                text = "Clicks v1.0.0",
+                fontSize = 11.sp,
+                color = ClicksMuted,
+                modifier = Modifier.align(Alignment.CenterHorizontally)
             )
-
-            Spacer(Modifier.height(14.dp))
-
-            Column(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(14.dp)
-            ) {
-                products.chunked(2).forEach { rowProducts ->
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        rowProducts.forEach { product ->
-                            val isFavorite = storeViewModel.isFavorite(product.id)
-                            ProductCard(
-                                product = product,
-                                isFavorite = isFavorite,
-                                onFavoriteClick = {
-                                    storeViewModel.toggleFavorite(product.id)
-                                },
-                                onClick = { onProductClick(product.id) },
-                                modifier = Modifier.weight(1f)
-                            )
-                        }
-
-                        if (rowProducts.size == 1) {
-                            Spacer(Modifier.weight(1f))
-                        }
-                    }
-                }
-            }
-
-            Spacer(Modifier.height(22.dp))
         }
+    }
+}
+
+@Composable
+private fun DrawerMenuItem(
+    icon: ImageVector,
+    title: String,
+    onClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
+            .clickable { onClick() }
+            .padding(vertical = 12.dp, horizontal = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = title,
+            tint = ClicksGreen,
+            modifier = Modifier.size(20.dp)
+        )
+        Spacer(Modifier.width(16.dp))
+        Text(
+            text = title,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Medium,
+            color = ClicksText
+        )
     }
 }
 
@@ -523,7 +739,7 @@ private fun ProductCard(
                     } else {
                         "Add to favorites"
                     },
-                    tint = if (isFavorite) ClicksGreen else ClicksText,
+                    tint = if (isFavorite) Color(0xFFEF4444) else ClicksText,
                     modifier = Modifier.size(20.dp)
                 )
             }
@@ -608,7 +824,7 @@ private fun ClicksBottomBar(
                     Text(
                         text = label,
                         fontSize = 11.sp,
-                        color = if (selected) ClicksGreen else ClicksGreenInactive,
+                        color = if (selected) Color.White else ClicksGreenInactive,
                         fontWeight = if (selected) {
                             FontWeight.SemiBold
                         } else {

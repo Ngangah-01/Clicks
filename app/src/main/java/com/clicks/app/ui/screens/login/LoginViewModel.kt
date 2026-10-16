@@ -7,6 +7,9 @@ import com.clicks.app.data.remote.ApiResult
 import com.clicks.app.data.remote.dto.LoginRequest
 import com.clicks.app.data.repository.AuthRepository
 import kotlinx.coroutines.launch
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
+import com.clicks.app.data.repository.SessionRepository
 
 data class LoginUiState(
     val isLoading: Boolean = false,
@@ -15,8 +18,11 @@ data class LoginUiState(
 )
 
 class LoginViewModel(
+    application: Application,
     private val authRepository: AuthRepository = AuthRepository()
-) : ViewModel() {
+) : AndroidViewModel(application) {
+
+    private val sessionRepository = SessionRepository(application)
 
     var uiState = mutableStateOf(LoginUiState())
         private set
@@ -40,12 +46,19 @@ class LoginViewModel(
                 )
             ) {
                 is ApiResult.Success -> {
-                    uiState.value = LoginUiState(
-                        successMessage = result.message.ifBlank {
-                            "Login successful."
-                        }
-                    )
-                    onSuccess()
+                    try {
+                        sessionRepository.saveToken(result.data.token)
+                        onSuccess()
+                        uiState.value = LoginUiState(
+                            successMessage = result.message.ifBlank {
+                                "Login successful."
+                            }
+                        )
+                    }catch (ex: Exception){
+                        uiState.value = LoginUiState(
+                            errorMessage = "Please try again." // session not created
+                        )
+                    }
                 }
 
                 is ApiResult.Error -> {
