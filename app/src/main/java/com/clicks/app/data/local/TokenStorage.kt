@@ -71,6 +71,14 @@ class TokenStorage(context: Context) {
         }
     }
 
+    fun setOnboardingCompleted(completed: Boolean) {
+        preferences.edit { putBoolean(KEY_ONBOARDING_COMPLETED, completed) }
+    }
+
+    fun isOnboardingCompleted(): Boolean {
+        return preferences.getBoolean(KEY_ONBOARDING_COMPLETED, false)
+    }
+
     private fun getExistingKey(): SecretKey {
         val keyStore = KeyStore.getInstance(KEYSTORE_PROVIDER).apply { load(null) }
         return keyStore.getKey(KEY_ALIAS, null) as? SecretKey
@@ -109,5 +117,6 @@ class TokenStorage(context: Context) {
         const val GCM_TAG_BITS = 128
         const val KEY_TOKEN = "encrypted_token"
         const val KEY_IV = "token_iv"
+        const val KEY_ONBOARDING_COMPLETED = "onboarding_completed"
     }
 }

@@ -1,10 +1,14 @@
 package com.clicks.app.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.clicks.app.data.local.TokenStorage
+import com.clicks.app.data.repository.SessionRepository
 import com.clicks.app.ui.screens.login.LoginScreen
 import com.clicks.app.ui.screens.login.LoginViewModel
 import com.clicks.app.ui.screens.onboarding.OnboardingContainerScreen
@@ -19,23 +23,30 @@ import com.clicks.app.ui.screens.checkout.CheckoutScreen
 import com.clicks.app.ui.screens.profile.ProfileScreen
 import com.clicks.app.ui.screens.orders.OrdersScreen
 import com.clicks.app.ui.viewmodel.StoreViewModel
-import androidx.compose.ui.platform.LocalContext
-import com.clicks.app.ui.screens.login.LoginViewModelFactory
-import com.clicks.app.ui.screens.register.RegisterViewModelFactory
 
 @Composable
 fun NavGraph() {
     val navController = rememberNavController()
+    val context = LocalContext.current
+    val sessionRepository = remember { SessionRepository(TokenStorage(context)) }
     val storeViewModel: StoreViewModel = viewModel()
+
+    val startDestination = when {
+        !sessionRepository.isOnboardingCompleted() -> Routes.Onboarding.route
+        sessionRepository.isLoggedIn() -> Routes.Home.route
+        else -> Routes.Login.route
+    }
 
     NavHost(
         navController = navController,
-        startDestination = Routes.Onboarding.route
+        startDestination = startDestination
     ) {
         composable(Routes.Onboarding.route) {
             OnboardingContainerScreen(
                 onFinished = {
-                    navController.navigate(Routes.Login.route) {
+                    sessionRepository.setOnboardingCompleted(true)
+                    val nextRoute = if (sessionRepository.isLoggedIn()) Routes.Home.route else Routes.Login.route
+                    navController.navigate(nextRoute) {
                         popUpTo(Routes.Onboarding.route) {
                             inclusive = true
                         }
@@ -44,10 +55,7 @@ fun NavGraph() {
             )
         }
         composable(Routes.Login.route) {
-            val context = LocalContext.current
-            val loginViewModel: LoginViewModel = viewModel(
-                factory = LoginViewModelFactory(context.applicationContext as android.app.Application)
-            )
+            val loginViewModel: LoginViewModel = viewModel()
             LoginScreen(
                 viewModel = loginViewModel,
                 onLoginSuccess = {
@@ -70,10 +78,7 @@ fun NavGraph() {
         }
 
         composable(Routes.Register.route) {
-            val context = LocalContext.current
-            val registerViewModel: RegisterViewModel = viewModel(
-                factory = RegisterViewModelFactory(context.applicationContext as android.app.Application)
-            )
+            val registerViewModel: RegisterViewModel = viewModel()
             RegisterScreen(
                 viewModel = registerViewModel,
                 onLoginClick = {
@@ -114,6 +119,7 @@ fun NavGraph() {
                     navController.navigate(Routes.Orders.route)
                 },
                 onLogoutClick = {
+                    sessionRepository.clearSession()
                     navController.navigate(Routes.Login.route) {
                         popUpTo(Routes.Onboarding.route) { inclusive = true }
                     }
@@ -194,6 +200,7 @@ fun NavGraph() {
                     navController.navigate(Routes.Orders.route)
                 },
                 onLogoutClick = {
+                    sessionRepository.clearSession()
                     navController.navigate(Routes.Login.route) {
                         popUpTo(Routes.Onboarding.route) { inclusive = true }
                     }

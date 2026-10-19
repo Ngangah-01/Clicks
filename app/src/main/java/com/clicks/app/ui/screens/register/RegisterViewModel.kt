@@ -1,15 +1,12 @@
-
 package com.clicks.app.ui.screens.register
 
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clicks.app.data.remote.ApiResult
 import com.clicks.app.data.remote.dto.RegisterRequest
 import com.clicks.app.data.repository.AuthRepository
 import kotlinx.coroutines.launch
-import android.app.Application
-import com.clicks.app.data.repository.SessionRepository
 
 data class RegisterUiState(
     val isLoading: Boolean = false,
@@ -18,11 +15,9 @@ data class RegisterUiState(
 )
 
 class RegisterViewModel(
-    application: Application,
     private val authRepository: AuthRepository = AuthRepository()
-) : AndroidViewModel(application) {
+) : ViewModel() {
 
-    private val sessionRepository = SessionRepository(application)
     var uiState = mutableStateOf(RegisterUiState())
         private set
 
@@ -30,8 +25,8 @@ class RegisterViewModel(
         firstName: String,
         lastName: String,
         email: String,
-        password: String
-
+        password: String,
+        onSuccess: () -> Unit
     ) {
         if (uiState.value.isLoading) return
 
@@ -49,19 +44,12 @@ class RegisterViewModel(
                 )
             ) {
                 is ApiResult.Success -> {
-                    try {
-                        sessionRepository.saveToken(result.data.token)
-
-                        uiState.value = RegisterUiState(
-                            successMessage = result.message.ifBlank {
-                                "Registration succcessful."
-                            }
-                        )
-                    }catch (ex: Exception){
-                        uiState.value = RegisterUiState(
-                            errorMessage = "Please try again." // session not created
-                        )
-                    }
+                    uiState.value = RegisterUiState(
+                        successMessage = result.message.ifBlank {
+                            "Registration successful."
+                        }
+                    )
+                    onSuccess()
                 }
 
                 is ApiResult.Error -> {

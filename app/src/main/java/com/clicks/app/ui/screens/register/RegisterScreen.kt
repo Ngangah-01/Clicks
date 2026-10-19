@@ -38,7 +38,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.clicks.app.R
 import kotlinx.coroutines.delay
-import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun RegisterScreen(
@@ -63,13 +62,6 @@ fun RegisterScreen(
 
     LaunchedEffect(Unit) {
         isVisible = true
-    }
-
-    LaunchedEffect(uiState.successMessage) {
-        if (uiState.successMessage != null) {
-            onRegisterSuccess()
-            viewModel.clearMessages()
-        }
     }
 
     val brandGreen = Color(0xFF0B6638)
@@ -163,7 +155,7 @@ fun RegisterScreen(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "Enter your details to create an account",
+                        text = "Lorem Ipsum Dolor Sit Amet, Consectetur Adipiscing Elit, Sed Do Eiusmod Tempor",
                         fontSize = 15.sp,
                         color = textMuted,
                         lineHeight = 18.sp
@@ -192,11 +184,6 @@ fun RegisterScreen(
                                 firstName = it
                                 firstNameError = null
                             },
-                            placeholder = {
-                                Text(text = "John",
-                                    color = Color(0xFF9CA3AF),
-                                    fontSize = 16.sp,
-                                )},
                             modifier = Modifier.fillMaxWidth(),
                             singleLine = true,
                             isError = firstNameError != null,
@@ -246,11 +233,6 @@ fun RegisterScreen(
                                 lastName = it
                                 lastNameError = null
                             },
-                            placeholder = {
-                                Text(text = "Doe",
-                                    color = Color(0xFF9CA3AF),
-                                    fontSize = 16.sp,
-                                )},
                             modifier = Modifier.fillMaxWidth(),
                             singleLine = true,
                             isError = lastNameError != null,
@@ -303,11 +285,6 @@ fun RegisterScreen(
                             email = it
                             emailError = null
                         },
-                        placeholder = {
-                            Text(text = "johndoe@gmail.com",
-                                color = Color(0xFF9CA3AF),
-                                fontSize = 16.sp,
-                            ) },
                         modifier = Modifier.fillMaxWidth(),
                         singleLine = true,
                         isError = emailError != null,
@@ -359,11 +336,6 @@ fun RegisterScreen(
                             password = it
                             passwordError = null
                         },
-                        placeholder = {
-                            Text(text = "••••••••",
-                                color = Color(0xFF9CA3AF),
-                                fontSize = 16.sp,
-                            ) },
                         modifier = Modifier.fillMaxWidth(),
                         visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                         singleLine = true,
@@ -426,8 +398,8 @@ fun RegisterScreen(
                             emailError = "Valid email is required"
                             valid = false
                         }
-                        if (password.isBlank() || password.length < 8) {
-                            passwordError = "Password must be at least 8 characters"
+                        if (password.isBlank() || password.length < 6) {
+                            passwordError = "Password must be at least 6 characters"
                             valid = false
                         }
                         if (valid) {
@@ -435,7 +407,8 @@ fun RegisterScreen(
                                 firstName = firstName.trim(),
                                 lastName = lastName.trim(),
                                 email = email.trim(),
-                                password = password
+                                password = password,
+                                onSuccess = onRegisterSuccess
                             )
                         }
                     },
@@ -520,7 +493,7 @@ fun ToastBanner(
     onDismiss: () -> Unit
 ) {
     LaunchedEffect(message) {
-        delay(4000L.milliseconds)
+        delay(4000L)
         onDismiss()
     }
 

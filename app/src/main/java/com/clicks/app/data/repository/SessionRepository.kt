@@ -1,25 +1,18 @@
 package com.clicks.app.data.repository
 
-import android.content.Context
 import com.clicks.app.data.local.TokenStorage
 
-class SessionRepository(context: Context) {
+class SessionRepository(
+    private val tokenStorage: TokenStorage
+) {
 
-    private val tokenStorage = TokenStorage(context)
+    fun saveToken(token: String) = tokenStorage.saveToken(token)
+    fun getToken(): String? = tokenStorage.getToken()
 
-    fun saveToken(token: String) {
-        tokenStorage.saveToken(token)
-    }
+    fun isLoggedIn(): Boolean = !getToken().isNullOrBlank()
 
-    fun getToken(): String? {
-        return tokenStorage.getToken()
-    }
+    fun clearSession() = tokenStorage.clearToken()
 
-    fun isLoggedIn(): Boolean {
-        return !getToken().isNullOrBlank()
-    }
-
-    fun clearSession() {
-        tokenStorage.clearToken()
-    }
+    fun setOnboardingCompleted(completed: Boolean) = tokenStorage.setOnboardingCompleted(completed)
+    fun isOnboardingCompleted(): Boolean = tokenStorage.isOnboardingCompleted()
 }
