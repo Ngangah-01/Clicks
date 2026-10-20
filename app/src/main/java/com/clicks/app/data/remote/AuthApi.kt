@@ -22,5 +22,6 @@ interface AuthApi {
     ): ApiResponse<AuthResponse>
 
     @GET("api/auth/me")
-    suspend fun getCurrentUser(): ApiResponse<UserResponse>
+    suspend fun getCurrentUser():
+            ApiResponse<UserResponse>
 }
