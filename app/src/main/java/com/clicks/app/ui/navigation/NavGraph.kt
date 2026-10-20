@@ -21,6 +21,7 @@ import com.clicks.app.ui.screens.cart.CartScreen
 import com.clicks.app.ui.screens.favorites.FavoritesScreen
 import com.clicks.app.ui.screens.checkout.CheckoutScreen
 import com.clicks.app.ui.screens.profile.ProfileScreen
+import com.clicks.app.ui.screens.profile.ProfileViewModel
 import com.clicks.app.ui.screens.orders.OrdersScreen
 import com.clicks.app.ui.viewmodel.StoreViewModel
 
@@ -35,6 +36,12 @@ fun NavGraph() {
         !sessionRepository.isOnboardingCompleted() -> Routes.Onboarding.route
         sessionRepository.isLoggedIn() -> Routes.Home.route
         else -> Routes.Login.route
+    }
+
+    val goToLogin = {
+        navController.navigate(Routes.Login.route) {
+            popUpTo(Routes.Onboarding.route) { inclusive = true }
+        }
     }
 
     NavHost(
@@ -97,7 +104,7 @@ fun NavGraph() {
         composable(Routes.Home.route) {
             HomeScreen(
                 storeViewModel = storeViewModel,
-                onCategoryClick = { category ->
+                onCategoryClick = { _ ->
                     navController.navigate(Routes.Products.route)
                 },
                 onViewAllClick = {
@@ -120,9 +127,7 @@ fun NavGraph() {
                 },
                 onLogoutClick = {
                     sessionRepository.clearSession()
-                    navController.navigate(Routes.Login.route) {
-                        popUpTo(Routes.Onboarding.route) { inclusive = true }
-                    }
+                    goToLogin()
                 },
                 onNotificationClick = {
                     // Notification action
@@ -193,18 +198,13 @@ fun NavGraph() {
         }
 
         composable(Routes.Profile.route) {
+            val profileViewModel: ProfileViewModel = viewModel()
             ProfileScreen(
-                storeViewModel = storeViewModel,
+                viewModel = profileViewModel,
                 onBackClick = { navController.popBackStack() },
-                onOrdersClick = {
-                    navController.navigate(Routes.Orders.route)
-                },
-                onLogoutClick = {
-                    sessionRepository.clearSession()
-                    navController.navigate(Routes.Login.route) {
-                        popUpTo(Routes.Onboarding.route) { inclusive = true }
-                    }
-                }
+                onOrdersClick = { navController.navigate(Routes.Orders.route) },
+                onLogoutClick = { profileViewModel.logout(); goToLogin() },
+                onSessionExpired = { goToLogin() }
             )
         }
 

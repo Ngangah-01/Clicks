@@ -22,20 +22,30 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.clicks.app.ui.viewmodel.StoreViewModel
+import com.clicks.app.data.remote.dto.UserResponse
 
 private val ClicksGreen = Color(0xFF07865B)
 private val ClicksText = Color(0xFF163E32)
 private val ClicksMint = Color(0xFFF0F7F3)
 private val ClicksMuted = Color(0xFF789087)
+private val ClicksRed = Color(0xFFEF4444)
 
 @Composable
 fun ProfileScreen(
-    storeViewModel: StoreViewModel,
+    viewModel: ProfileViewModel,
     onBackClick: () -> Unit = {},
     onOrdersClick: () -> Unit = {},
-    onLogoutClick: () -> Unit = {}
+    onLogoutClick: () -> Unit = {},
+    onSessionExpired: () -> Unit = {}
 ) {
+    val uiState = viewModel.uiState
+    val user = uiState.user
+
+    // The ViewModel has already cleared the token; the screen only navigates.
+    LaunchedEffect(uiState.isSessionExpired) {
+        if (uiState.isSessionExpired) onSessionExpired()
+    }
+
     var notificationsEnabled by remember { mutableStateOf(true) }
     var emailAlertsEnabled by remember { mutableStateOf(true) }
     val addresses = remember {
@@ -47,10 +57,7 @@ fun ProfileScreen(
     var showAddAddressDialog by remember { mutableStateOf(false) }
     var newAddressInput by remember { mutableStateOf("") }
 
-    var showEditProfileDialog by remember { mutableStateOf(false) }
-    var editName by remember { mutableStateOf(storeViewModel.userName) }
-    var editEmail by remember { mutableStateOf(storeViewModel.userEmail) }
-    var editPhone by remember { mutableStateOf(storeViewModel.userPhone) }
+    var showAccountInfoDialog by remember { mutableStateOf(false) }
 
     Scaffold(
         containerColor = Color.White
@@ -94,54 +101,86 @@ fun ProfileScreen(
 
             Spacer(Modifier.height(16.dp))
 
-            // User Info Header Card
+            // User Info Header Card: loaded / loading / error
             Card(
                 shape = RoundedCornerShape(20.dp),
                 colors = CardDefaults.cardColors(containerColor = ClicksMint),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(20.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(64.dp)
-                            .clip(CircleShape)
-                            .background(ClicksGreen),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = storeViewModel.userName.take(2).uppercase(),
-                            fontSize = 22.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White
-                        )
+                when {
+                    user != null -> {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(20.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(64.dp)
+                                    .clip(CircleShape)
+                                    .background(ClicksGreen),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = user.initials(),
+                                    fontSize = 22.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White
+                                )
+                            }
+
+                            Spacer(Modifier.width(16.dp))
+
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = user.displayName(),
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = ClicksText
+                                )
+                                Spacer(Modifier.height(2.dp))
+                                Text(
+                                    text = user.email,
+                                    fontSize = 13.sp,
+                                    color = ClicksMuted
+                                )
+                            }
+                        }
                     }
 
-                    Spacer(Modifier.width(16.dp))
+                    uiState.isLoading -> {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(32.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(color = ClicksGreen)
+                        }
+                    }
 
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = storeViewModel.userName,
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = ClicksText
-                        )
-                        Spacer(Modifier.height(2.dp))
-                        Text(
-                            text = storeViewModel.userEmail,
-                            fontSize = 13.sp,
-                            color = ClicksMuted
-                        )
-                        Spacer(Modifier.height(4.dp))
-                        Text(
-                            text = storeViewModel.userPhone,
-                            fontSize = 12.sp,
-                            color = ClicksMuted
-                        )
+                    else -> {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(20.dp)
+                        ) {
+                            Text(
+                                text = uiState.errorMessage
+                                    ?: "Could not load your profile.",
+                                fontSize = 13.sp,
+                                color = ClicksRed
+                            )
+                            Spacer(Modifier.height(4.dp))
+                            TextButton(onClick = viewModel::loadProfile) {
+                                Text(
+                                    text = "Retry",
+                                    color = ClicksGreen,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -214,12 +253,10 @@ fun ProfileScreen(
             ProfileMenuItem(
                 icon = Icons.Outlined.PersonOutline,
                 title = "Account Information",
-                subtitle = "Edit name, phone number, email"
+                subtitle = "View your name and email"
             ) {
-                editName = storeViewModel.userName
-                editEmail = storeViewModel.userEmail
-                editPhone = storeViewModel.userPhone
-                showEditProfileDialog = true
+                // Nothing to show until the profile has loaded.
+                if (user != null) showAccountInfoDialog = true
             }
             ProfileMenuItem(
                 icon = Icons.Outlined.Lock,
@@ -339,7 +376,7 @@ fun ProfileScreen(
         }
     }
 
-    // Add Address Dialog
+    // Add Address Dialog (local only: the backend has no address endpoints yet)
     if (showAddAddressDialog) {
         AlertDialog(
             onDismissRequest = { showAddAddressDialog = false },
@@ -376,55 +413,52 @@ fun ProfileScreen(
         )
     }
 
-    // Edit Profile Dialog (Account Information Persistence)
-    if (showEditProfileDialog) {
+    // Account Information Dialog (read-only until the backend has an update endpoint)
+    if (showAccountInfoDialog && user != null) {
         AlertDialog(
-            onDismissRequest = { showEditProfileDialog = false },
-            title = { Text("Edit Account Information", fontWeight = FontWeight.Bold) },
+            onDismissRequest = { showAccountInfoDialog = false },
+            title = { Text("Account Information", fontWeight = FontWeight.Bold) },
             text = {
-                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                    OutlinedTextField(
-                        value = editName,
-                        onValueChange = { editName = it },
-                        label = { Text("Full Name") },
-                        modifier = Modifier.fillMaxWidth(),
-                        singleLine = true,
-                        shape = RoundedCornerShape(12.dp)
-                    )
-                    OutlinedTextField(
-                        value = editEmail,
-                        onValueChange = { editEmail = it },
-                        label = { Text("Email Address") },
-                        modifier = Modifier.fillMaxWidth(),
-                        singleLine = true,
-                        shape = RoundedCornerShape(12.dp)
-                    )
-                    OutlinedTextField(
-                        value = editPhone,
-                        onValueChange = { editPhone = it },
-                        label = { Text("Phone Number") },
-                        modifier = Modifier.fillMaxWidth(),
-                        singleLine = true,
-                        shape = RoundedCornerShape(12.dp)
-                    )
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    AccountInfoRow(label = "First name", value = user.firstName)
+                    AccountInfoRow(label = "Last name", value = user.lastName)
+                    AccountInfoRow(label = "Email address", value = user.email)
                 }
             },
             confirmButton = {
                 Button(
-                    onClick = {
-                        storeViewModel.updateProfile(editName, editEmail, editPhone)
-                        showEditProfileDialog = false
-                    },
+                    onClick = { showAccountInfoDialog = false },
                     colors = ButtonDefaults.buttonColors(containerColor = ClicksGreen)
                 ) {
-                    Text("Save")
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showEditProfileDialog = false }) {
-                    Text("Cancel", color = ClicksMuted)
+                    Text("Close")
                 }
             }
+        )
+    }
+}
+
+private fun UserResponse.displayName(): String =
+    "$firstName $lastName".trim()
+
+private fun UserResponse.initials(): String =
+    listOfNotNull(firstName.firstOrNull(), lastName.firstOrNull())
+        .joinToString("")
+        .uppercase()
+
+@Composable
+private fun AccountInfoRow(label: String, value: String) {
+    Column {
+        Text(
+            text = label,
+            fontSize = 12.sp,
+            color = ClicksMuted
+        )
+        Spacer(Modifier.height(2.dp))
+        Text(
+            text = value,
+            fontSize = 15.sp,
+            fontWeight = FontWeight.Medium,
+            color = ClicksText
         )
     }
 }

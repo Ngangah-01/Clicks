@@ -10,7 +10,6 @@ class AuthInterceptor(
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
 
-        // Login and register are public; never send a token to them.
         if (request.url.encodedPath.startsWith("/api/auth/")) {
             return chain.proceed(request)
         }
