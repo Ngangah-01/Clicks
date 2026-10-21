@@ -24,11 +24,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.clicks.app.data.remote.dto.UserResponse
 
-private val ClicksGreen = Color(0xFF07865B)
-private val ClicksText = Color(0xFF163E32)
-private val ClicksMint = Color(0xFFF0F7F3)
-private val ClicksMuted = Color(0xFF789087)
-private val ClicksRed = Color(0xFFEF4444)
+val ClicksGreen = Color(0xFF07865B)
+val ClicksText = Color(0xFF163E32)
+val ClicksMint = Color(0xFFF0F7F3)
+val ClicksMuted = Color(0xFF789087)
+val ClicksRed = Color(0xFFEF4444)
 
 @Composable
 fun ProfileScreen(
@@ -437,10 +437,10 @@ fun ProfileScreen(
     }
 }
 
-private fun UserResponse.displayName(): String =
+public fun UserResponse.displayName(): String =
     "$firstName $lastName".trim()
 
-private fun UserResponse.initials(): String =
+public fun UserResponse.initials(): String =
     listOfNotNull(firstName.firstOrNull(), lastName.firstOrNull())
         .joinToString("")
         .uppercase()

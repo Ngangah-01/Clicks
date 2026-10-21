@@ -35,6 +35,9 @@ import coil.compose.AsyncImage
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import com.clicks.app.R
+import com.clicks.app.ui.screens.profile.ProfileViewModel
+import com.clicks.app.ui.screens.profile.displayName
+import com.clicks.app.ui.screens.profile.initials
 import com.clicks.app.ui.viewmodel.StoreViewModel
 
 private val ClicksGreen = Color(0xFF07865B)
@@ -101,9 +104,11 @@ private val products = listOf(
     ShopProduct(9, "Minimal Shoulder Bag", "$1,650", "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=700")
 )
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     storeViewModel: StoreViewModel,
+    profileViewModel: ProfileViewModel,
     onFavoritesClick: () -> Unit = {},
     onCartClick: () -> Unit = {},
     onProfileClick: () -> Unit = {},
@@ -117,17 +122,132 @@ fun HomeScreen(
 ) {
     var searchText by remember { mutableStateOf("") }
     var selectedTab by remember { mutableStateOf("Home") }
-    val cartCount = storeViewModel.cartItemCount
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
+
+    var showNotificationsSheet by remember { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState()
+    val unreadNotifications = storeViewModel.unreadNotificationCount
+
+    if (showNotificationsSheet) {
+        ModalBottomSheet(
+            onDismissRequest = { showNotificationsSheet = false },
+            sheetState = sheetState,
+            containerColor = Color.White
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(24.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Notifications",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = ClicksText
+                    )
+                    TextButton(
+                        onClick = { storeViewModel.markAllNotificationsRead() }
+                    ) {
+                        Text(
+                            text = "Mark all as read",
+                            fontSize = 13.sp,
+                            color = ClicksGreen,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                }
+
+                Spacer(Modifier.height(16.dp))
+
+                storeViewModel.notifications.forEach { notification ->
+                    Card(
+                        shape = RoundedCornerShape(14.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = if (notification.isRead) Color(0xFFF9FAFB) else ClicksMint
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 6.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(14.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(40.dp)
+                                    .clip(CircleShape)
+                                    .background(if (notification.isRead) Color(0xFFE5E7EB) else ClicksGreen),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Outlined.Notifications,
+                                    contentDescription = null,
+                                    tint = if (notification.isRead) ClicksMuted else Color.White,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                            }
+
+                            Spacer(Modifier.width(14.dp))
+
+                            Column(modifier = Modifier.weight(1f)) {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Text(
+                                        text = notification.title,
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = ClicksText
+                                    )
+                                    Text(
+                                        text = notification.time,
+                                        fontSize = 11.sp,
+                                        color = ClicksMuted
+                                    )
+                                }
+                                Spacer(Modifier.height(4.dp))
+                                Text(
+                                    text = notification.message,
+                                    fontSize = 12.sp,
+                                    color = ClicksMuted,
+                                    lineHeight = 16.sp
+                                )
+                            }
+
+                            if (!notification.isRead) {
+                                Spacer(Modifier.width(8.dp))
+                                Box(
+                                    modifier = Modifier
+                                        .size(8.dp)
+                                        .clip(CircleShape)
+                                        .background(Color(0xFFEF4444))
+                                )
+                            }
+                        }
+                    }
+                }
+
+                Spacer(Modifier.height(36.dp))
+            }
+        }
+    }
 
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
             ClicksDrawerSheet(
-                userName = storeViewModel.userName,
-                userEmail = storeViewModel.userEmail,
+                profileViewModel = profileViewModel,
                 onProfileClick = onProfileClick,
                 onOrdersClick = onOrdersClick,
                 onFavoritesClick = onFavoritesClick,
@@ -209,18 +329,18 @@ fun HomeScreen(
                         horizontalArrangement = Arrangement.End,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        // Cart icon with badge in header
+                        // Notification bell icon with unread badge in header
                         Box(
-                            modifier = Modifier.clickable { onCartClick() }
+                            modifier = Modifier.clickable { showNotificationsSheet = true }
                         ) {
-                            IconButton(onClick = onCartClick) {
+                            IconButton(onClick = { showNotificationsSheet = true }) {
                                 Icon(
-                                    imageVector = Icons.Outlined.ShoppingCart,
-                                    contentDescription = "Cart",
+                                    imageVector = Icons.Outlined.Notifications,
+                                    contentDescription = "Notifications",
                                     tint = ClicksGreen
                                 )
                             }
-                            if (cartCount > 0) {
+                            if (unreadNotifications > 0) {
                                 Box(
                                     modifier = Modifier
                                         .align(Alignment.TopEnd)
@@ -475,8 +595,7 @@ fun HomeScreen(
 
 @Composable
 private fun ClicksDrawerSheet(
-    userName: String,
-    userEmail: String,
+    profileViewModel: ProfileViewModel,
     onProfileClick: () -> Unit,
     onOrdersClick: () -> Unit,
     onFavoritesClick: () -> Unit,
@@ -484,6 +603,9 @@ private fun ClicksDrawerSheet(
     onLogoutClick: () -> Unit,
     onCloseDrawer: () -> Unit
 ) {
+    val uiState = profileViewModel.uiState
+    val user = uiState.user
+
     ModalDrawerSheet(
         drawerContainerColor = Color.White,
         modifier = Modifier.width(300.dp)
@@ -494,38 +616,87 @@ private fun ClicksDrawerSheet(
                 .statusBarsPadding()
                 .padding(24.dp)
         ) {
-            // Header
-            Row(
-                verticalAlignment = Alignment.CenterVertically
+            // User Info Header Card using ProfileViewModel state and exact ProfileScreen layout
+            Card(
+                shape = RoundedCornerShape(20.dp),
+                colors = CardDefaults.cardColors(containerColor = ClicksMint),
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Box(
-                    modifier = Modifier
-                        .size(56.dp)
-                        .clip(CircleShape)
-                        .background(ClicksGreen),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = userName.take(2).uppercase(),
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
-                    )
-                }
-                Spacer(Modifier.width(14.dp))
-                Column {
-                    Text(
-                        text = userName,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = ClicksText
-                    )
-                    Spacer(Modifier.height(2.dp))
-                    Text(
-                        text = userEmail,
-                        fontSize = 12.sp,
-                        color = ClicksMuted
-                    )
+                when {
+                    user != null -> {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(20.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(64.dp)
+                                    .clip(CircleShape)
+                                    .background(ClicksGreen),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = user.initials(),
+                                    fontSize = 22.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White
+                                )
+                            }
+
+                            Spacer(Modifier.width(16.dp))
+
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = user.displayName(),
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = ClicksText
+                                )
+                                Spacer(Modifier.height(2.dp))
+                                Text(
+                                    text = user.email,
+                                    fontSize = 13.sp,
+                                    color = ClicksMuted
+                                )
+                            }
+                        }
+                    }
+
+                    uiState.isLoading -> {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(32.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(color = ClicksGreen)
+                        }
+                    }
+
+                    else -> {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(20.dp)
+                        ) {
+                            Text(
+                                text = uiState.errorMessage
+                                    ?: "Could not load your profile.",
+                                fontSize = 13.sp,
+                                color = Color(0xFFEF4444)
+                            )
+                            Spacer(Modifier.height(4.dp))
+                            TextButton(onClick = profileViewModel::loadProfile) {
+                                Text(
+                                    text = "Retry",
+                                    color = ClicksGreen,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        }
+                    }
                 }
             }
 

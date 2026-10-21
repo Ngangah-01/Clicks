@@ -40,7 +40,7 @@ fun NavGraph() {
 
     val goToLogin = {
         navController.navigate(Routes.Login.route) {
-            popUpTo(navController.graph.id) { inclusive = true }
+            popUpTo(Routes.Onboarding.route) { inclusive = true }
         }
     }
 
@@ -102,8 +102,10 @@ fun NavGraph() {
         }
 
         composable(Routes.Home.route) {
+            val profileViewModel: ProfileViewModel = viewModel()
             HomeScreen(
                 storeViewModel = storeViewModel,
+                profileViewModel = profileViewModel,
                 onCategoryClick = { _ ->
                     navController.navigate(Routes.Products.route)
                 },
