@@ -20,6 +20,9 @@ import com.clicks.app.ui.screens.products.ProductDetailsScreen
 import com.clicks.app.ui.screens.cart.CartScreen
 import com.clicks.app.ui.screens.favorites.FavoritesScreen
 import com.clicks.app.ui.screens.checkout.CheckoutScreen
+import com.clicks.app.ui.screens.location.DeliveryLocationViewModel
+import com.clicks.app.ui.screens.location.LocationPickerScreen
+import com.clicks.app.ui.screens.location.LocationPickerViewModel
 import com.clicks.app.ui.screens.profile.ProfileScreen
 import com.clicks.app.ui.screens.profile.ProfileViewModel
 import com.clicks.app.ui.screens.orders.OrdersScreen
@@ -31,6 +34,7 @@ fun NavGraph() {
     val context = LocalContext.current
     val sessionRepository = remember { SessionRepository(TokenStorage(context)) }
     val storeViewModel: StoreViewModel = viewModel()
+    val deliveryLocationViewModel: DeliveryLocationViewModel = viewModel()
 
     val startDestination = when {
         !sessionRepository.isOnboardingCompleted() -> Routes.Onboarding.route
@@ -180,12 +184,23 @@ fun NavGraph() {
         composable(Routes.Checkout.route) {
             CheckoutScreen(
                 storeViewModel = storeViewModel,
+                deliveryLocationViewModel = deliveryLocationViewModel,
                 onBackClick = { navController.popBackStack() },
+                onPickLocation = { navController.navigate(Routes.LocationPicker.route) },
                 onOrderPlaced = {
                     navController.navigate(Routes.Home.route) {
                         popUpTo(Routes.Home.route) { inclusive = true }
                     }
                 }
+            )
+        }
+
+        composable(Routes.LocationPicker.route) {
+            val pickerViewModel: LocationPickerViewModel = viewModel()
+            LocationPickerScreen(
+                viewModel = pickerViewModel,
+                onConfirm = { deliveryLocationViewModel.confirm(it); navController.popBackStack() },
+                onBackClick = { navController.popBackStack() }
             )
         }
 

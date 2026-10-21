@@ -25,6 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import com.clicks.app.ui.screens.location.DeliveryLocationViewModel
 import com.clicks.app.ui.viewmodel.StoreViewModel
 
 private val ClicksGreen = Color(0xFF07865B)
@@ -33,6 +34,8 @@ private val ClicksMuted = Color(0xFF789087)
 
 @Composable
 fun CheckoutScreen(
+    deliveryLocationViewModel: DeliveryLocationViewModel,
+    onPickLocation: () -> Unit = {},
     storeViewModel: StoreViewModel,
     onBackClick: () -> Unit = {},
     onOrderPlaced: () -> Unit = {}
@@ -61,6 +64,7 @@ fun CheckoutScreen(
                 ) {
                     Button(
                         onClick = { showSuccessDialog = true },
+                        enabled = deliveryLocationViewModel.location != null,
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(56.dp),
@@ -123,48 +127,10 @@ fun CheckoutScreen(
             Spacer(Modifier.height(16.dp))
 
             // Delivery Address Section
-            Card(
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFFF9FAFB)),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = "Delivery Address",
-                            fontSize = 13.sp,
-                            color = ClicksMuted
-                        )
-                        Spacer(Modifier.height(4.dp))
-                        Text(
-                            text = "Home",
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = ClicksText
-                        )
-                        Spacer(Modifier.height(2.dp))
-                        Text(
-                            text = "925 S Chugach St #APT 10, Alaska 99645",
-                            fontSize = 13.sp,
-                            color = ClicksMuted
-                        )
-                    }
-
-                    Text(
-                        text = "Change",
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = ClicksGreen,
-                        modifier = Modifier.clickable { }
-                    )
-                }
-            }
+            DeliveryLocationPreview(
+                location = deliveryLocationViewModel.location,
+                onClick = onPickLocation
+            )
 
             Spacer(Modifier.height(24.dp))
 

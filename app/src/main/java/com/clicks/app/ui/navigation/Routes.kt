@@ -25,4 +25,6 @@ sealed class Routes(val route: String) {
     data object Profile : Routes("profile")
 
     data object Orders : Routes("orders")
+
+    data object LocationPicker : Routes("location_picker")
 }
