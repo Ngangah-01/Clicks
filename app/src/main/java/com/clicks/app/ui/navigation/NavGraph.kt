@@ -40,7 +40,7 @@ fun NavGraph() {
 
     val goToLogin = {
         navController.navigate(Routes.Login.route) {
-            popUpTo(Routes.Onboarding.route) { inclusive = true }
+            popUpTo(navController.graph.id) { inclusive = true }
         }
     }
 

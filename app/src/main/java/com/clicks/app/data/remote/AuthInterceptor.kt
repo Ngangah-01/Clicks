@@ -10,7 +10,7 @@ class AuthInterceptor(
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
 
-        if (request.url.encodedPath.startsWith("/api/auth/")) {
+        if (request.url.encodedPath in NO_AUTH_PATHS) {
             return chain.proceed(request)
         }
 
@@ -21,5 +21,8 @@ class AuthInterceptor(
                 .header("Authorization", "Bearer $token")
                 .build()
         )
+    }
+    private companion object {
+        val NO_AUTH_PATHS = setOf("/api/auth/login", "/api/auth/register")
     }
 }
