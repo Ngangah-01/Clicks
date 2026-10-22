@@ -17,7 +17,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -26,14 +25,14 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.clicks.app.ui.screens.location.DeliveryLocation
 import com.clicks.app.ui.screens.location.MAP_STYLE_URL
 import com.clicks.app.ui.screens.location.rememberMapViewWithLifecycle
+import com.clicks.app.ui.theme.ClicksGreen
+import com.clicks.app.ui.theme.ClicksMint
+import com.clicks.app.ui.theme.ClicksMuted
+import com.clicks.app.ui.theme.ClicksText
+import com.clicks.app.ui.theme.SurfaceLight
 import org.maplibre.android.camera.CameraUpdateFactory
 import org.maplibre.android.geometry.LatLng
 import org.maplibre.android.maps.MapLibreMap
-
-private val ClicksGreen = Color(0xFF07865B)
-private val ClicksText = Color(0xFF163E32)
-private val ClicksMint = Color(0xFFF0F7F3)
-private val ClicksMuted = Color(0xFF789087)
 
 /**
  * Delivery address card for Checkout.
@@ -50,7 +49,7 @@ fun DeliveryLocationPreview(
 ) {
     Card(
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFF9FAFB)),
+        colors = CardDefaults.cardColors(containerColor = SurfaceLight),
         modifier = modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)

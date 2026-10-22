@@ -19,12 +19,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.clicks.app.ui.theme.BorderColor
+import com.clicks.app.ui.theme.ClicksGreen
+import com.clicks.app.ui.theme.ClicksMint
+import com.clicks.app.ui.theme.ClicksMuted
+import com.clicks.app.ui.theme.ClicksText
+import com.clicks.app.ui.theme.InfoBg
+import com.clicks.app.ui.theme.InfoText
+import com.clicks.app.ui.theme.SurfaceLight
+import com.clicks.app.ui.theme.Warning
+import com.clicks.app.ui.theme.WarningBg
 import com.clicks.app.ui.viewmodel.StoreViewModel
-
-private val ClicksGreen = Color(0xFF07865B)
-private val ClicksText = Color(0xFF163E32)
-private val ClicksMint = Color(0xFFF0F7F3)
-private val ClicksMuted = Color(0xFF789087)
 
 @Composable
 fun OrdersScreen(
@@ -66,7 +71,7 @@ fun OrdersScreen(
                 )
             }
 
-            HorizontalDivider(color = Color(0xFFE5E7EB), thickness = 1.dp)
+            HorizontalDivider(color = BorderColor, thickness = 1.dp)
 
             if (orders.isEmpty()) {
                 Box(
@@ -108,7 +113,7 @@ fun OrdersScreen(
                     items(orders, key = { it.orderId }) { order ->
                         Card(
                             shape = RoundedCornerShape(16.dp),
-                            colors = CardDefaults.cardColors(containerColor = Color(0xFFF9FAFB)),
+                            colors = CardDefaults.cardColors(containerColor = SurfaceLight),
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Column(
@@ -131,8 +136,8 @@ fun OrdersScreen(
                                         shape = CircleShape,
                                         color = when (order.status) {
                                             "Delivered" -> ClicksMint
-                                            "Processing" -> Color(0xFFFEF3C7)
-                                            else -> Color(0xFFEFF6FF)
+                                            "Processing" -> WarningBg
+                                            else -> InfoBg
                                         }
                                     ) {
                                         Text(
@@ -141,8 +146,8 @@ fun OrdersScreen(
                                             fontWeight = FontWeight.SemiBold,
                                             color = when (order.status) {
                                                 "Delivered" -> ClicksGreen
-                                                "Processing" -> Color(0xFFD97706)
-                                                else -> Color(0xFF2563EB)
+                                                "Processing" -> Warning
+                                                else -> InfoText
                                             },
                                             modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
                                         )
@@ -168,7 +173,7 @@ fun OrdersScreen(
 
                                 Spacer(Modifier.height(12.dp))
 
-                                HorizontalDivider(color = Color(0xFFE5E7EB), thickness = 1.dp)
+                                HorizontalDivider(color = BorderColor, thickness = 1.dp)
 
                                 Spacer(Modifier.height(10.dp))
 

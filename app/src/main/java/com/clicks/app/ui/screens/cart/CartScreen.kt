@@ -26,13 +26,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.clicks.app.ui.theme.BorderColor
+import com.clicks.app.ui.theme.ClicksGreen
+import com.clicks.app.ui.theme.ClicksMint
+import com.clicks.app.ui.theme.ClicksMuted
+import com.clicks.app.ui.theme.ClicksText
+import com.clicks.app.ui.theme.Error
+import com.clicks.app.ui.theme.StarGold
+import com.clicks.app.ui.theme.SurfaceLight
+import com.clicks.app.ui.theme.SurfaceLightAlt
 import com.clicks.app.ui.viewmodel.CartItem
 import com.clicks.app.ui.viewmodel.StoreViewModel
-
-private val ClicksGreen = Color(0xFF07865B)
-private val ClicksText = Color(0xFF163E32)
-private val ClicksMint = Color(0xFFF0F7F3)
-private val ClicksMuted = Color(0xFF789087)
 
 @Composable
 fun CartScreen(
@@ -50,86 +54,101 @@ fun CartScreen(
         bottomBar = {
             if (cartItems.isNotEmpty()) {
                 Surface(
-                    color = Color.White,
-                    shadowElevation = 16.dp
+                    shadowElevation = 12.dp,
+                    color = Color.White
                 ) {
-                    Box(
+                    Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .navigationBarsPadding()
                             .padding(horizontal = 24.dp, vertical = 16.dp)
                     ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "Total ($totalItems items)",
+                                fontSize = 14.sp,
+                                color = ClicksMuted
+                            )
+                            Text(
+                                text = "$ " + "%.2f".format(subtotal),
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = ClicksText
+                            )
+                        }
+
+                        Spacer(Modifier.height(12.dp))
+
                         Button(
                             onClick = onProceedToBuy,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(56.dp),
-                            shape = RoundedCornerShape(28.dp),
+                                .height(52.dp),
+                            shape = RoundedCornerShape(26.dp),
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = ClicksGreen,
-                                contentColor = Color.White
+                                containerColor = ClicksGreen
                             )
                         ) {
                             Text(
-                                text = "PROCEED TO BUY ($totalItems ITEMS)",
+                                text = "Proceed to Buy",
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Bold,
-                                letterSpacing = 0.5.sp
+                                color = Color.White
                             )
                         }
                     }
                 }
             }
         }
-    ) { innerPadding ->
+    ) { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
-                .statusBarsPadding()
-                .background(Color.White)
+                .padding(padding)
         ) {
-            // Top Bar
+            // Header
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 12.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    IconButton(onClick = onBackClick) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                            contentDescription = "Back",
-                            tint = ClicksText
-                        )
-                    }
-                    Spacer(Modifier.width(8.dp))
-                    Column {
-                        Text(
-                            text = "My Cart",
-                            fontSize = 22.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = ClicksText
-                        )
-                        Text(
-                            text = "$totalItems Items in cart",
-                            fontSize = 13.sp,
-                            color = ClicksMuted
-                        )
-                    }
+                IconButton(onClick = onBackClick) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
+                        contentDescription = "Back",
+                        tint = ClicksText
+                    )
                 }
-                            }
 
-            HorizontalDivider(color = Color(0xFFE5E7EB), thickness = 1.dp)
+                Spacer(Modifier.width(8.dp))
+
+                Column {
+                    Text(
+                        text = "Shopping Cart",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = ClicksText
+                    )
+                    Text(
+                        text = "$totalItems items in your cart",
+                        fontSize = 12.sp,
+                        color = ClicksMuted
+                    )
+                }
+            }
+
+            HorizontalDivider(color = BorderColor, thickness = 1.dp)
 
             // Subtotal Banner
             if (cartItems.isNotEmpty()) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(Color(0xFFF9FAFB))
+                        .background(SurfaceLight)
                         .padding(horizontal = 24.dp, vertical = 16.dp)
                 ) {
                     Row(
@@ -168,7 +187,7 @@ fun CartScreen(
                         )
                     }
                 }
-                HorizontalDivider(color = Color(0xFFE5E7EB), thickness = 1.dp)
+                HorizontalDivider(color = BorderColor, thickness = 1.dp)
             }
 
             // Cart Items List
@@ -190,7 +209,7 @@ fun CartScreen(
                         Button(
                             onClick = onStartShopping,
                             colors = ButtonDefaults
-                                .buttonColors(containerColor = Color(0xFF07865B))
+                                .buttonColors(containerColor = ClicksGreen)
                         ) {
                             Text(text = "Start Shopping", color = Color.White)
                         }
@@ -232,7 +251,7 @@ private fun CartItemRow(
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
             .background(Color.White)
-            .border(1.dp, Color(0xFFF3F4F6), RoundedCornerShape(16.dp))
+            .border(1.dp, SurfaceLightAlt, RoundedCornerShape(16.dp))
             .padding(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -277,7 +296,7 @@ private fun CartItemRow(
                 Icon(
                     imageVector = Icons.Outlined.Star,
                     contentDescription = "Rating",
-                    tint = Color(0xFFFFB800),
+                    tint = StarGold,
                     modifier = Modifier.size(14.dp)
                 )
                 Spacer(Modifier.width(4.dp))
@@ -348,14 +367,14 @@ private fun CartItemRow(
                     Icon(
                         imageVector = Icons.Outlined.DeleteOutline,
                         contentDescription = "Remove",
-                        tint = Color(0xFFEF4444),
+                        tint = Error,
                         modifier = Modifier.size(15.dp)
                     )
                     Spacer(Modifier.width(2.dp))
                     Text(
                         text = "Remove",
                         fontSize = 12.sp,
-                        color = Color(0xFFEF4444),
+                        color = Error,
                         fontWeight = FontWeight.Medium
                     )
                 }

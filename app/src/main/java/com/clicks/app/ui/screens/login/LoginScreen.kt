@@ -100,32 +100,7 @@ fun LoginScreen(
                     .padding(horizontal = 28.dp, vertical = 24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Top Back Button (if provided)
-                if (onBackClick != null) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        IconButton(
-                            onClick = onBackClick,
-                            modifier = Modifier
-                                .size(40.dp)
-                                .background(Color(0xFFF3F4F6), CircleShape)
-                        ) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Back",
-                                tint = brandGreen
-                            )
-                        }
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // Logo Section (Clicks Logo + Clicks + Accent bar)
+                               // Logo Section (Clicks Logo + Clicks + Accent bar)
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {

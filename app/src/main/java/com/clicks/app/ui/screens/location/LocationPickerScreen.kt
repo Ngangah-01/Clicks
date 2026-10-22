@@ -30,14 +30,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.app.ActivityCompat
+import com.clicks.app.ui.theme.ClicksGreen
+import com.clicks.app.ui.theme.ClicksMint
+import com.clicks.app.ui.theme.ClicksMuted
+import com.clicks.app.ui.theme.ClicksText
+import com.clicks.app.ui.theme.Error
 import org.maplibre.android.camera.CameraUpdateFactory
 import org.maplibre.android.geometry.LatLng
 import org.maplibre.android.maps.MapLibreMap
-
-private val ClicksGreen = Color(0xFF07865B)
-private val ClicksText = Color(0xFF163E32)
-private val ClicksMint = Color(0xFFF0F7F3)
-private val ClicksMuted = Color(0xFF789087)
 
 // Where the map starts before we know anything about the user (Nairobi CBD).
 private const val DEFAULT_LAT = -1.2921
@@ -269,7 +269,7 @@ fun LocationPickerScreen(
                 }
 
                 uiState.message?.let { message ->
-                    Text(text = message, fontSize = 12.sp, color = Color(0xFFEF4444))
+                    Text(text = message, fontSize = 12.sp, color = Error)
                 }
 
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {

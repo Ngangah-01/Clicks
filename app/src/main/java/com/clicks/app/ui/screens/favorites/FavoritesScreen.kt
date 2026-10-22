@@ -25,14 +25,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.clicks.app.ui.screens.products.sampleProducts
+import com.clicks.app.ui.theme.BorderColor
+import com.clicks.app.ui.theme.ClicksGreen
+import com.clicks.app.ui.theme.ClicksImageBackground
+import com.clicks.app.ui.theme.ClicksMuted
+import com.clicks.app.ui.theme.ClicksText
+import com.clicks.app.ui.theme.Error
+import com.clicks.app.ui.theme.StarGold
 import com.clicks.app.ui.viewmodel.StoreViewModel
-
-private val ClicksGreen = Color(0xFF07865B)
-private val ClicksText = Color(0xFF163E32)
-private val ClicksImageBackground = Color(0xFFF3F4F0)
-private val ClicksMuted = Color(0xFF789087)
-private val HeartRed = Color(0xFFEF4444)
-private val StarGold = Color(0xFFFFB800)
 
 @Composable
 fun FavoritesScreen(
@@ -76,7 +76,7 @@ fun FavoritesScreen(
                 )
             }
 
-            HorizontalDivider(color = Color(0xFFE5E7EB), thickness = 1.dp)
+            HorizontalDivider(color = BorderColor, thickness = 1.dp)
 
             if (favoriteProducts.isEmpty()) {
                 Box(
@@ -148,7 +148,7 @@ fun FavoritesScreen(
                                     Icon(
                                         imageVector = Icons.Filled.Favorite,
                                         contentDescription = "Remove favorite",
-                                        tint = HeartRed,
+                                        tint = Error,
                                         modifier = Modifier.size(21.dp)
                                     )
                                 }

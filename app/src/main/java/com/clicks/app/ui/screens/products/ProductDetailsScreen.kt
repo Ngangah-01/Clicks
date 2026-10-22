@@ -26,11 +26,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.clicks.app.ui.theme.BorderLight
+import com.clicks.app.ui.theme.ClicksGreen
+import com.clicks.app.ui.theme.ClicksMuted
+import com.clicks.app.ui.theme.ClicksText
+import com.clicks.app.ui.theme.Error
+import com.clicks.app.ui.theme.ProductBgLight
+import com.clicks.app.ui.theme.StarGold
 import com.clicks.app.ui.viewmodel.StoreViewModel
-
-private val ClicksGreen = Color(0xFF07865B)
-private val ClicksText = Color(0xFF163E32)
-private val ClicksMuted = Color(0xFF789087)
 
 @Composable
 fun ProductDetailsScreen(
@@ -156,7 +159,7 @@ fun ProductDetailsScreen(
                                 .offset(x = (-4).dp, y = 4.dp)
                                 .size(10.dp)
                                 .clip(CircleShape)
-                                .background(Color(0xFFEF4444))
+                                .background(Error)
                         )
                     }
                 }
@@ -170,7 +173,7 @@ fun ProductDetailsScreen(
                     .fillMaxWidth()
                     .height(320.dp)
                     .clip(RoundedCornerShape(24.dp))
-                    .background(Color(0xFFF5F6F2))
+                    .background(ProductBgLight)
             ) {
                 AsyncImage(
                     model = product.imageUrl,
@@ -214,7 +217,7 @@ fun ProductDetailsScreen(
                 Icon(
                     imageVector = Icons.Outlined.Star,
                     contentDescription = "Rating",
-                    tint = Color(0xFFFFB800),
+                    tint = StarGold,
                     modifier = Modifier.size(18.dp)
                 )
                 Spacer(Modifier.width(6.dp))
@@ -266,7 +269,7 @@ fun ProductDetailsScreen(
                             .background(if (selected) ClicksGreen else Color.White)
                             .border(
                                 width = if (selected) 0.dp else 1.dp,
-                                color = if (selected) Color.Transparent else Color(0xFFE2E8F0),
+                                color = if (selected) Color.Transparent else BorderLight,
                                 shape = RoundedCornerShape(12.dp)
                             )
                             .clickable { selectedSize = size },
@@ -311,7 +314,7 @@ fun ProductDetailsScreen(
                                 .fillMaxWidth()
                                 .height(160.dp)
                                 .clip(RoundedCornerShape(16.dp))
-                                .background(Color(0xFFF5F6F2))
+                                .background(ProductBgLight)
                         ) {
                             AsyncImage(
                                 model = similar.imageUrl,

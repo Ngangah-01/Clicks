@@ -25,6 +25,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.clicks.app.ui.theme.ClicksGreenLight
 import com.clicks.app.ui.theme.ClicksSplashBg
 
 data class OnboardingStep(
@@ -142,7 +143,7 @@ fun OnboardingScreen(
                                 center = androidx.compose.ui.geometry.Offset(x = size.width * 0.15f, y = size.height * 0.25f)
                             )
                             drawCircle(
-                                color = Color(0xFF10B981).copy(alpha = 0.4f),
+                                color = ClicksGreenLight.copy(alpha = 0.4f),
                                 radius = 10.dp.toPx(),
                                 center = androidx.compose.ui.geometry.Offset(x = size.width * 0.85f, y = size.height * 0.75f)
                             )

@@ -24,11 +24,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.clicks.app.data.remote.dto.UserResponse
 
-val ClicksGreen = Color(0xFF07865B)
-val ClicksText = Color(0xFF163E32)
-val ClicksMint = Color(0xFFF0F7F3)
-val ClicksMuted = Color(0xFF789087)
-val ClicksRed = Color(0xFFEF4444)
+import com.clicks.app.ui.theme.ClicksGreen
+import com.clicks.app.ui.theme.ClicksMint
+import com.clicks.app.ui.theme.ClicksMuted
+import com.clicks.app.ui.theme.ClicksText
+import com.clicks.app.ui.theme.Error
+import com.clicks.app.ui.theme.SurfaceLight
+import com.clicks.app.ui.theme.Warning
+import com.clicks.app.ui.theme.WarningBg
 
 @Composable
 fun ProfileScreen(
@@ -170,7 +173,7 @@ fun ProfileScreen(
                                 text = uiState.errorMessage
                                     ?: "Could not load your profile.",
                                 fontSize = 13.sp,
-                                color = ClicksRed
+                                color = Error
                             )
                             Spacer(Modifier.height(4.dp))
                             TextButton(onClick = viewModel::loadProfile) {
@@ -181,6 +184,28 @@ fun ProfileScreen(
                                 )
                             }
                         }
+                    }
+                }
+            }
+
+            if (user != null && uiState.errorMessage != null) {
+                Spacer(Modifier.height(8.dp))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(WarningBg)
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "You're offline. Showing cached profile.",
+                        fontSize = 12.sp,
+                        color = Warning
+                    )
+                    TextButton(onClick = viewModel::loadProfile) {
+                        Text("Retry", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Warning)
                     }
                 }
             }
@@ -217,7 +242,7 @@ fun ProfileScreen(
             addresses.forEach { address ->
                 Card(
                     shape = RoundedCornerShape(14.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color(0xFFF9FAFB)),
+                    colors = CardDefaults.cardColors(containerColor = SurfaceLight),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 4.dp)
@@ -272,7 +297,7 @@ fun ProfileScreen(
 
             Card(
                 shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFFF9FAFB)),
+                colors = CardDefaults.cardColors(containerColor = SurfaceLight),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
@@ -355,8 +380,8 @@ fun ProfileScreen(
                     .height(52.dp),
                 shape = RoundedCornerShape(26.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFEF4444).copy(alpha = 0.1f),
-                    contentColor = Color(0xFFEF4444)
+                    containerColor = Error.copy(alpha = 0.1f),
+                    contentColor = Error
                 )
             ) {
                 Icon(
@@ -482,7 +507,7 @@ private fun ProfileMenuItem(
 ) {
     Card(
         shape = RoundedCornerShape(14.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFF9FAFB)),
+        colors = CardDefaults.cardColors(containerColor = SurfaceLight),
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp)

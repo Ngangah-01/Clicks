@@ -40,13 +40,18 @@ import com.clicks.app.ui.screens.profile.displayName
 import com.clicks.app.ui.screens.profile.initials
 import com.clicks.app.ui.viewmodel.StoreViewModel
 
-private val ClicksGreen = Color(0xFF07865B)
-private val ClicksGreenDark = Color(0xFF07533F)
-private val ClicksGreenInactive = Color(0xFF3B6E5B)
-private val ClicksMint = Color(0xFFF0F7F3)
-private val ClicksCream = Color(0xFFF7F5E9)
-private val ClicksText = Color(0xFF163E32)
-private val ClicksMuted = Color(0xFF789087)
+import com.clicks.app.ui.theme.BannerBgLight
+import com.clicks.app.ui.theme.BannerOverlayShade
+import com.clicks.app.ui.theme.BorderColor
+import com.clicks.app.ui.theme.ClicksCream
+import com.clicks.app.ui.theme.ClicksGreen
+import com.clicks.app.ui.theme.ClicksGreenHeaderDark as ClicksGreenDark
+import com.clicks.app.ui.theme.ClicksGreenInactive
+import com.clicks.app.ui.theme.ClicksMint
+import com.clicks.app.ui.theme.ClicksMuted
+import com.clicks.app.ui.theme.ClicksText
+import com.clicks.app.ui.theme.Error
+import com.clicks.app.ui.theme.SurfaceLight
 
 private data class ShopCategory(
     val name: String,

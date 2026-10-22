@@ -26,11 +26,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.clicks.app.ui.screens.location.DeliveryLocationViewModel
+import com.clicks.app.ui.theme.BorderColor
+import com.clicks.app.ui.theme.ClicksGreen
+import com.clicks.app.ui.theme.ClicksMuted
+import com.clicks.app.ui.theme.ClicksText
+import com.clicks.app.ui.theme.SurfaceLight
+import com.clicks.app.ui.theme.SurfaceLightAlt
 import com.clicks.app.ui.viewmodel.StoreViewModel
-
-private val ClicksGreen = Color(0xFF07865B)
-private val ClicksText = Color(0xFF163E32)
-private val ClicksMuted = Color(0xFF789087)
 
 @Composable
 fun CheckoutScreen(
@@ -161,8 +163,8 @@ fun CheckoutScreen(
                             .clip(RoundedCornerShape(14.dp))
                             .clickable { selectedPaymentMethod = method },
                         shape = RoundedCornerShape(14.dp),
-                        color = if (selected) ClicksGreen else Color(0xFFF3F4F6),
-                        border = if (selected) null else BorderStroke(1.dp, Color(0xFFE5E7EB))
+                        color = if (selected) ClicksGreen else SurfaceLightAlt,
+                        border = if (selected) null else BorderStroke(1.dp, BorderColor)
                     ) {
                         Row(
                             modifier = Modifier.fillMaxSize(),
@@ -193,7 +195,7 @@ fun CheckoutScreen(
             if (selectedPaymentMethod == "Card") {
                 Card(
                     shape = RoundedCornerShape(14.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color(0xFFF9FAFB)),
+                    colors = CardDefaults.cardColors(containerColor = SurfaceLight),
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Row(
@@ -221,7 +223,7 @@ fun CheckoutScreen(
             } else if (selectedPaymentMethod == "Mpesa") {
                 Card(
                     shape = RoundedCornerShape(14.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color(0xFFF9FAFB)),
+                    colors = CardDefaults.cardColors(containerColor = SurfaceLight),
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Row(
@@ -264,14 +266,14 @@ fun CheckoutScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(16.dp))
-                    .background(Color(0xFFF9FAFB))
+                    .background(SurfaceLight)
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 SummaryRow("Sub-total", "$ " + "%.2f".format(subtotal))
                 SummaryRow("VAT (%)", "$ " + "%.2f".format(vat))
                 SummaryRow("Shipping fee", "$ " + "%.2f".format(shippingFee))
-                HorizontalDivider(color = Color(0xFFE5E7EB), thickness = 1.dp)
+                HorizontalDivider(color = BorderColor, thickness = 1.dp)
                 SummaryRow("Total", "$ " + "%.2f".format(total), isBold = true)
             }
 

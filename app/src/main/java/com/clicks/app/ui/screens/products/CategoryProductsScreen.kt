@@ -31,15 +31,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.clicks.app.ui.theme.ClicksGreen
+import com.clicks.app.ui.theme.ClicksImageBackground
+import com.clicks.app.ui.theme.ClicksMint
+import com.clicks.app.ui.theme.ClicksMuted
+import com.clicks.app.ui.theme.ClicksText
+import com.clicks.app.ui.theme.Error
+import com.clicks.app.ui.theme.ProductCategoryBg
+import com.clicks.app.ui.theme.StarGold
 import com.clicks.app.ui.viewmodel.StoreViewModel
-
-private val ClicksGreen = Color(0xFF07865B)
-private val ClicksText = Color(0xFF163E32)
-private val ClicksMint = Color(0xFFF0F7F3)
-private val ClicksImageBackground = Color(0xFFF3F4F0)
-private val ClicksMuted = Color(0xFF789087)
-private val HeartRed = Color(0xFFEF4444)
-private val StarGold = Color(0xFFFFB800)
 
 data class ProductCategory(
     val title: String,
@@ -58,112 +58,69 @@ data class StoreProduct(
     val imageUrl: String
 )
 
-val productCategories = listOf(
-    ProductCategory(
-        "Clothes",
-        "Stay stylish, always",
-        listOf("All", "Men", "Women", "Kids", "Accessories")
-    ),
-    ProductCategory(
-        "Shoes",
-        "Find your perfect fit",
-        listOf("All", "Sneakers", "Casual", "Formal", "Sports")
-    ),
-    ProductCategory(
-        "Accessories",
-        "Complete your look",
-        listOf("All", "Sunglasses", "Watches", "Jewelry", "Belts")
-    ),
-    ProductCategory(
-        "Bags",
-        "Carry it your way",
-        listOf("All", "Handbags", "Backpacks", "Totes", "Travel")
-    )
-)
-
 val sampleProducts = listOf(
-    StoreProduct(
-        1, "Classic Hoodie", "Clothes", 32.00, 4.8, 124, "New",
-        "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=700"
-    ),
-    StoreProduct(
-        2, "Oversized T-Shirt", "Clothes", 18.00, 4.6, 98, "Bestseller",
-        "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=700"
-    ),
-    StoreProduct(
-        3, "Denim Jacket", "Clothes", 45.00, 4.7, 86, null,
-        "https://images.unsplash.com/photo-1576995853123-5a10305d93c0?w=700"
-    ),
-    StoreProduct(
-        4, "Straight Fit Jeans", "Clothes", 38.00, 4.5, 72, null,
-        "https://images.unsplash.com/photo-1542272604-787c3835535d?w=700"
-    ),
-    StoreProduct(
-        5, "Everyday Sneakers", "Shoes", 55.00, 4.8, 112, "Popular",
-        "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=700"
-    ),
-    StoreProduct(
-        6, "Classic White Shoes", "Shoes", 48.00, 4.6, 74, null,
-        "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=700"
-    ),
-    StoreProduct(
-        7, "Minimal Sunglasses", "Accessories", 22.00, 4.7, 61, "New",
-        "https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=700"
-    ),
-    StoreProduct(
-        8, "Classic Wristwatch", "Accessories", 75.00, 4.8, 91, null,
-        "https://images.unsplash.com/photo-1524805444758-089113d48a6d?w=700"
-    ),
-    StoreProduct(
-        9, "Classic Shoulder Bag", "Bags", 42.00, 4.8, 105, "Bestseller",
-        "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=700"
-    ),
-    StoreProduct(
-        10, "Everyday Tote", "Bags", 28.00, 4.5, 49, null,
-        "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=700"
-    )
+    StoreProduct(1, "Caramel Iced Latte", "Coffee", 4.50, 4.8, 120, "Iced Coffees", "https://images.unsplash.com/photo-1517256064527-09c73fc73e38?auto=format&fit=crop&w=800&q=80"),
+    StoreProduct(2, "Matcha Green Tea", "Teas", 5.00, 4.9, 95, "Teas", "https://images.unsplash.com/photo-1536256263959-770b48d82b0a?auto=format&fit=crop&w=800&q=80"),
+    StoreProduct(3, "Strawberry Smoothie", "Smoothies", 5.50, 4.7, 80, "Smoothies", "https://images.unsplash.com/photo-1553530666-ba11a7da3888?auto=format&fit=crop&w=800&q=80"),
+    StoreProduct(4, "Fresh Orange Juice", "Beverages", 4.00, 4.6, 60, "Fresh Juice", "https://images.unsplash.com/photo-1613478223719-2ab802602423?auto=format&fit=crop&w=800&q=80"),
+    StoreProduct(5, "Butter Croissant", "Bakery", 3.00, 4.8, 140, "Croissants", "https://images.unsplash.com/photo-1555507036-ab1f4038808a?auto=format&fit=crop&w=800&q=80"),
+    StoreProduct(6, "Blueberry Muffin", "Bakery", 3.50, 4.7, 110, "Muffins", "https://images.unsplash.com/photo-1607958996333-41aef7caefcc?auto=format&fit=crop&w=800&q=80"),
+    StoreProduct(7, "Chocolate Chip Cookie", "Snacks", 2.50, 4.9, 200, "Cookies", "https://images.unsplash.com/photo-1499636136210-6f4ee915583e?auto=format&fit=crop&w=800&q=80"),
+    StoreProduct(8, "Chicken Avocado Sandwich", "Snacks", 7.50, 4.8, 155, "Sandwiches", "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=800&q=80")
 )
 
 @Composable
 fun CategoryProductsScreen(
-    initialCategory: String = "Clothes",
+    categoryTitle: String = "All Beverages",
     storeViewModel: StoreViewModel,
     onBackClick: () -> Unit = {},
     onProductClick: (Int) -> Unit = {}
 ) {
-    var selectedCategory by remember {
-        mutableStateOf(
-            productCategories.firstOrNull {
-                it.title.equals(initialCategory, ignoreCase = true)
-            }?.title ?: "Clothes"
+    val categories = listOf(
+        ProductCategory(
+            title = "All Beverages",
+            subtitle = "Fresh, iced, and hot drinks",
+            subcategories = listOf("All", "Iced Coffees", "Teas", "Smoothies", "Fresh Juice")
+        ),
+        ProductCategory(
+            title = "Snacks & Pastries",
+            subtitle = "Baked fresh every morning",
+            subcategories = listOf("All", "Croissants", "Muffins", "Cookies", "Sandwiches")
+        ),
+        ProductCategory(
+            title = "Combo Meals",
+            subtitle = "Great value meal deals",
+            subcategories = listOf("All", "Breakfast Combo", "Lunch Special", "Family Pack")
         )
-    }
+    )
+
+    val category = categories.find { it.title.equals(categoryTitle, ignoreCase = true) }
+        ?: categories.first()
 
     var selectedSubcategory by remember { mutableStateOf("All") }
-    var searchVisible by remember { mutableStateOf(false) }
     var searchQuery by remember { mutableStateOf("") }
-    var sortMenuExpanded by remember { mutableStateOf(false) }
     var sortOption by remember { mutableStateOf("Recommended") }
+    var sortMenuExpanded by remember { mutableStateOf(false) }
 
-    val category = productCategories.firstOrNull { it.title == selectedCategory } ?: productCategories.first()
-
-    val displayedProducts = remember(
-        selectedCategory,
-        selectedSubcategory,
-        searchQuery,
-        sortOption
-    ) {
-        val filtered = sampleProducts.filter { product ->
-            product.category == selectedCategory &&
-                product.name.contains(searchQuery, ignoreCase = true)
+    val allProducts = sampleProducts.filter {
+        when (category.title) {
+            "All Beverages" -> it.category == "Coffee" || it.category == "Smoothies" || it.category == "Beverages"
+            "Snacks & Pastries" -> it.category == "Bakery" || it.category == "Snacks"
+            else -> true
         }
+    }
 
-        when (sortOption) {
-            "Price: Low to High" -> filtered.sortedBy { it.price }
-            "Price: High to Low" -> filtered.sortedByDescending { it.price }
-            "Top Rated" -> filtered.sortedByDescending { it.rating }
-            else -> filtered
-        }
+    val filteredProducts = allProducts.filter { product ->
+        val matchesSubcategory = selectedSubcategory == "All" || product.tag.equals(selectedSubcategory, ignoreCase = true) || product.category.equals(selectedSubcategory, ignoreCase = true)
+        val matchesSearch = searchQuery.isBlank() || product.name.contains(searchQuery, ignoreCase = true)
+        matchesSubcategory && matchesSearch
+    }
+
+    val displayedProducts = when (sortOption) {
+        "Price: Low to High" -> filteredProducts.sortedBy { it.price }
+        "Price: High to Low" -> filteredProducts.sortedByDescending { it.price }
+        "Top Rated" -> filteredProducts.sortedByDescending { it.rating }
+        else -> filteredProducts
     }
 
     Scaffold(
@@ -176,59 +133,66 @@ fun CategoryProductsScreen(
                 .statusBarsPadding()
                 .background(Color.White)
         ) {
-            // Screen heading
+            // Header
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 12.dp, end = 16.dp, top = 12.dp),
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = onBackClick) {
                     Icon(
-                        Icons.AutoMirrored.Outlined.ArrowBack,
-                        contentDescription = "Go back",
-                        tint = ClicksGreen
+                        imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
+                        contentDescription = "Back",
+                        tint = ClicksText
                     )
                 }
+
+                Spacer(Modifier.width(8.dp))
 
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = category.title,
-                        fontSize = 29.sp,
+                        fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         color = ClicksText
                     )
                     Text(
                         text = category.subtitle,
-                        fontSize = 14.sp,
+                        fontSize = 12.sp,
                         color = ClicksMuted
                     )
                 }
 
-                IconButton(onClick = { searchVisible = !searchVisible }) {
+                IconButton(onClick = { /* Cart or profile action */ }) {
                     Icon(
-                        Icons.Outlined.Search,
-                        contentDescription = "Search products",
-                        tint = ClicksGreen
+                        imageVector = Icons.Outlined.ShoppingCart,
+                        contentDescription = "Cart",
+                        tint = ClicksText
                     )
                 }
             }
 
-            // Optional search field
-            if (searchVisible) {
-                OutlinedTextField(
-                    value = searchQuery,
-                    onValueChange = { searchQuery = it },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 20.dp, vertical = 8.dp),
-                    placeholder = { Text("Search ${category.title.lowercase()}") },
-                    singleLine = true,
-                    shape = RoundedCornerShape(14.dp)
+            // Search bar
+            OutlinedTextField(
+                value = searchQuery,
+                onValueChange = { searchQuery = it },
+                placeholder = { Text("Search in ${category.title}...", fontSize = 14.sp) },
+                leadingIcon = {
+                    Icon(Icons.Outlined.Search, contentDescription = null, tint = ClicksMuted)
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp, vertical = 4.dp),
+                singleLine = true,
+                shape = RoundedCornerShape(14.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = ClicksGreen,
+                    unfocusedBorderColor = Color(0xFFE5E7EB)
                 )
-            }
+            )
 
-            // Category selector
+            // Subcategories horizontal pills
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -251,7 +215,7 @@ fun CategoryProductsScreen(
                         border = if (selected) null else
                             androidx.compose.foundation.BorderStroke(
                                 1.dp,
-                                Color(0xFFDDEAE3)
+                                ProductCategoryBg
                             )
                     ) {
                         Text(
@@ -428,7 +392,7 @@ private fun ProductGridCard(
                     } else {
                         "Add to favorites"
                     },
-                    tint = if (isFavorite) HeartRed else ClicksText,
+                    tint = if (isFavorite) Error else ClicksText,
                     modifier = Modifier.size(21.dp)
                 )
             }
