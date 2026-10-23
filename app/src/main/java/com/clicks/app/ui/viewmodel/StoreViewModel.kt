@@ -1,9 +1,6 @@
 package com.clicks.app.ui.viewmodel
 
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.clicks.app.ui.screens.products.StoreProduct
 import com.clicks.app.ui.screens.products.sampleProducts
@@ -30,14 +27,9 @@ data class NotificationItem(
 )
 
 class StoreViewModel : ViewModel() {
-    // User profile persistent state
-    var userName by mutableStateOf("William Smith")
-    var userEmail by mutableStateOf("williamsmith@example.com")
-    var userPhone by mutableStateOf("+1 (555) 234-5678")
-
     val favorites = mutableStateListOf<Int>()
     val cartItems = mutableStateListOf<CartItem>()
-    val orders = mutableStateListOf<OrderItem>(
+    val orders = mutableStateListOf(
         OrderItem("ORD-78421", "Oct 24, 2023", 34.50, "Delivered", "Truffle Burger & Fries, Caramel Iced Latte"),
         OrderItem("ORD-78390", "Sep 15, 2023", 26.00, "In Transit", "Wood-Fired Margherita Pizza, Berry Smoothie")
     )
@@ -117,9 +109,5 @@ class StoreViewModel : ViewModel() {
         cartItems.clear()
     }
 
-    fun updateProfile(name: String, email: String, phone: String) {
-        userName = name
-        userEmail = email
-        userPhone = phone
-    }
+
 }

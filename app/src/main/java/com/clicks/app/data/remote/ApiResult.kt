@@ -1,9 +1,4 @@
 package com.clicks.app.data.remote
-
-/**
- * Categories of failure so the UI can react differently
- * (e.g. highlight the email field on [Conflict], show a retry on [Network]).
- */
 enum class ApiErrorType {
     Network,
     BadRequest,

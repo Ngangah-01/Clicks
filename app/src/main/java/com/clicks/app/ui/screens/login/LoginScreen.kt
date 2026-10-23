@@ -14,7 +14,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.ErrorOutline
@@ -35,6 +34,23 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.clicks.app.R
+import com.clicks.app.ui.theme.TextMuted
+import com.clicks.app.ui.theme.BrandGreen
+import com.clicks.app.ui.theme.TextDark
+import com.clicks.app.ui.theme.LabelColor
+import com.clicks.app.ui.theme.BorderColor
+import com.clicks.app.ui.theme.ClicksTextPlaceholder
+import com.clicks.app.ui.theme.Error
+import com.clicks.app.ui.theme.ErrorBg
+import com.clicks.app.ui.theme.ErrorBorder
+import com.clicks.app.ui.theme.ErrorIcon
+import com.clicks.app.ui.theme.ErrorText
+import com.clicks.app.ui.theme.SuccessBg
+import com.clicks.app.ui.theme.SuccessBorder
+import com.clicks.app.ui.theme.SuccessIcon
+import com.clicks.app.ui.theme.SuccessText
+import com.clicks.app.ui.theme.WarmCreamBg
+import com.clicks.app.ui.theme.WarmPeachBg
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -44,7 +60,6 @@ fun LoginScreen(
     onLoginSuccess: () -> Unit,
     onRegisterClick: () -> Unit,
     onForgotPasswordClick: () -> Unit,
-    onBackClick: (() -> Unit)? = null
 ) {
     val uiState by viewModel.uiState
     var email by rememberSaveable { mutableStateOf("") }
@@ -58,12 +73,6 @@ fun LoginScreen(
     LaunchedEffect(Unit) {
         isVisible = true
     }
-
-    val brandGreen = Color(0xFF0B6638)
-    val textDark = Color(0xFF111111)
-    val textMuted = Color(0xFF6B7280)
-    val labelColor = Color(0xFF9CA3AF)
-    val borderColor = Color(0xFFE5E7EB)
 
     Box(
         modifier = Modifier
@@ -120,7 +129,7 @@ fun LoginScreen(
                             text = "Clicks",
                             fontSize = 30.sp,
                             fontWeight = FontWeight.Bold,
-                            color = textDark,
+                            color = TextDark,
                             letterSpacing = 0.5.sp
                         )
                     }
@@ -129,7 +138,7 @@ fun LoginScreen(
                         modifier = Modifier
                             .width(70.dp)
                             .height(3.dp)
-                            .background(Color(0xFFF2C299), RoundedCornerShape(1.5.dp))
+                            .background(WarmPeachBg, RoundedCornerShape(1.5.dp))
                     )
                 }
 
@@ -144,13 +153,13 @@ fun LoginScreen(
                         text = "Sign In",
                         fontSize = 26.sp,
                         fontWeight = FontWeight.Bold,
-                        color = textDark
+                        color = TextDark
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
                         text = "Welcome back! Enter your details to access your account",
                         fontSize = 13.sp,
-                        color = textMuted,
+                        color = TextMuted,
                         lineHeight = 18.sp
                     )
                 }
@@ -162,7 +171,7 @@ fun LoginScreen(
                     Text(
                         text = "Email",
                         fontSize = 13.sp,
-                        color = labelColor,
+                        color = LabelColor,
                         fontWeight = FontWeight.Medium
                     )
                     Spacer(modifier = Modifier.height(4.dp))
@@ -174,7 +183,7 @@ fun LoginScreen(
                         },
                         placeholder = {
                             Text(text = "johndoe@gmail.com",
-                                color = Color(0xFF9CA3AF),
+                                color = ClicksTextPlaceholder,
                                 fontSize = 16.sp,
                                 ) },
                         modifier = Modifier.fillMaxWidth(),
@@ -188,23 +197,23 @@ fun LoginScreen(
                             focusedBorderColor = Color.Transparent,
                             unfocusedBorderColor = Color.Transparent,
                             errorBorderColor = Color.Transparent,
-                            focusedTextColor = textDark,
-                            unfocusedTextColor = textDark
+                            focusedTextColor = TextDark,
+                            unfocusedTextColor = TextDark
                         ),
                         textStyle = androidx.compose.ui.text.TextStyle(
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Medium,
-                            color = textDark
+                            color = TextDark
                         )
                     )
                     HorizontalDivider(
                         thickness = 1.dp,
-                        color = if (emailError != null) Color(0xFFEF4444) else borderColor
+                        color = if (emailError != null) Error else BorderColor
                     )
                     if (emailError != null) {
                         Text(
                             text = emailError ?: "",
-                            color = Color(0xFFEF4444),
+                            color = ClicksTextPlaceholder,
                             fontSize = 12.sp,
                             modifier = Modifier.padding(top = 4.dp)
                         )
@@ -218,7 +227,7 @@ fun LoginScreen(
                     Text(
                         text = "Password",
                         fontSize = 13.sp,
-                        color = labelColor,
+                        color = LabelColor,
                         fontWeight = FontWeight.Medium
                     )
                     Spacer(modifier = Modifier.height(4.dp))
@@ -230,7 +239,7 @@ fun LoginScreen(
                         },
                         placeholder = {
                             Text(text = "••••••••",
-                                color = Color(0xFF9CA3AF),
+                                color = ClicksTextPlaceholder,
                                 fontSize = 16.sp,
                             ) },
                         modifier = Modifier.fillMaxWidth(),
@@ -242,7 +251,7 @@ fun LoginScreen(
                                 Icon(
                                     imageVector = if (passwordVisible) Icons.Outlined.Visibility else Icons.Outlined.VisibilityOff,
                                     contentDescription = "Toggle password visibility",
-                                    tint = brandGreen
+                                    tint = BrandGreen
                                 )
                             }
                         },
@@ -254,23 +263,23 @@ fun LoginScreen(
                             focusedBorderColor = Color.Transparent,
                             unfocusedBorderColor = Color.Transparent,
                             errorBorderColor = Color.Transparent,
-                            focusedTextColor = textDark,
-                            unfocusedTextColor = textDark
+                            focusedTextColor = TextDark,
+                            unfocusedTextColor = TextDark
                         ),
                         textStyle = androidx.compose.ui.text.TextStyle(
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Medium,
-                            color = textDark
+                            color = TextDark
                         )
                     )
                     HorizontalDivider(
                         thickness = 1.dp,
-                        color = if (passwordError != null) Color(0xFFEF4444) else borderColor
+                        color = if (passwordError != null) Error else BorderColor
                     )
                     if (passwordError != null) {
                         Text(
                             text = passwordError ?: "",
-                            color = Color(0xFFEF4444),
+                            color = Error,
                             fontSize = 12.sp,
                             modifier = Modifier.padding(top = 4.dp)
                         )
@@ -305,9 +314,9 @@ fun LoginScreen(
                     enabled = !uiState.isLoading,
                     shape = RoundedCornerShape(26.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = brandGreen,
+                        containerColor = BrandGreen,
                         contentColor = Color.White,
-                        disabledContainerColor = brandGreen.copy(alpha = 0.6f),
+                        disabledContainerColor = BrandGreen.copy(alpha = 0.6f),
                         disabledContentColor = Color.White
                     )
                 ) {
@@ -337,12 +346,12 @@ fun LoginScreen(
                 ) {
                     Text(
                         text = "Forgot Password? ",
-                        color = textMuted,
+                        color = TextMuted,
                         fontSize = 14.sp
                     )
                     Text(
                         text = "Reset Password",
-                        color = brandGreen,
+                        color = BrandGreen,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.clickable { onForgotPasswordClick() }
@@ -354,7 +363,7 @@ fun LoginScreen(
                 // Don't have any account?
                 Text(
                     text = "Don't have an account?",
-                    color = textMuted,
+                    color = TextMuted,
                     fontSize = 14.sp
                 )
 
@@ -368,8 +377,8 @@ fun LoginScreen(
                         .height(52.dp),
                     shape = RoundedCornerShape(26.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFFF7E2C6),
-                        contentColor = textDark
+                        containerColor = WarmCreamBg,
+                        contentColor = TextDark
                     )
                 ) {
                     Text(
@@ -377,7 +386,7 @@ fun LoginScreen(
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 0.5.sp,
-                        color = textDark
+                        color = TextDark
                     )
                 }
 
@@ -407,8 +416,8 @@ private fun ToastBanner(
     ) {
         Surface(
             shape = RoundedCornerShape(16.dp),
-            color = if (isError) Color(0xFFFEF2F2) else Color(0xFFF0FDF4),
-            border = BorderStroke(1.dp, if (isError) Color(0xFFFCA5A5) else Color(0xFF86EFAC)),
+            color = if (isError) ErrorBg else SuccessBg,
+            border = BorderStroke(1.dp, if (isError) ErrorBorder else SuccessBorder ),
             shadowElevation = 8.dp
         ) {
             Row(
@@ -420,7 +429,7 @@ private fun ToastBanner(
                 Icon(
                     imageVector = if (isError) Icons.Outlined.ErrorOutline else Icons.Outlined.CheckCircle,
                     contentDescription = null,
-                    tint = if (isError) Color(0xFFDC2626) else Color(0xFF16A34A),
+                    tint = if (isError) ErrorIcon else SuccessIcon,
                     modifier = Modifier.size(22.dp)
                 )
                 Spacer(Modifier.width(12.dp))
@@ -428,7 +437,7 @@ private fun ToastBanner(
                     text = message,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Medium,
-                    color = if (isError) Color(0xFF991B1B) else Color(0xFF166534),
+                    color = if (isError) ErrorText else SuccessText,
                     modifier = Modifier.weight(1f)
                 )
                 IconButton(
@@ -438,7 +447,7 @@ private fun ToastBanner(
                     Icon(
                         imageVector = Icons.Outlined.Close,
                         contentDescription = "Close",
-                        tint = if (isError) Color(0xFFDC2626) else Color(0xFF16A34A),
+                        tint = if (isError) ErrorIcon else SuccessIcon,
                         modifier = Modifier.size(16.dp)
                     )
                 }

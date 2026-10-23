@@ -41,9 +41,7 @@ class LoginViewModel(
             ) {
                 is ApiResult.Success -> {
                     uiState.value = LoginUiState(
-                        successMessage = result.message.ifBlank {
-                            "Login successful."
-                        }
+                        successMessage = result.message
                     )
                     onSuccess()
                 }

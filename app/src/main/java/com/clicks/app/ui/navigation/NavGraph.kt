@@ -78,14 +78,10 @@ fun NavGraph() {
                 },
                 onRegisterClick = {
                     navController.navigate(Routes.Register.route)
-                },
-                onForgotPasswordClick = {
-                    // Handle forgot password
-                },
-                onBackClick = {
-                    // Back handler from login if needed
                 }
-            )
+            ) {
+                // Handle forgot password
+            }
         }
 
         composable(Routes.Register.route) {
@@ -135,9 +131,6 @@ fun NavGraph() {
                     sessionRepository.clearSession()
                     goToLogin()
                 },
-                onNotificationClick = {
-                    // Notification action
-                }
             )
         }
 

@@ -15,33 +15,23 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.Sort
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Done
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.Close
-import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.ShoppingCart
-import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
 import com.clicks.app.ui.theme.ClicksGreen
-import com.clicks.app.ui.theme.ClicksImageBackground
-import com.clicks.app.ui.theme.ClicksMint
 import com.clicks.app.ui.theme.ClicksMuted
 import com.clicks.app.ui.theme.ClicksText
 import com.clicks.app.ui.theme.Error
 import com.clicks.app.ui.theme.ProductCategoryBg
-import com.clicks.app.ui.theme.StarGold
 import com.clicks.app.ui.viewmodel.StoreViewModel
 
 data class ProductCategory(
