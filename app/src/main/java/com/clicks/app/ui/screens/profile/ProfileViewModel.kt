@@ -14,7 +14,6 @@ import kotlinx.coroutines.launch
 
 data class ProfileUiState(
     val isLoading: Boolean = true,
-    val isRefreshing: Boolean = false,
     val user: UserResponse? = null,
     val errorMessage: String? = null,
     val isSessionExpired: Boolean = false
@@ -36,32 +35,22 @@ class ProfileViewModel(
     fun loadProfile() {
         if (loadJob?.isActive == true) return
 
-        val hasExistingUser = uiState.user != null
-        uiState = uiState.copy(
-            isLoading = !hasExistingUser,
-            isRefreshing = hasExistingUser,
-            errorMessage = null
-        )
+        // Keep any user already on screen so a failed refresh doesn't blank it.
+        uiState = uiState.copy(isLoading = true, errorMessage = null)
 
         loadJob = viewModelScope.launch {
             when (val result = authRepository.getCurrentUser()) {
                 is ApiResult.Success -> {
-                    uiState = ProfileUiState(
-                        isLoading = false,
-                        isRefreshing = false,
-                        user = result.data,
-                        errorMessage = null
-                    )
+                    uiState = ProfileUiState(isLoading = false, user = result.data)
                 }
 
                 is ApiResult.Error -> {
                     if (result.isAuthFailure()) {
                         authRepository.logout()
-                        uiState = ProfileUiState(isLoading = false, isRefreshing = false, isSessionExpired = true)
+                        uiState = ProfileUiState(isLoading = false, isSessionExpired = true)
                     } else {
                         uiState = uiState.copy(
                             isLoading = false,
-                            isRefreshing = false,
                             errorMessage = result.message
                         )
                     }

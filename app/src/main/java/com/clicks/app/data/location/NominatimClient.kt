@@ -10,17 +10,6 @@ import org.json.JSONObject
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
-/**
- * Free reverse geocoding (coordinates -> address) from OpenStreetMap's public Nominatim.
- *
- * Usage policy for the public server: identify your app in the User-Agent, stay at or
- * under 1 request per second, and don't hammer it. The picker ViewModel debounces
- * requests (it only asks after the map stops moving) to stay well within that.
- *
- * IMPORTANT: this class deliberately has its OWN OkHttpClient. The client in ApiClient
- * adds the user's JWT to every non-public request, and that token must never be sent
- * to a third-party server.
- */
 class NominatimClient {
 
     private val client = OkHttpClient.Builder()

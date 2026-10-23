@@ -24,25 +24,14 @@ import java.util.Locale
 import kotlin.coroutines.resume
 
 sealed interface LocationSettingsStatus {
-    /** Device location is on; a fix can be requested. */
     data object Ready : LocationSettingsStatus
-
-    /** Location is off but the user can switch it on from a system dialog. */
     data class NeedsResolution(val pendingIntent: PendingIntent) : LocationSettingsStatus
-
-    /** Could not determine (e.g. Play services problem). Callers may still try. */
     data object Unavailable : LocationSettingsStatus
 }
-
-/**
- * Device location (Google's fused provider: free, no API key, no billing) plus
- * reverse geocoding (Android's Geocoder first, OSM Nominatim as a free fallback).
- */
 class LocationClient(
     context: Context,
     private val nominatim: NominatimClient = NominatimClient()
 ) {
-
     private val appContext = context.applicationContext
     private val fusedClient = LocationServices.getFusedLocationProviderClient(appContext)
 

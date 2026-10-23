@@ -71,6 +71,12 @@ class StoreViewModel : ViewModel() {
         }
     }
 
+    fun isInCart(productId: Int): Boolean = cartItems.any { it.product.id == productId }
+
+    fun toggleCart(productId: Int) {
+        if (isInCart(productId))
+            removeFromCart(productId) else addToCart(productId)
+    }
     fun addToCart(productId: Int, quantity: Int = 1) {
         val product = sampleProducts.firstOrNull { it.id == productId } ?: return
         val existing = cartItems.find { it.product.id == productId }

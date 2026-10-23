@@ -30,8 +30,6 @@ import com.clicks.app.ui.theme.ClicksMuted
 import com.clicks.app.ui.theme.ClicksText
 import com.clicks.app.ui.theme.Error
 import com.clicks.app.ui.theme.SurfaceLight
-import com.clicks.app.ui.theme.Warning
-import com.clicks.app.ui.theme.WarningBg
 
 @Composable
 fun ProfileScreen(
@@ -184,28 +182,6 @@ fun ProfileScreen(
                                 )
                             }
                         }
-                    }
-                }
-            }
-
-            if (user != null && uiState.errorMessage != null) {
-                Spacer(Modifier.height(8.dp))
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(WarningBg)
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "You're offline. Showing cached profile.",
-                        fontSize = 12.sp,
-                        color = Warning
-                    )
-                    TextButton(onClick = viewModel::loadProfile) {
-                        Text("Retry", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Warning)
                     }
                 }
             }

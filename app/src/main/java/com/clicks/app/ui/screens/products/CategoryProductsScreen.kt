@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -13,10 +14,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.Sort
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.PersonOutline
+import androidx.compose.material.icons.outlined.RemoveShoppingCart
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.material.icons.outlined.Star
@@ -326,10 +331,13 @@ fun CategoryProductsScreen(
                         items = displayedProducts,
                         key = { it.id }
                     ) { product ->
-                        val isFavorite = storeViewModel.isFavorite(product.id)
                         ProductGridCard(
                             product = product,
-                            isFavorite = isFavorite,
+                            isFavorite = storeViewModel.isFavorite(product.id),
+                            isInCart = storeViewModel.isInCart(product.id),
+                            onCartClick = {
+                                storeViewModel.toggleCart(product.id)
+                            },
                             onFavoriteClick = {
                                 storeViewModel.toggleFavorite(product.id)
                             },
@@ -346,6 +354,8 @@ fun CategoryProductsScreen(
 private fun ProductGridCard(
     product: StoreProduct,
     isFavorite: Boolean,
+    isInCart: Boolean,
+    onCartClick: () -> Unit,
     onFavoriteClick: () -> Unit,
     onClick: () -> Unit
 ) {
@@ -426,13 +436,44 @@ private fun ProductGridCard(
 
         Spacer(Modifier.height(7.dp))
 
-        Text(
-            text = "$ " + "%.2f".format(product.price),
-            fontSize = 17.sp,
-            fontWeight = FontWeight.Bold,
-            color = ClicksGreen,
-            modifier = Modifier.padding(horizontal = 5.dp)
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = "$ " + "%.2f".format(product.price),
+                fontSize = 17.sp,
+                fontWeight = FontWeight.Bold,
+                color = ClicksGreen,
+                modifier = Modifier.padding(horizontal = 5.dp)
+            )
+            IconButton(
+                onClick = onCartClick,
+                modifier = Modifier
+                    .size(35.dp)
+            ){
+                val isInCart = false
+                Icon(
+                    imageVector = if (isInCart)
+                        Icons.Filled.Done
+                    else
+                        Icons.Filled.Add,
+                    contentDescription = if (isInCart)
+                        "Remove from cart"
+                    else
+                        "Add to cart",
+                    tint = if (isInCart) Error else Color.White,
+                    modifier = Modifier
+                        .size(21.dp)
+                        .background(
+                            ClicksGreen,
+                            CircleShape
+                        )
+
+
+                    )
+            }
+        }
 
         Spacer(Modifier.height(9.dp))
 
