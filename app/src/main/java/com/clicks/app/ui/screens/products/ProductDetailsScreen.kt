@@ -1,7 +1,6 @@
 package com.clicks.app.ui.screens.products
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
@@ -17,6 +16,7 @@ import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,7 +26,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.clicks.app.ui.theme.BorderLight
 import com.clicks.app.ui.theme.ClicksGreen
 import com.clicks.app.ui.theme.ClicksMuted
 import com.clicks.app.ui.theme.ClicksText
@@ -34,6 +33,8 @@ import com.clicks.app.ui.theme.Error
 import com.clicks.app.ui.theme.ProductBgLight
 import com.clicks.app.ui.theme.StarGold
 import com.clicks.app.ui.viewmodel.StoreViewModel
+import com.clicks.app.ui.components.QuantityPill
+import kotlinx.coroutines.launch
 
 @Composable
 fun ProductDetailsScreen(
@@ -46,65 +47,66 @@ fun ProductDetailsScreen(
 ) {
     val product = sampleProducts.firstOrNull { it.id == productId } ?: sampleProducts.first()
 
-    var selectedSize by remember { mutableStateOf("M") }
-    val sizes = listOf("S", "M", "L", "XL")
+    val maxQUANTITY = 10
+    var quantity by rememberSaveable(productId) { mutableIntStateOf(1) }
     val isFavorite = storeViewModel.isFavorite(productId)
     val cartCount = storeViewModel.cartItemCount
+    val inCart = storeViewModel.isInCart(productId)
+    val cartQty = storeViewModel.cartQuantityOf(productId)
+    val shownQuantity = if (inCart) cartQty else quantity
+
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
 
     Scaffold(
         containerColor = Color.White,
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         bottomBar = {
             Surface(
                 color = Color.White,
                 shadowElevation = 16.dp
             ) {
-                Row(
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .navigationBarsPadding()
-                        .padding(horizontal = 24.dp, vertical = 16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                        .padding(horizontal = 24.dp, vertical = 16.dp)
                 ) {
-                    Column {
-                        Text(
-                            text = "Price",
-                            fontSize = 12.sp,
-                            color = ClicksMuted
-                        )
-                        Spacer(Modifier.height(2.dp))
-                        Text(
-                            text = "$ " + "%.2f".format(product.price),
-                            fontSize = 22.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = ClicksText
-                        )
-                    }
-
                     Button(
                         onClick = {
-                            storeViewModel.addToCart(productId)
-                            onAddToCartClick()
+                            if (!inCart) {
+                                storeViewModel.addToCart(productId, quantity)
+                                onAddToCartClick()
+                                scope.launch {
+                                    val result = snackbarHostState.showSnackbar(
+                                        message = "Added to cart",
+                                        duration = SnackbarDuration.Short
+                                    )
+                                    if (result == SnackbarResult.ActionPerformed) {
+                                        onCartClick()
+                                    }
+                                }
+                            } else {
+                                onCartClick()
+                            }
                         },
-                        modifier = Modifier
-                            .height(52.dp)
-                            .width(180.dp),
-                        shape = RoundedCornerShape(16.dp),
+                        modifier = Modifier.fillMaxWidth().height(56.dp),
+                        shape = RoundedCornerShape(28.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = ClicksText,
+                            containerColor = if (!inCart) ClicksGreen else Color(0xFFF2C299),
                             contentColor = Color.White
                         )
                     ) {
-                        Icon(
-                            imageVector = Icons.Outlined.ShoppingCart,
-                            contentDescription = "Cart",
-                            modifier = Modifier.size(18.dp)
-                        )
+                        Icon(Icons.Outlined.ShoppingCart, contentDescription = null, modifier = Modifier.size(18.dp))
                         Spacer(Modifier.width(8.dp))
                         Text(
-                            text = "Add to Cart",
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.SemiBold
+                            text = if (!inCart) {
+                                "Add to cart · $ " + "%.2f".format(product.price * quantity)
+                            } else {
+                                "View cart · $cartQty item${if (cartQty > 1) "s" else ""}"
+                            },
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold
                         )
                     }
                 }
@@ -247,46 +249,52 @@ fun ProductDetailsScreen(
 
             Spacer(Modifier.height(24.dp))
 
-            // Choose Size
-            Text(
-                text = "Choose size",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                color = ClicksText
-            )
-
-            Spacer(Modifier.height(12.dp))
-
             Row(
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                sizes.forEach { size ->
-                    val selected = selectedSize == size
-                    Box(
-                        modifier = Modifier
-                            .size(48.dp)
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(if (selected) ClicksGreen else Color.White)
-                            .border(
-                                width = if (selected) 0.dp else 1.dp,
-                                color = if (selected) Color.Transparent else BorderLight,
-                                shape = RoundedCornerShape(12.dp)
-                            )
-                            .clickable { selectedSize = size },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = size,
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = if (selected) Color.White else ClicksText
-                        )
-                    }
+                Column {
+                    Text(text = "Price", fontSize = 12.sp, color = ClicksMuted)
+                    Spacer(Modifier.height(2.dp))
+                    Text(
+                        text = "$ " + "%.2f".format(product.price),
+                        fontSize = 22.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = ClicksText
+                    )
                 }
+
+                QuantityPill(
+                    quantity = shownQuantity,
+                    canDecrease = shownQuantity > 1,
+                    canIncrease = shownQuantity < maxQUANTITY,
+                    onDecrease = {
+                        if (inCart) {
+                            if (shownQuantity > 1) {
+                                storeViewModel.updateQuantity(productId, -1)
+                            }
+                        } else {
+                            if (quantity > 1) {
+                                quantity--
+                            }
+                        }
+                    },
+                    onIncrease = {
+                        if (inCart) {
+                            if (shownQuantity < maxQUANTITY) {
+                                storeViewModel.updateQuantity(productId, 1)
+                            }
+                        } else {
+                            if (quantity < maxQUANTITY) {
+                                quantity++
+                            }
+                        }
+                    }
+                )
             }
 
-            Spacer(Modifier.height(32.dp))
-
+            Spacer(Modifier.height(12.dp))
             // Similar To Section
             Text(
                 text = "Similar To",

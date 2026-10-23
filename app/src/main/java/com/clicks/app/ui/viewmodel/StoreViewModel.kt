@@ -10,7 +10,7 @@ import com.clicks.app.ui.screens.products.sampleProducts
 
 data class CartItem(
     val product: StoreProduct,
-    var quantity: Int = 1
+    val quantity: Int = 1
 )
 
 data class OrderItem(
@@ -38,8 +38,8 @@ class StoreViewModel : ViewModel() {
     val favorites = mutableStateListOf<Int>()
     val cartItems = mutableStateListOf<CartItem>()
     val orders = mutableStateListOf<OrderItem>(
-        OrderItem("ORD-78421", "Oct 24, 2023", 1190.00, "Delivered", "Classic Hoodie, Sneakers"),
-        OrderItem("ORD-78390", "Sep 15, 2023", 450.00, "In Transit", "Denim Jacket")
+        OrderItem("ORD-78421", "Oct 24, 2023", 34.50, "Delivered", "Truffle Burger & Fries, Caramel Iced Latte"),
+        OrderItem("ORD-78390", "Sep 15, 2023", 26.00, "In Transit", "Wood-Fired Margherita Pizza, Berry Smoothie")
     )
 
     val notifications = mutableStateListOf(
@@ -77,21 +77,26 @@ class StoreViewModel : ViewModel() {
         if (isInCart(productId))
             removeFromCart(productId) else addToCart(productId)
     }
+
+    fun cartQuantityOf(productId: Int): Int = cartItems.firstOrNull { it.product.id == productId }?.quantity ?: 0
+
     fun addToCart(productId: Int, quantity: Int = 1) {
         val product = sampleProducts.firstOrNull { it.id == productId } ?: return
-        val existing = cartItems.find { it.product.id == productId }
-        if (existing != null) {
-            existing.quantity += quantity
-        } else {
+        val index = cartItems.indexOfFirst { it.product.id == productId }
+        if (index >= 0) {
+            cartItems[index] = cartItems[index].copy(quantity = cartItems[index].quantity + quantity)        } else {
             cartItems.add(CartItem(product, quantity))
         }
     }
 
     fun updateQuantity(productId: Int, delta: Int) {
-        val item = cartItems.find { it.product.id == productId } ?: return
-        item.quantity += delta
-        if (item.quantity <= 0) {
-            cartItems.remove(item)
+        val index = cartItems.indexOfFirst { it.product.id == productId }
+        if (index < 0) return
+        val newQuantity = cartItems[index].quantity + delta
+        if (newQuantity <= 0) {
+            cartItems.removeAt(index)
+        } else {
+            cartItems[index] = cartItems[index].copy(quantity = newQuantity)
         }
     }
 

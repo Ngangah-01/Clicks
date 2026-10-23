@@ -39,31 +39,20 @@ import com.clicks.app.ui.screens.profile.ProfileViewModel
 import com.clicks.app.ui.screens.profile.displayName
 import com.clicks.app.ui.screens.profile.initials
 import com.clicks.app.ui.viewmodel.StoreViewModel
-
-import com.clicks.app.ui.theme.BannerBgLight
-import com.clicks.app.ui.theme.BannerOverlayShade
-import com.clicks.app.ui.theme.BorderColor
+import com.clicks.app.ui.screens.products.sampleProducts
+import com.clicks.app.ui.components.ProductCard
 import com.clicks.app.ui.theme.ClicksCream
 import com.clicks.app.ui.theme.ClicksGreen
-import com.clicks.app.ui.theme.ClicksGreenHeaderDark as ClicksGreenDark
 import com.clicks.app.ui.theme.ClicksGreenInactive
 import com.clicks.app.ui.theme.ClicksMint
 import com.clicks.app.ui.theme.ClicksMuted
 import com.clicks.app.ui.theme.ClicksText
-import com.clicks.app.ui.theme.Error
-import com.clicks.app.ui.theme.SurfaceLight
+import kotlin.time.Duration.Companion.milliseconds
 
 private data class ShopCategory(
     val name: String,
     val count: String,
     val imageUrl: String
-)
-
-private data class ShopProduct(
-    val id: Int,
-    val name: String,
-    val price: String,
-    val image: String
 )
 
 private data class PromoBanner(
@@ -73,40 +62,33 @@ private data class PromoBanner(
 )
 
 private val categories = listOf(
-    ShopCategory("Clothes", "Explore", "https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=400"),
-    ShopCategory("Shoes", "Explore", "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400"),
-    ShopCategory("Accessories", "Explore", "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400"),
-    ShopCategory("Bags", "Explore", "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400")
+    ShopCategory("Burgers", "Explore", "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400"),
+    ShopCategory("Pizza", "Explore", "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400"),
+    ShopCategory("Drinks", "Explore", "https://images.unsplash.com/photo-1544145945-f90425340c7e?w=400"),
+    ShopCategory("Desserts", "Explore", "https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=400")
 )
 
 private val promoBanners = listOf(
     PromoBanner(
-        tag = "NEW COLLECTION",
-        title = "Thoughtful pieces\nwith a minimal touch",
-        image = "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1200"
+        tag = "CHEF'S SPECIALS",
+        title = "Fresh gourmet meals\ndelivered hot & fast",
+        image = "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1200"
     ),
     PromoBanner(
-        tag = "SUMMER SALE",
-        title = "Up to 50% off on\ntrending seasonal styles",
-        image = "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1200"
+        tag = "COMBO DEALS",
+        title = "Save big on our\npopular family meal packs",
+        image = "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=1200"
     ),
     PromoBanner(
-        tag = "EXCLUSIVE DROPS",
-        title = "Handcrafted leather\n& premium accessories",
-        image = "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1200"
+        tag = "ARTISAN BAKERY",
+        title = "Freshly baked pastries\n& warm crusty breads",
+        image = "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1200"
     ),
     PromoBanner(
-        tag = "ESSENTIALS",
-        title = "Comfortable basics\nfor daily wear",
-        image = "https://images.unsplash.com/photo-1445205170230-053b83016050?w=1200"
+        tag = "HAPPY HOUR",
+        title = "Refreshing smoothies\n& iced craft coffees",
+        image = "https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=1200"
     )
-)
-
-private val products = listOf(
-    ShopProduct(1, "Classic Leather Bag", "$2,190", "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=700"),
-    ShopProduct(5, "Everyday Sneakers", "$1,450", "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=700"),
-    ShopProduct(7, "Modern Sunglasses", "$890", "https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=700"),
-    ShopProduct(9, "Minimal Shoulder Bag", "$1,650", "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=700")
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -119,7 +101,6 @@ fun HomeScreen(
     onProfileClick: () -> Unit = {},
     onOrdersClick: () -> Unit = {},
     onLogoutClick: () -> Unit = {},
-    onNotificationClick: () -> Unit = {},
     onProductClick: (Int) -> Unit = {},
     onCategoryClick: (String) -> Unit = {},
     onViewAllClick: () -> Unit = {},
@@ -401,7 +382,7 @@ fun HomeScreen(
 
                 LaunchedEffect(pagerState) {
                     while (true) {
-                        delay(4000L)
+                        delay(4000L.milliseconds)
                         val nextPage = (pagerState.currentPage + 1) % promoBanners.size
                         pagerState.animateScrollToPage(nextPage)
                     }
@@ -567,19 +548,19 @@ fun HomeScreen(
                     modifier = Modifier.padding(horizontal = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(14.dp)
                 ) {
-                    products.chunked(2).forEach { rowProducts ->
+                    val featuredProducts = sampleProducts.take(4)
+                    featuredProducts.chunked(2).forEach { rowProducts ->
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
                             rowProducts.forEach { product ->
-                                val isFavorite = storeViewModel.isFavorite(product.id)
                                 ProductCard(
                                     product = product,
-                                    isFavorite = isFavorite,
-                                    onFavoriteClick = {
-                                        storeViewModel.toggleFavorite(product.id)
-                                    },
+                                    isFavorite = storeViewModel.isFavorite(product.id),
+                                    isInCart = storeViewModel.isInCart(product.id),
+                                    onCartClick = { storeViewModel.toggleCart(product.id) },
+                                    onFavoriteClick = { storeViewModel.toggleFavorite(product.id) },
                                     onClick = { onProductClick(product.id) },
                                     modifier = Modifier.weight(1f)
                                 )
@@ -864,85 +845,6 @@ private fun SectionHeading(
             color = ClicksGreen,
             modifier = Modifier.clickable { onActionClick() }
         )
-    }
-}
-
-@Composable
-private fun ProductCard(
-    product: ShopProduct,
-    isFavorite: Boolean,
-    onFavoriteClick: () -> Unit,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier
-            .clip(RoundedCornerShape(16.dp))
-            .background(Color(0xFFF8F8F1))
-            .clickable(onClick = onClick)
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(160.dp)
-        ) {
-            AsyncImage(
-                model = product.image,
-                contentDescription = product.name,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize()
-            )
-
-            IconButton(
-                onClick = onFavoriteClick,
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(4.dp)
-                    .size(36.dp)
-                    .background(
-                        Color.White.copy(alpha = 0.88f),
-                        CircleShape
-                    )
-            ) {
-                Icon(
-                    imageVector = if (isFavorite) {
-                        Icons.Filled.Favorite
-                    } else {
-                        Icons.Outlined.FavoriteBorder
-                    },
-                    contentDescription = if (isFavorite) {
-                        "Remove from favorites"
-                    } else {
-                        "Add to favorites"
-                    },
-                    tint = if (isFavorite) Color(0xFFEF4444) else ClicksText,
-                    modifier = Modifier.size(20.dp)
-                )
-            }
-        }
-
-        Column(
-            modifier = Modifier.padding(
-                horizontal = 12.dp,
-                vertical = 10.dp
-            )
-        ) {
-            Text(
-                text = product.name,
-                fontSize = 13.sp,
-                fontWeight = FontWeight.Medium,
-                color = ClicksText,
-                maxLines = 2,
-                minLines = 2
-            )
-            Spacer(Modifier.height(6.dp))
-            Text(
-                text = product.price,
-                fontSize = 15.sp,
-                fontWeight = FontWeight.Bold,
-                color = ClicksGreen
-            )
-        }
     }
 }
 

@@ -116,85 +116,14 @@ fun FavoritesScreen(
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     items(favoriteProducts, key = { it.id }) { product ->
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clip(RoundedCornerShape(17.dp))
-                                .background(Color.White)
-                                .clickable { onProductClick(product.id) }
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(176.dp)
-                                    .clip(RoundedCornerShape(17.dp))
-                                    .background(ClicksImageBackground)
-                            ) {
-                                AsyncImage(
-                                    model = product.imageUrl,
-                                    contentDescription = product.name,
-                                    contentScale = ContentScale.Crop,
-                                    modifier = Modifier.fillMaxSize()
-                                )
-
-                                IconButton(
-                                    onClick = { storeViewModel.toggleFavorite(product.id) },
-                                    modifier = Modifier
-                                        .align(Alignment.TopEnd)
-                                        .padding(5.dp)
-                                        .size(35.dp)
-                                        .background(Color.White.copy(alpha = 0.94f), CircleShape)
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Filled.Favorite,
-                                        contentDescription = "Remove favorite",
-                                        tint = Error,
-                                        modifier = Modifier.size(21.dp)
-                                    )
-                                }
-                            }
-
-                            Spacer(Modifier.height(12.dp))
-
-                            Text(
-                                text = product.name,
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                color = ClicksText,
-                                maxLines = 1,
-                                modifier = Modifier.padding(horizontal = 5.dp)
-                            )
-
-                            Spacer(Modifier.height(7.dp))
-
-                            Text(
-                                text = "$ " + "%.2f".format(product.price),
-                                fontSize = 17.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = ClicksGreen,
-                                modifier = Modifier.padding(horizontal = 5.dp)
-                            )
-
-                            Spacer(Modifier.height(9.dp))
-
-                            Row(
-                                modifier = Modifier.padding(start = 5.dp, bottom = 5.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Outlined.Star,
-                                    contentDescription = "Rating",
-                                    tint = StarGold,
-                                    modifier = Modifier.size(16.dp)
-                                )
-                                Spacer(Modifier.width(5.dp))
-                                Text(
-                                    text = "${product.rating} (${product.reviewCount})",
-                                    fontSize = 11.sp,
-                                    color = ClicksMuted
-                                )
-                            }
-                        }
+                        com.clicks.app.ui.components.ProductCard(
+                            product = product,
+                            isFavorite = true,
+                            isInCart = storeViewModel.isInCart(product.id),
+                            onCartClick = { storeViewModel.toggleCart(product.id) },
+                            onFavoriteClick = { storeViewModel.toggleFavorite(product.id) },
+                            onClick = { onProductClick(product.id) }
+                        )
                     }
                 }
             }
