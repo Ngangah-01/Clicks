@@ -437,6 +437,7 @@ private fun ProductGridCard(
         Spacer(Modifier.height(7.dp))
 
         Row(
+            modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -452,25 +453,16 @@ private fun ProductGridCard(
                 modifier = Modifier
                     .size(35.dp)
             ){
-                val isInCart = false
                 Icon(
-                    imageVector = if (isInCart)
-                        Icons.Filled.Done
-                    else
-                        Icons.Filled.Add,
-                    contentDescription = if (isInCart)
-                        "Remove from cart"
-                    else
-                        "Add to cart",
-                    tint = if (isInCart) Error else Color.White,
+                    imageVector = if (isInCart) Icons.Filled.Done else Icons.Filled.Add,
+                    contentDescription = if (isInCart) "Remove from cart" else "Add to cart",
+                    tint = if (isInCart) Color.White else Color.White,
                     modifier = Modifier
                         .size(21.dp)
                         .background(
-                            ClicksGreen,
+                            if (isInCart) Color(0xFFF2C299) else ClicksGreen,
                             CircleShape
                         )
-
-
                     )
             }
         }
