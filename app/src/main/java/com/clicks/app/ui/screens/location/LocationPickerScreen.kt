@@ -143,7 +143,6 @@ fun LocationPickerScreen(
                                     DEFAULT_ZOOM
                                 )
                             )
-                            // A rotating or tilting map makes a fixed centre pin confusing.
                             mapLibreMap.uiSettings.isRotateGesturesEnabled = false
                             mapLibreMap.uiSettings.isTiltGesturesEnabled = false
 
@@ -167,7 +166,6 @@ fun LocationPickerScreen(
                 }
             )
 
-            // Centre pin that "hops" while the map is moving.
             val pinLift by animateDpAsState(
                 targetValue = if (isCameraMoving) 18.dp else 0.dp,
                 label = "pinLift"
@@ -178,7 +176,7 @@ fun LocationPickerScreen(
                 tint = ClicksGreen,
                 modifier = Modifier
                     .align(Alignment.Center)
-                    .offset(y = (-24).dp - pinLift) // tip of the pin sits on the exact centre
+                    .offset(y = (-24).dp - pinLift)
                     .size(48.dp)
             )
 
