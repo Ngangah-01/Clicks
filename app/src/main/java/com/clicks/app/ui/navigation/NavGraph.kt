@@ -138,6 +138,9 @@ fun NavGraph() {
             CategoryProductsScreen(
                 storeViewModel = storeViewModel,
                 onBackClick = { navController.popBackStack() },
+                onCartClick = {
+                    navController.navigate(Routes.Cart.route)
+                },
                 onProductClick = { productId ->
                     navController.navigate(Routes.ProductDetails.createRoute(productId))
                 }
