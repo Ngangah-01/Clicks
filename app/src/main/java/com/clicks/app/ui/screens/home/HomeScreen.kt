@@ -12,7 +12,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.HelpOutline
 import androidx.compose.material.icons.automirrored.outlined.Logout
@@ -417,9 +416,17 @@ fun HomeScreen(
                     }
                 }
 
-                Spacer(Modifier.height(28.dp))
+                Spacer(Modifier.height(14.dp))
 
-                // Promotional Hero Carousel
+                SectionHeading(
+                    title = "Combo Deals",
+                    action = "View all",
+                    onActionClick = onViewAllClick,
+                    modifier = Modifier.padding(horizontal = 22.dp)
+                )
+
+                Spacer(Modifier.height(14.dp))
+
                 val pagerState = rememberPagerState(pageCount = { promoBanners.size })
 
                 LaunchedEffect(pagerState) {
@@ -825,7 +832,7 @@ private fun SectionHeading(
         Text(
             text = title,
             fontSize = 22.sp,
-            fontWeight = FontWeight.Medium,
+            fontWeight = FontWeight.Bold,
             color = ClicksText
         )
         Text(
