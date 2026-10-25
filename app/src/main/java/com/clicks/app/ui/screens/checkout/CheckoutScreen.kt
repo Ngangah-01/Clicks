@@ -2,7 +2,6 @@ package com.clicks.app.ui.screens.checkout
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -11,8 +10,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.CheckCircle
-import androidx.compose.material.icons.outlined.CreditCard
-import androidx.compose.material.icons.outlined.LocalAtm
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.PhoneAndroid
 import androidx.compose.material3.*
@@ -22,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -31,8 +29,9 @@ import com.clicks.app.ui.theme.ClicksGreen
 import com.clicks.app.ui.theme.ClicksMuted
 import com.clicks.app.ui.theme.ClicksText
 import com.clicks.app.ui.theme.SurfaceLight
-import com.clicks.app.ui.theme.SurfaceLightAlt
 import com.clicks.app.ui.viewmodel.StoreViewModel
+import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun CheckoutScreen(
@@ -47,9 +46,23 @@ fun CheckoutScreen(
     val vat = 0.0
     val total = subtotal + shippingFee + vat
 
-    var selectedPaymentMethod by remember { mutableStateOf("Card") }
+    var mpesaPhone by remember { mutableStateOf("+254 712 345 678") }
+    var showEditPhoneDialog by remember { mutableStateOf(false) }
+    var isProcessingPayment by remember { mutableStateOf(false) }
+    var isPaymentConfirmed by remember { mutableStateOf(false) }
+    var transactionCode by remember { mutableStateOf("") }
+
     var promoCode by remember { mutableStateOf("") }
     var showSuccessDialog by remember { mutableStateOf(false) }
+
+    LaunchedEffect(isProcessingPayment) {
+        if (isProcessingPayment) {
+            delay(2500.milliseconds)
+            transactionCode = "MP${(10000000..99999999).random()}"
+            isPaymentConfirmed = true
+            isProcessingPayment = false
+        }
+    }
 
     Scaffold(
         containerColor = Color.White,
@@ -64,20 +77,25 @@ fun CheckoutScreen(
                         .navigationBarsPadding()
                         .padding(horizontal = 24.dp, vertical = 16.dp)
                 ) {
+                    val isLocationSet = deliveryLocationViewModel.location != null
+                    val canPlaceOrder = isLocationSet && isPaymentConfirmed
+
                     Button(
                         onClick = { showSuccessDialog = true },
-                        enabled = deliveryLocationViewModel.location != null,
+                        enabled = canPlaceOrder,
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(56.dp),
                         shape = RoundedCornerShape(28.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = ClicksGreen,
-                            contentColor = Color.White
+                            contentColor = Color.White,
+                            disabledContainerColor = Color(0xFFE5E7EB),
+                            disabledContentColor = ClicksMuted
                         )
                     ) {
                         Text(
-                            text = "Place Order",
+                            text = if (!isLocationSet) "Select Delivery Location" else "Place Order",
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold,
                             letterSpacing = 0.5.sp
@@ -136,116 +154,138 @@ fun CheckoutScreen(
 
             Spacer(Modifier.height(24.dp))
 
-            // Payment Method Section
-            Text(
-                text = "Payment Method",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                color = ClicksText
-            )
-
-            Spacer(Modifier.height(12.dp))
-
+            // Payment Method Section (M-Pesa Only)
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                listOf(
-                    Pair("Card", Icons.Outlined.CreditCard),
-                    Pair("Cash", Icons.Outlined.LocalAtm),
-                    Pair("Mpesa", Icons.Outlined.PhoneAndroid)
-                ).forEach { (method, icon) ->
-                    val selected = selectedPaymentMethod == method
+                Text(
+                    text = "Payment",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = ClicksText
+                )
+
+                if (isPaymentConfirmed) {
                     Surface(
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(56.dp)
-                            .clip(RoundedCornerShape(14.dp))
-                            .clickable { selectedPaymentMethod = method },
-                        shape = RoundedCornerShape(14.dp),
-                        color = if (selected) ClicksGreen else SurfaceLightAlt,
-                        border = if (selected) null else BorderStroke(1.dp, BorderColor)
+                        shape = CircleShape,
+                        color = ClicksGreen.copy(alpha = 0.12f)
                     ) {
-                        Row(
-                            modifier = Modifier.fillMaxSize(),
-                            horizontalArrangement = Arrangement.Center,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                imageVector = icon,
-                                contentDescription = method,
-                                tint = if (selected) Color.White else ClicksText,
-                                modifier = Modifier.size(18.dp)
-                            )
-                            Spacer(Modifier.width(6.dp))
-                            Text(
-                                text = method,
-                                fontSize = 13.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                color = if (selected) Color.White else ClicksText
-                            )
-                        }
+                        Text(
+                            text = "✓ Paid",
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = ClicksGreen,
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
+                        )
                     }
                 }
             }
 
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(12.dp))
 
-            // Selected payment details card
-            if (selectedPaymentMethod == "Card") {
-                Card(
-                    shape = RoundedCornerShape(14.dp),
-                    colors = CardDefaults.cardColors(containerColor = SurfaceLight),
-                    modifier = Modifier.fillMaxWidth()
+            // M-Pesa Card
+            Card(
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = if (isPaymentConfirmed) ClicksGreen.copy(alpha = 0.08f) else SurfaceLight
+                ),
+                border = if (isPaymentConfirmed) BorderStroke(1.5.dp, ClicksGreen) else BorderStroke(1.dp, BorderColor),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
                 ) {
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
+                        modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(
-                            text = "VISA **** **** **** 2512",
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = ClicksText
-                        )
-                        Text(
-                            text = "Edit",
-                            fontSize = 13.sp,
-                            color = ClicksGreen,
-                            fontWeight = FontWeight.SemiBold,
-                            modifier = Modifier.clickable { }
-                        )
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Box(
+                                modifier = Modifier
+                                    .size(42.dp)
+                                    .clip(CircleShape)
+                                    .background(ClicksGreen.copy(alpha = 0.15f)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Outlined.PhoneAndroid,
+                                    contentDescription = "M-Pesa",
+                                    tint = ClicksGreen,
+                                    modifier = Modifier.size(22.dp)
+                                )
+                            }
+                            Spacer(Modifier.width(12.dp))
+                            Column {
+                                Text(
+                                    text = "M-Pesa",
+                                    fontSize = 15.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = ClicksText
+                                )
+                                Text(
+                                    text = mpesaPhone,
+                                    fontSize = 13.sp,
+                                    color = ClicksMuted
+                                )
+                            }
+                        }
+
+                        TextButton(onClick = { showEditPhoneDialog = true }) {
+                            Text(
+                                text = "Edit",
+                                fontSize = 13.sp,
+                                color = ClicksGreen,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
                     }
-                }
-            } else if (selectedPaymentMethod == "Mpesa") {
-                Card(
-                    shape = RoundedCornerShape(14.dp),
-                    colors = CardDefaults.cardColors(containerColor = SurfaceLight),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "M-Pesa: +254 712 345 678",
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = ClicksText
-                        )
-                        Text(
-                            text = "Edit",
-                            fontSize = 13.sp,
-                            color = ClicksGreen,
-                            fontWeight = FontWeight.SemiBold,
-                            modifier = Modifier.clickable { }
-                        )
+
+                    if (isPaymentConfirmed) {
+                        Spacer(Modifier.height(12.dp))
+                        HorizontalDivider(color = ClicksGreen.copy(alpha = 0.2f), thickness = 1.dp)
+                        Spacer(Modifier.height(10.dp))
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "Transaction Ref: $transactionCode",
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = ClicksGreen
+                            )
+                            Text(
+                                text = "Confirmed",
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = ClicksGreen
+                            )
+                        }
+                    } else {
+                        Spacer(Modifier.height(14.dp))
+                        Button(
+                            onClick = { isProcessingPayment = true },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(44.dp),
+                            shape = RoundedCornerShape(12.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = ClicksGreen,
+                                contentColor = Color.White
+                            )
+                        ) {
+                            Text(
+                                text = "Pay $ " + "%.2f".format(total) + " via M-Pesa",
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
                     }
                 }
             }
@@ -311,6 +351,97 @@ fun CheckoutScreen(
         }
     }
 
+    // Edit M-Pesa Phone Number Dialog
+    if (showEditPhoneDialog) {
+        var tempPhone by remember { mutableStateOf(mpesaPhone) }
+        AlertDialog(
+            onDismissRequest = { showEditPhoneDialog = false },
+            title = {
+                Text(
+                    text = "Edit M-Pesa Number",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp,
+                    color = ClicksText
+                )
+            },
+            text = {
+                Column {
+                    Text(
+                        text = "Enter your M-Pesa registered phone number:",
+                        fontSize = 14.sp,
+                        color = ClicksMuted
+                    )
+                    Spacer(Modifier.height(12.dp))
+                    OutlinedTextField(
+                        value = tempPhone,
+                        onValueChange = { newValue -> tempPhone = newValue },
+                        singleLine = true,
+                        shape = RoundedCornerShape(12.dp),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedTextColor = ClicksText,
+                            unfocusedTextColor = ClicksText,
+                            focusedBorderColor = ClicksGreen,
+                            unfocusedBorderColor = BorderColor
+                        ),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        if (tempPhone.isNotBlank()) {
+                            mpesaPhone = tempPhone
+                        }
+                        showEditPhoneDialog = false
+                    }
+                ) {
+                    Text("Save", fontWeight = FontWeight.Bold, color = ClicksGreen)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showEditPhoneDialog = false }) {
+                    Text("Cancel", color = ClicksMuted)
+                }
+            },
+            containerColor = Color.White
+        )
+    }
+
+    // Processing M-Pesa Payment STK Push Dialog
+    if (isProcessingPayment) {
+        Dialog(onDismissRequest = {}) {
+            Surface(
+                shape = RoundedCornerShape(20.dp),
+                color = Color.White,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(24.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    CircularProgressIndicator(color = ClicksGreen, modifier = Modifier.size(48.dp))
+                    Spacer(Modifier.height(20.dp))
+                    Text(
+                        text = "M-Pesa STK Push Sent",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = ClicksText
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        text = "Please enter your M-Pesa PIN on your phone ($mpesaPhone) to complete payment of $ " + "%.2f".format(total),
+                        fontSize = 14.sp,
+                        color = ClicksMuted,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+        }
+    }
+
     // Success Notification Dialog
     if (showSuccessDialog) {
         Dialog(onDismissRequest = {}) {
@@ -322,8 +453,7 @@ fun CheckoutScreen(
                     .padding(16.dp)
             ) {
                 Column(
-                    modifier = Modifier
-                        .padding(24.dp),
+                    modifier = Modifier.padding(24.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Box(
@@ -353,10 +483,21 @@ fun CheckoutScreen(
                     Spacer(Modifier.height(8.dp))
 
                     Text(
-                        text = "Your order has been placed.",
+                        text = "Your order has been placed successfully.",
                         fontSize = 15.sp,
-                        color = ClicksMuted
+                        color = ClicksMuted,
+                        textAlign = TextAlign.Center
                     )
+
+                    if (transactionCode.isNotEmpty()) {
+                        Spacer(Modifier.height(6.dp))
+                        Text(
+                            text = "M-Pesa Ref: $transactionCode",
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = ClicksGreen
+                        )
+                    }
 
                     Spacer(Modifier.height(24.dp))
 
