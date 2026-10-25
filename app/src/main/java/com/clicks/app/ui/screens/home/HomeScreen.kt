@@ -111,6 +111,12 @@ fun HomeScreen(
     var isSearchOpen by remember { mutableStateOf(false) }
     var selectedTab by remember { mutableStateOf("Home") }
 
+    LaunchedEffect(profileViewModel.uiState.isSessionExpired) {
+        if (profileViewModel.uiState.isSessionExpired) {
+            onLogoutClick()
+        }
+    }
+
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 

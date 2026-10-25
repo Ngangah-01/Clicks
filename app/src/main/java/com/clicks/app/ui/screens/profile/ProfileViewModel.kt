@@ -64,5 +64,8 @@ class ProfileViewModel(
     }
 
     private fun ApiResult.Error.isAuthFailure() =
-        type == ApiErrorType.Unauthorized || type == ApiErrorType.Forbidden
+        type == ApiErrorType.Unauthorized ||
+        type == ApiErrorType.Forbidden ||
+        type == ApiErrorType.NotFound ||
+        code == 401 || code == 403 || code == 404
 }
