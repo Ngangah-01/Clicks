@@ -8,7 +8,7 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
@@ -37,7 +37,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             ClicksTheme {
                 Surface(Modifier.fillMaxSize()) {
-                    Box(Modifier.windowInsetsPadding(WindowInsets.safeDrawing)) {
+                    Box(Modifier.windowInsetsPadding(WindowInsets.systemBars)) {
                         NavGraph()
                     }
                 }
