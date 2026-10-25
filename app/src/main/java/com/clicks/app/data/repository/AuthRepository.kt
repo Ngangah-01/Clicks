@@ -73,7 +73,7 @@ class AuthRepository(
             throw exception
         } catch (exception: Exception) {
             ApiResult.Error(
-                message = "Authentication succeeded, but your session could not be saved. Please try signing in again."
+                message = "An error occurred! Please try again.",
             )
         }
     }

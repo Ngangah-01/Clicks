@@ -1,5 +1,6 @@
 package com.clicks.app.ui.screens.home
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -41,6 +42,7 @@ import com.clicks.app.ui.screens.profile.initials
 import com.clicks.app.ui.viewmodel.StoreViewModel
 import com.clicks.app.ui.screens.products.sampleProducts
 import com.clicks.app.ui.components.ProductCard
+import com.clicks.app.ui.components.SearchBar
 import com.clicks.app.ui.theme.ClicksCream
 import com.clicks.app.ui.theme.ClicksGreen
 import com.clicks.app.ui.theme.ClicksGreenInactive
@@ -107,6 +109,7 @@ fun HomeScreen(
     onDiscoverClick: () -> Unit = {}
 ) {
     var searchText by remember { mutableStateOf("") }
+    var isSearchOpen by remember { mutableStateOf(false) }
     var selectedTab by remember { mutableStateOf("Home") }
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -315,6 +318,18 @@ fun HomeScreen(
                         horizontalArrangement = Arrangement.End,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
+                        // Search Toggle Icon Button
+                        IconButton(onClick = {
+                            isSearchOpen = !isSearchOpen
+                            if (!isSearchOpen) searchText = ""
+                        }) {
+                            Icon(
+                                imageVector = Icons.Outlined.Search,
+                                contentDescription = "Search",
+                                tint = ClicksGreen
+                            )
+                        }
+
                         // Notification bell icon with unread badge in header
                         Box(
                             modifier = Modifier.clickable { showNotificationsSheet = true }
@@ -340,42 +355,69 @@ fun HomeScreen(
                     }
                 }
 
-                // Search field
+                // Search field (collapsible/toggleable using shared SearchBar)
+                AnimatedVisibility(visible = isSearchOpen) {
+                    SearchBar(
+                        query = searchText,
+                        onQueryChange = { searchText = it },
+                        placeholder = "Search products..."
+                    )
+                }
+
+                Spacer(Modifier.height(14.dp))
+
+                SectionHeading(
+                    title = "Categories",
+                    action = "View all",
+                    onActionClick = onViewAllClick,
+                    modifier = Modifier.padding(horizontal = 22.dp)
+                )
+
+                Spacer(Modifier.height(14.dp))
+
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 22.dp, vertical = 18.dp)
-                        .clip(RoundedCornerShape(18.dp))
-                        .background(ClicksMint)
-                        .padding(horizontal = 16.dp, vertical = 14.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                        .horizontalScroll(rememberScrollState())
+                        .padding(horizontal = 22.dp),
+                    horizontalArrangement = Arrangement.spacedBy(14.dp)
                 ) {
-                    Icon(
-                        imageVector = Icons.Outlined.Search,
-                        contentDescription = "Search",
-                        tint = ClicksGreen
-                    )
-                    Spacer(Modifier.width(12.dp))
-                    Box(Modifier.weight(1f)) {
-                        if (searchText.isEmpty()) {
+                    categories.forEach { category ->
+                        Column(
+                            modifier = Modifier
+                                .width(88.dp)
+                                .clickable { onCategoryClick(category.name) },
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(76.dp)
+                                    .clip(CircleShape)
+                                    .background(ClicksMint),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                AsyncImage(
+                                    model = category.imageUrl,
+                                    contentDescription = category.name,
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier
+                                        .size(70.dp)
+                                        .clip(CircleShape)
+                                )
+                            }
+                            Spacer(Modifier.height(8.dp))
                             Text(
-                                "Search products",
-                                color = ClicksMuted,
-                                fontSize = 14.sp
+                                text = category.name,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = ClicksText,
+                                maxLines = 1
                             )
                         }
-                        BasicTextField(
-                            value = searchText,
-                            onValueChange = { searchText = it },
-                            singleLine = true,
-                            textStyle = androidx.compose.ui.text.TextStyle(
-                                color = ClicksText,
-                                fontSize = 14.sp
-                            ),
-                            modifier = Modifier.fillMaxWidth()
-                        )
                     }
                 }
+
+                Spacer(Modifier.height(28.dp))
 
                 // Promotional Hero Carousel
                 val pagerState = rememberPagerState(pageCount = { promoBanners.size })
@@ -476,59 +518,6 @@ fun HomeScreen(
                                         .background(indicatorColor)
                                 )
                             }
-                        }
-                    }
-                }
-
-                Spacer(Modifier.height(28.dp))
-
-                SectionHeading(
-                    title = "Categories",
-                    action = "View all",
-                    onActionClick = onViewAllClick,
-                    modifier = Modifier.padding(horizontal = 22.dp)
-                )
-
-                Spacer(Modifier.height(14.dp))
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .horizontalScroll(rememberScrollState())
-                        .padding(horizontal = 22.dp),
-                    horizontalArrangement = Arrangement.spacedBy(14.dp)
-                ) {
-                    categories.forEach { category ->
-                        Column(
-                            modifier = Modifier
-                                .width(88.dp)
-                                .clickable { onCategoryClick(category.name) },
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(76.dp)
-                                    .clip(CircleShape)
-                                    .background(ClicksMint),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                AsyncImage(
-                                    model = category.imageUrl,
-                                    contentDescription = category.name,
-                                    contentScale = ContentScale.Crop,
-                                    modifier = Modifier
-                                        .size(70.dp)
-                                        .clip(CircleShape)
-                                )
-                            }
-                            Spacer(Modifier.height(8.dp))
-                            Text(
-                                text = category.name,
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                color = ClicksText,
-                                maxLines = 1
-                            )
                         }
                     }
                 }

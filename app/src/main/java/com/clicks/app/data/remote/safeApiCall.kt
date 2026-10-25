@@ -39,7 +39,6 @@ suspend fun <T> safeApiCall(
             )
         }
     } catch (exception: CancellationException) {
-        // Never swallow coroutine cancellation.
         throw exception
     } catch (exception: HttpException) {
         exception.toApiError()
