@@ -4,7 +4,7 @@ import com.clicks.app.auth.login.AuthResponse
 import com.clicks.app.auth.login.LoginRequest
 import com.clicks.app.auth.register.RegisterRequest
 import com.clicks.app.auth.register.UserResponse
-import com.clicks.app.data.local.TokenStorage
+import com.clicks.app.lib.session.TokenStorage
 import com.clicks.app.data.remote.ApiClient
 import com.clicks.app.data.remote.ApiResult
 import com.clicks.app.data.remote.safeApiCall

@@ -15,9 +15,9 @@ import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.clicks.app.data.remote.ApiClient
 import com.clicks.app.navigation.NavGraph
-import com.clicks.app.ui.screens.splash.SplashState
-import com.clicks.app.ui.screens.splash.SplashViewModel
-import com.clicks.app.ui.theme.ClicksTheme
+import com.clicks.app.onboarding.splash.SplashState
+import com.clicks.app.onboarding.splash.SplashViewModel
+import com.clicks.app.lib.theme.ClicksTheme
 
 class MainActivity : ComponentActivity() {
 

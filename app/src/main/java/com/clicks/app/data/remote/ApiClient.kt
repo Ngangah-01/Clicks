@@ -2,7 +2,7 @@ package com.clicks.app.data.remote
 
 import android.content.Context
 import com.clicks.app.auth.data.AuthApi
-import com.clicks.app.data.local.TokenStorage
+import com.clicks.app.lib.session.TokenStorage
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

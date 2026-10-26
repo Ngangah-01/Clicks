@@ -7,26 +7,26 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.clicks.app.data.local.TokenStorage
-import com.clicks.app.data.repository.SessionRepository
+import com.clicks.app.lib.session.TokenStorage
+import com.clicks.app.lib.session.SessionRepository
 import com.clicks.app.auth.login.LoginScreen
 import com.clicks.app.auth.login.LoginViewModel
-import com.clicks.app.ui.screens.onboarding.OnboardingContainerScreen
+import com.clicks.app.onboarding.OnboardingContainerScreen
 import com.clicks.app.auth.register.RegisterScreen
 import com.clicks.app.auth.register.RegisterViewModel
-import com.clicks.app.ui.screens.home.HomeScreen
-import com.clicks.app.ui.screens.products.CategoryProductsScreen
-import com.clicks.app.ui.screens.products.ProductDetailsScreen
-import com.clicks.app.ui.screens.cart.CartScreen
-import com.clicks.app.ui.screens.favorites.FavoritesScreen
-import com.clicks.app.ui.screens.checkout.CheckoutScreen
-import com.clicks.app.ui.screens.location.DeliveryLocationViewModel
-import com.clicks.app.ui.screens.location.LocationPickerScreen
-import com.clicks.app.ui.screens.location.LocationPickerViewModel
-import com.clicks.app.ui.screens.profile.ProfileScreen
-import com.clicks.app.ui.screens.profile.ProfileViewModel
-import com.clicks.app.ui.screens.orders.OrdersScreen
-import com.clicks.app.ui.viewmodel.StoreViewModel
+import com.clicks.app.home.HomeScreen
+import com.clicks.app.menu.CategoryProductsScreen
+import com.clicks.app.menu.ProductDetailsScreen
+import com.clicks.app.cart.CartScreen
+import com.clicks.app.favorites.FavoritesScreen
+import com.clicks.app.checkout.CheckoutScreen
+import com.clicks.app.location.ui.DeliveryLocationViewModel
+import com.clicks.app.location.ui.LocationPickerScreen
+import com.clicks.app.location.ui.LocationPickerViewModel
+import com.clicks.app.profile.ProfileScreen
+import com.clicks.app.profile.ProfileViewModel
+import com.clicks.app.orders.OrdersScreen
+import com.clicks.app.lib.viewmodel.StoreViewModel
 
 @Composable
 fun NavGraph() {
