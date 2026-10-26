@@ -1,10 +1,10 @@
-package com.clicks.app.data.remote
+package com.clicks.app.auth.data
 
+import com.clicks.app.auth.login.AuthResponse
+import com.clicks.app.auth.login.LoginRequest
+import com.clicks.app.auth.register.RegisterRequest
+import com.clicks.app.auth.register.UserResponse
 import com.clicks.app.data.remote.dto.ApiResponse
-import com.clicks.app.data.remote.dto.AuthResponse
-import com.clicks.app.data.remote.dto.LoginRequest
-import com.clicks.app.data.remote.dto.RegisterRequest
-import com.clicks.app.data.remote.dto.UserResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -22,6 +22,5 @@ interface AuthApi {
     ): ApiResponse<AuthResponse>
 
     @GET("api/auth/me")
-    suspend fun getCurrentUser():
-            ApiResponse<UserResponse>
+    suspend fun getCurrentUser(): ApiResponse<UserResponse>
 }

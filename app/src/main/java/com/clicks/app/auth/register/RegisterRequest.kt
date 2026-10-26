@@ -1,5 +1,4 @@
-
-package com.clicks.app.data.remote.dto
+package com.clicks.app.auth.register
 
 data class RegisterRequest(
     val firstName: String,

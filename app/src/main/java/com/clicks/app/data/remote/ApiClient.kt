@@ -1,6 +1,7 @@
 package com.clicks.app.data.remote
 
 import android.content.Context
+import com.clicks.app.auth.data.AuthApi
 import com.clicks.app.data.local.TokenStorage
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit

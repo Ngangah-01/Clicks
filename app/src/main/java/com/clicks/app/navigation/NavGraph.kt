@@ -1,4 +1,4 @@
-package com.clicks.app.ui.navigation
+package com.clicks.app.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -9,11 +9,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.clicks.app.data.local.TokenStorage
 import com.clicks.app.data.repository.SessionRepository
-import com.clicks.app.ui.screens.login.LoginScreen
-import com.clicks.app.ui.screens.login.LoginViewModel
+import com.clicks.app.auth.login.LoginScreen
+import com.clicks.app.auth.login.LoginViewModel
 import com.clicks.app.ui.screens.onboarding.OnboardingContainerScreen
-import com.clicks.app.ui.screens.register.RegisterScreen
-import com.clicks.app.ui.screens.register.RegisterViewModel
+import com.clicks.app.auth.register.RegisterScreen
+import com.clicks.app.auth.register.RegisterViewModel
 import com.clicks.app.ui.screens.home.HomeScreen
 import com.clicks.app.ui.screens.products.CategoryProductsScreen
 import com.clicks.app.ui.screens.products.ProductDetailsScreen

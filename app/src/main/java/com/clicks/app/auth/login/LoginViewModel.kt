@@ -1,59 +1,52 @@
-package com.clicks.app.ui.screens.register
+package com.clicks.app.auth.login
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.clicks.app.auth.data.AuthRepository
 import com.clicks.app.data.remote.ApiResult
-import com.clicks.app.data.remote.dto.RegisterRequest
-import com.clicks.app.data.repository.AuthRepository
 import kotlinx.coroutines.launch
 
-data class RegisterUiState(
+data class LoginUiState(
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
     val successMessage: String? = null
 )
 
-class RegisterViewModel(
+class LoginViewModel(
     private val authRepository: AuthRepository = AuthRepository()
 ) : ViewModel() {
 
-    var uiState = mutableStateOf(RegisterUiState())
+    var uiState = mutableStateOf(LoginUiState())
         private set
 
-    fun register(
-        firstName: String,
-        lastName: String,
+    fun login(
         email: String,
         password: String,
         onSuccess: () -> Unit
     ) {
         if (uiState.value.isLoading) return
 
-        uiState.value = RegisterUiState(isLoading = true)
+        uiState.value = LoginUiState(isLoading = true)
 
         viewModelScope.launch {
             when (
-                val result = authRepository.register(
-                    RegisterRequest(
-                        firstName = firstName.trim(),
-                        lastName = lastName.trim(),
+                val result = authRepository.login(
+                    LoginRequest(
                         email = email.trim(),
                         password = password
                     )
                 )
             ) {
                 is ApiResult.Success -> {
-                    uiState.value = RegisterUiState(
-                        successMessage = result.message.ifBlank {
-                            "Registration successful."
-                        }
+                    uiState.value = LoginUiState(
+                        successMessage = result.message
                     )
                     onSuccess()
                 }
 
                 is ApiResult.Error -> {
-                    uiState.value = RegisterUiState(
+                    uiState.value = LoginUiState(
                         errorMessage = result.message
                     )
                 }

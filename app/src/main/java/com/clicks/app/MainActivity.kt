@@ -14,7 +14,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.clicks.app.data.remote.ApiClient
-import com.clicks.app.ui.navigation.NavGraph
+import com.clicks.app.navigation.NavGraph
 import com.clicks.app.ui.screens.splash.SplashState
 import com.clicks.app.ui.screens.splash.SplashViewModel
 import com.clicks.app.ui.theme.ClicksTheme

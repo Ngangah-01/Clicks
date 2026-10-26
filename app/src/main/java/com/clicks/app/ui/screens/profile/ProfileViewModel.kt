@@ -5,10 +5,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.clicks.app.auth.data.AuthRepository
+import com.clicks.app.auth.register.UserResponse
 import com.clicks.app.data.remote.ApiErrorType
 import com.clicks.app.data.remote.ApiResult
-import com.clicks.app.data.remote.dto.UserResponse
-import com.clicks.app.data.repository.AuthRepository
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 

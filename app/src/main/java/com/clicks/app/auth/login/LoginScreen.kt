@@ -1,4 +1,4 @@
-package com.clicks.app.ui.screens.register
+package com.clicks.app.auth.login
 
 import android.util.Patterns
 import androidx.compose.animation.AnimatedVisibility
@@ -27,48 +27,53 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.clicks.app.R
+import com.clicks.app.ui.theme.BorderColor
+import com.clicks.app.ui.theme.BrandGreen
+import com.clicks.app.ui.theme.ClicksTextPlaceholder
+import com.clicks.app.ui.theme.Error
+import com.clicks.app.ui.theme.ErrorBg
+import com.clicks.app.ui.theme.ErrorBorder
+import com.clicks.app.ui.theme.ErrorIcon
+import com.clicks.app.ui.theme.ErrorText
+import com.clicks.app.ui.theme.LabelColor
+import com.clicks.app.ui.theme.SuccessBg
+import com.clicks.app.ui.theme.SuccessBorder
+import com.clicks.app.ui.theme.SuccessIcon
+import com.clicks.app.ui.theme.SuccessText
+import com.clicks.app.ui.theme.TextDark
+import com.clicks.app.ui.theme.TextMuted
+import com.clicks.app.ui.theme.WarmCreamBg
+import com.clicks.app.ui.theme.WarmPeachBg
 import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
-fun RegisterScreen(
-    viewModel: RegisterViewModel,
-    onLoginClick: () -> Unit,
-    onRegisterSuccess: () -> Unit
+fun LoginScreen(
+    viewModel: LoginViewModel,
+    onLoginSuccess: () -> Unit,
+    onRegisterClick: () -> Unit,
+    onForgotPasswordClick: () -> Unit,
 ) {
     val uiState by viewModel.uiState
-    var firstName by rememberSaveable { mutableStateOf("") }
-    var lastName by rememberSaveable { mutableStateOf("") }
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
-
     var passwordVisible by rememberSaveable { mutableStateOf(false) }
 
-    var firstNameError by rememberSaveable { mutableStateOf<String?>(null) }
-    var lastNameError by rememberSaveable { mutableStateOf<String?>(null) }
     var emailError by rememberSaveable { mutableStateOf<String?>(null) }
     var passwordError by rememberSaveable { mutableStateOf<String?>(null) }
-
     var isVisible by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         isVisible = true
     }
-
-    val brandGreen = Color(0xFF0B6638)
-    val textDark = Color(0xFF111111)
-    val textMuted = Color(0xFF6B7280)
-    val labelColor = Color(0xFF9CA3AF)
-    val borderColor = Color(0xFFE5E7EB)
 
     Box(
         modifier = Modifier
@@ -105,8 +110,6 @@ fun RegisterScreen(
                     .padding(horizontal = 28.dp, vertical = 24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Spacer(modifier = Modifier.height(16.dp))
-
                 // Logo Section (Clicks Logo + Clicks + Accent bar)
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally
@@ -119,15 +122,15 @@ fun RegisterScreen(
                             painter = painterResource(id = R.drawable.image2),
                             contentDescription = "Clicks Logo",
                             modifier = Modifier
-                                .size(50.dp)
+                                .size(40.dp)
                                 .clip(CircleShape)
                         )
                         Spacer(modifier = Modifier.width(10.dp))
                         Text(
                             text = "Clicks",
-                            fontSize = 40.sp,
+                            fontSize = 30.sp,
                             fontWeight = FontWeight.Bold,
-                            color = textDark,
+                            color = TextDark,
                             letterSpacing = 0.5.sp
                         )
                     }
@@ -136,146 +139,40 @@ fun RegisterScreen(
                         modifier = Modifier
                             .width(70.dp)
                             .height(3.dp)
-                            .background(Color(0xFFF2C299), RoundedCornerShape(1.5.dp))
+                            .background(WarmPeachBg, RoundedCornerShape(1.5.dp))
                     )
                 }
 
                 Spacer(modifier = Modifier.height(36.dp))
 
-                // Title & Subtitle
+                // Header Title & Subtitle
                 Column(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.Start
                 ) {
                     Text(
-                        text = "Create An Account",
-                        fontSize = 30.sp,
+                        text = "Sign In",
+                        fontSize = 26.sp,
                         fontWeight = FontWeight.Bold,
-                        color = textDark
+                        color = TextDark
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "Lorem Ipsum Dolor Sit Amet, Consectetur Adipiscing Elit, Sed Do Eiusmod Tempor",
-                        fontSize = 15.sp,
-                        color = textMuted,
+                        text = "Welcome back! Enter your details to access your account",
+                        fontSize = 13.sp,
+                        color = TextMuted,
                         lineHeight = 18.sp
                     )
                 }
 
                 Spacer(modifier = Modifier.height(32.dp))
 
-                // First Name & Last Name Row
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    // First Name Field
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = "First Name",
-                            fontSize = 15.sp,
-                            color = labelColor,
-                            fontWeight = FontWeight.Medium
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        OutlinedTextField(
-                            value = firstName,
-                            onValueChange = {
-                                firstName = it
-                                firstNameError = null
-                            },
-                            modifier = Modifier.fillMaxWidth(),
-                            singleLine = true,
-                            isError = firstNameError != null,
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedContainerColor = Color.Transparent,
-                                unfocusedContainerColor = Color.Transparent,
-                                disabledContainerColor = Color.Transparent,
-                                errorContainerColor = Color.Transparent,
-                                focusedBorderColor = Color.Transparent,
-                                unfocusedBorderColor = Color.Transparent,
-                                errorBorderColor = Color.Transparent,
-                                focusedTextColor = textDark,
-                                unfocusedTextColor = textDark
-                            ),
-                            textStyle = androidx.compose.ui.text.TextStyle(
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Medium,
-                                color = textDark
-                            )
-                        )
-                        HorizontalDivider(
-                            thickness = 1.dp,
-                            color = if (firstNameError != null) Color(0xFFEF4444) else borderColor
-                        )
-                        if (firstNameError != null) {
-                            Text(
-                                text = firstNameError ?: "",
-                                color = Color(0xFFEF4444),
-                                fontSize = 12.sp,
-                                modifier = Modifier.padding(top = 4.dp)
-                            )
-                        }
-                    }
-
-                    // Last Name Field
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = "Last Name",
-                            fontSize = 15.sp,
-                            color = labelColor,
-                            fontWeight = FontWeight.Medium
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        OutlinedTextField(
-                            value = lastName,
-                            onValueChange = {
-                                lastName = it
-                                lastNameError = null
-                            },
-                            modifier = Modifier.fillMaxWidth(),
-                            singleLine = true,
-                            isError = lastNameError != null,
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedContainerColor = Color.Transparent,
-                                unfocusedContainerColor = Color.Transparent,
-                                disabledContainerColor = Color.Transparent,
-                                errorContainerColor = Color.Transparent,
-                                focusedBorderColor = Color.Transparent,
-                                unfocusedBorderColor = Color.Transparent,
-                                errorBorderColor = Color.Transparent,
-                                focusedTextColor = textDark,
-                                unfocusedTextColor = textDark
-                            ),
-                            textStyle = androidx.compose.ui.text.TextStyle(
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Medium,
-                                color = textDark
-                            )
-                        )
-                        HorizontalDivider(
-                            thickness = 1.dp,
-                            color = if (lastNameError != null) Color(0xFFEF4444) else borderColor
-                        )
-                        if (lastNameError != null) {
-                            Text(
-                                text = lastNameError ?: "",
-                                color = Color(0xFFEF4444),
-                                fontSize = 12.sp,
-                                modifier = Modifier.padding(top = 4.dp)
-                            )
-                        }
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                // Email Field
+                // Username / Email Field
                 Column(modifier = Modifier.fillMaxWidth()) {
                     Text(
                         text = "Email",
-                        fontSize = 15.sp,
-                        color = labelColor,
+                        fontSize = 13.sp,
+                        color = LabelColor,
                         fontWeight = FontWeight.Medium
                     )
                     Spacer(modifier = Modifier.height(4.dp))
@@ -285,6 +182,11 @@ fun RegisterScreen(
                             email = it
                             emailError = null
                         },
+                        placeholder = {
+                            Text(text = "johndoe@gmail.com",
+                                color = ClicksTextPlaceholder,
+                                fontSize = 16.sp,
+                            ) },
                         modifier = Modifier.fillMaxWidth(),
                         singleLine = true,
                         isError = emailError != null,
@@ -296,24 +198,24 @@ fun RegisterScreen(
                             focusedBorderColor = Color.Transparent,
                             unfocusedBorderColor = Color.Transparent,
                             errorBorderColor = Color.Transparent,
-                            focusedTextColor = textDark,
-                            unfocusedTextColor = textDark
+                            focusedTextColor = TextDark,
+                            unfocusedTextColor = TextDark
                         ),
-                        textStyle = androidx.compose.ui.text.TextStyle(
+                        textStyle = TextStyle(
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Medium,
-                            color = textDark
+                            color = TextDark
                         )
                     )
                     HorizontalDivider(
                         thickness = 1.dp,
-                        color = if (emailError != null) Color(0xFFEF4444) else borderColor
+                        color = if (emailError != null) Error else BorderColor
                     )
                     if (emailError != null) {
                         Text(
                             text = emailError ?: "",
-                            color = Color(0xFFEF4444),
-                            fontSize = 13.sp,
+                            color = ClicksTextPlaceholder,
+                            fontSize = 12.sp,
                             modifier = Modifier.padding(top = 4.dp)
                         )
                     }
@@ -325,8 +227,8 @@ fun RegisterScreen(
                 Column(modifier = Modifier.fillMaxWidth()) {
                     Text(
                         text = "Password",
-                        fontSize = 15.sp,
-                        color = labelColor,
+                        fontSize = 13.sp,
+                        color = LabelColor,
                         fontWeight = FontWeight.Medium
                     )
                     Spacer(modifier = Modifier.height(4.dp))
@@ -336,6 +238,11 @@ fun RegisterScreen(
                             password = it
                             passwordError = null
                         },
+                        placeholder = {
+                            Text(text = "••••••••",
+                                color = ClicksTextPlaceholder,
+                                fontSize = 16.sp,
+                            ) },
                         modifier = Modifier.fillMaxWidth(),
                         visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                         singleLine = true,
@@ -345,7 +252,7 @@ fun RegisterScreen(
                                 Icon(
                                     imageVector = if (passwordVisible) Icons.Outlined.Visibility else Icons.Outlined.VisibilityOff,
                                     contentDescription = "Toggle password visibility",
-                                    tint = brandGreen
+                                    tint = BrandGreen
                                 )
                             }
                         },
@@ -357,23 +264,23 @@ fun RegisterScreen(
                             focusedBorderColor = Color.Transparent,
                             unfocusedBorderColor = Color.Transparent,
                             errorBorderColor = Color.Transparent,
-                            focusedTextColor = textDark,
-                            unfocusedTextColor = textDark
+                            focusedTextColor = TextDark,
+                            unfocusedTextColor = TextDark
                         ),
-                        textStyle = androidx.compose.ui.text.TextStyle(
+                        textStyle = TextStyle(
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Medium,
-                            color = textDark
+                            color = TextDark
                         )
                     )
                     HorizontalDivider(
                         thickness = 1.dp,
-                        color = if (passwordError != null) Color(0xFFEF4444) else borderColor
+                        color = if (passwordError != null) Error else BorderColor
                     )
                     if (passwordError != null) {
                         Text(
                             text = passwordError ?: "",
-                            color = Color(0xFFEF4444),
+                            color = Error,
                             fontSize = 12.sp,
                             modifier = Modifier.padding(top = 4.dp)
                         )
@@ -382,33 +289,23 @@ fun RegisterScreen(
 
                 Spacer(modifier = Modifier.height(36.dp))
 
-                // SIGN UP Button
+                // LOGIN Button
                 Button(
                     onClick = {
                         var valid = true
-                        if (firstName.isBlank()) {
-                            firstNameError = "First name is required"
-                            valid = false
-                        }
-                        if (lastName.isBlank()) {
-                            lastNameError = "Last name is required"
-                            valid = false
-                        }
                         if (email.isBlank() || !Patterns.EMAIL_ADDRESS.matcher(email.trim()).matches()) {
                             emailError = "Valid email is required"
                             valid = false
                         }
-                        if (password.isBlank() || password.length < 6) {
-                            passwordError = "Password must be at least 6 characters"
+                        if (password.isBlank()) {
+                            passwordError = "Password is required"
                             valid = false
                         }
                         if (valid) {
-                            viewModel.register(
-                                firstName = firstName.trim(),
-                                lastName = lastName.trim(),
+                            viewModel.login(
                                 email = email.trim(),
                                 password = password,
-                                onSuccess = onRegisterSuccess
+                                onSuccess = onLoginSuccess
                             )
                         }
                     },
@@ -418,9 +315,9 @@ fun RegisterScreen(
                     enabled = !uiState.isLoading,
                     shape = RoundedCornerShape(26.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = brandGreen,
+                        containerColor = BrandGreen,
                         contentColor = Color.White,
-                        disabledContainerColor = brandGreen.copy(alpha = 0.6f),
+                        disabledContainerColor = BrandGreen.copy(alpha = 0.6f),
                         disabledContentColor = Color.White
                     )
                 ) {
@@ -432,7 +329,7 @@ fun RegisterScreen(
                         )
                     } else {
                         Text(
-                            text = "SIGN UP",
+                            text = "LOGIN",
                             fontSize = 15.sp,
                             fontWeight = FontWeight.Bold,
                             letterSpacing = 1.sp
@@ -440,43 +337,57 @@ fun RegisterScreen(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(20.dp))
 
-                // Terms and Conditions text
-                Text(
-                    text = buildAnnotatedString {
-                        append("By tapping “Sign Up” you accept our ")
-                        withStyle(style = SpanStyle(color = brandGreen, fontWeight = FontWeight.SemiBold)) {
-                            append("terms")
-                        }
-                        append(" and ")
-                        withStyle(style = SpanStyle(color = brandGreen, fontWeight = FontWeight.SemiBold)) {
-                            append("condition")
-                        }
-                    },
-                    color = textMuted,
-                    fontSize = 12.sp,
-                    modifier = Modifier.padding(horizontal = 8.dp)
-                )
-
-                Spacer(modifier = Modifier.height(32.dp))
-
-                // Already have an account? Sign in
+                // Forgot Password Row
                 Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Already have an account? ",
-                        color = textMuted,
+                        text = "Forgot Password? ",
+                        color = TextMuted,
                         fontSize = 14.sp
                     )
                     Text(
-                        text = "Sign in",
-                        color = brandGreen,
+                        text = "Reset Password",
+                        color = BrandGreen,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.clickable { onLoginClick() }
+                        modifier = Modifier.clickable { onForgotPasswordClick() }
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(48.dp))
+
+                // Don't have any account?
+                Text(
+                    text = "Don't have an account?",
+                    color = TextMuted,
+                    fontSize = 14.sp
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // Create an Account Button
+                Button(
+                    onClick = { onRegisterClick() },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(52.dp),
+                    shape = RoundedCornerShape(26.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = WarmCreamBg,
+                        contentColor = TextDark
+                    )
+                ) {
+                    Text(
+                        text = "CREATE AN ACCOUNT",
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = 0.5.sp,
+                        color = TextDark
                     )
                 }
 
@@ -487,13 +398,13 @@ fun RegisterScreen(
 }
 
 @Composable
-fun ToastBanner(
+private fun ToastBanner(
     message: String,
     isError: Boolean,
     onDismiss: () -> Unit
 ) {
     LaunchedEffect(message) {
-        delay(4000L)
+        delay(4000L.milliseconds)
         onDismiss()
     }
 
@@ -506,8 +417,8 @@ fun ToastBanner(
     ) {
         Surface(
             shape = RoundedCornerShape(16.dp),
-            color = if (isError) Color(0xFFFEF2F2) else Color(0xFFF0FDF4),
-            border = BorderStroke(1.dp, if (isError) Color(0xFFFCA5A5) else Color(0xFF86EFAC)),
+            color = if (isError) ErrorBg else SuccessBg,
+            border = BorderStroke(1.dp, if (isError) ErrorBorder else SuccessBorder),
             shadowElevation = 8.dp
         ) {
             Row(
@@ -519,7 +430,7 @@ fun ToastBanner(
                 Icon(
                     imageVector = if (isError) Icons.Outlined.ErrorOutline else Icons.Outlined.CheckCircle,
                     contentDescription = null,
-                    tint = if (isError) Color(0xFFDC2626) else Color(0xFF16A34A),
+                    tint = if (isError) ErrorIcon else SuccessIcon,
                     modifier = Modifier.size(22.dp)
                 )
                 Spacer(Modifier.width(12.dp))
@@ -527,7 +438,7 @@ fun ToastBanner(
                     text = message,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Medium,
-                    color = if (isError) Color(0xFF991B1B) else Color(0xFF166534),
+                    color = if (isError) ErrorText else SuccessText,
                     modifier = Modifier.weight(1f)
                 )
                 IconButton(
@@ -537,7 +448,7 @@ fun ToastBanner(
                     Icon(
                         imageVector = Icons.Outlined.Close,
                         contentDescription = "Close",
-                        tint = if (isError) Color(0xFFDC2626) else Color(0xFF16A34A),
+                        tint = if (isError) ErrorIcon else SuccessIcon,
                         modifier = Modifier.size(16.dp)
                     )
                 }

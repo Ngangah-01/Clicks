@@ -1,15 +1,13 @@
+package com.clicks.app.auth.data
 
-package com.clicks.app.data.repository
-
+import com.clicks.app.auth.login.AuthResponse
+import com.clicks.app.auth.login.LoginRequest
+import com.clicks.app.auth.register.RegisterRequest
+import com.clicks.app.auth.register.UserResponse
 import com.clicks.app.data.local.TokenStorage
 import com.clicks.app.data.remote.ApiClient
 import com.clicks.app.data.remote.ApiResult
-import com.clicks.app.data.remote.AuthApi
 import com.clicks.app.data.remote.safeApiCall
-import com.clicks.app.data.remote.dto.AuthResponse
-import com.clicks.app.data.remote.dto.LoginRequest
-import com.clicks.app.data.remote.dto.RegisterRequest
-import com.clicks.app.data.remote.dto.UserResponse
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -46,14 +44,12 @@ class AuthRepository(
 
         return persistSession(result)
     }
-//    get current user
-    suspend fun getCurrentUser():
-        ApiResult<UserResponse> {
+
+    suspend fun getCurrentUser(): ApiResult<UserResponse> {
         return safeApiCall {
             authApi.getCurrentUser()
         }
     }
-
 
     fun logout() {
         tokenStorage.clearToken()
@@ -73,7 +69,7 @@ class AuthRepository(
             throw exception
         } catch (exception: Exception) {
             ApiResult.Error(
-                message = "An error occurred! Please try again.",
+                message = "An error occurred! Please try again."
             )
         }
     }

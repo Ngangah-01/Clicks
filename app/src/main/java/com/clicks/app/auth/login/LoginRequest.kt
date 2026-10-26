@@ -1,4 +1,4 @@
-package com.clicks.app.data.remote.dto
+package com.clicks.app.auth.login
 
 data class LoginRequest(
     val email: String,

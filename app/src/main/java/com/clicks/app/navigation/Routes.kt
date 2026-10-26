@@ -1,4 +1,4 @@
-package com.clicks.app.ui.navigation
+package com.clicks.app.navigation
 
 sealed class Routes(val route: String) {
 

@@ -22,7 +22,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.clicks.app.data.remote.dto.UserResponse
+import com.clicks.app.auth.register.UserResponse
 
 import com.clicks.app.ui.theme.ClicksGreen
 import com.clicks.app.ui.theme.ClicksMint
