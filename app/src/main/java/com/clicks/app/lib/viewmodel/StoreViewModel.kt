@@ -2,8 +2,8 @@ package com.clicks.app.lib.viewmodel
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
-import com.clicks.app.menu.StoreProduct
-import com.clicks.app.menu.sampleProducts
+import com.clicks.app.feature.menu.StoreProduct
+import com.clicks.app.feature.menu.sampleProducts
 
 data class CartItem(
     val product: StoreProduct,

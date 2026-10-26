@@ -24,7 +24,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.clicks.app.menu.StoreProduct
+import com.clicks.app.feature.menu.StoreProduct
 import com.clicks.app.lib.theme.ClicksGreen
 import com.clicks.app.lib.theme.ClicksImageBackground
 import com.clicks.app.lib.theme.ClicksMint
