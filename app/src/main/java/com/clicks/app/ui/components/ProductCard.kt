@@ -1,6 +1,5 @@
 package com.clicks.app.ui.components
 
-import android.util.Size
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -33,7 +32,6 @@ import com.clicks.app.ui.theme.ClicksMuted
 import com.clicks.app.ui.theme.ClicksText
 import com.clicks.app.ui.theme.Error
 import com.clicks.app.ui.theme.StarGold
-import com.clicks.app.ui.components.SquircleShape
 
 @Composable
 fun ProductCard(
