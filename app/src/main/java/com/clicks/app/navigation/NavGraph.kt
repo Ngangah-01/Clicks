@@ -16,7 +16,7 @@ import com.clicks.app.feature.login.viewmodel.LoginViewModel
 import com.clicks.app.feature.onboarding.OnboardingContainerScreen
 import com.clicks.app.feature.register.ui.RegisterScreen
 import com.clicks.app.feature.register.ui.RegisterViewModel
-import com.clicks.app.feature.home.HomeScreen
+import com.clicks.app.feature.home.ui.HomeScreen
 import com.clicks.app.feature.menu.ui.CategoryProductsScreen
 import com.clicks.app.feature.menu.ui.ProductDetailsScreen
 import com.clicks.app.feature.cart.CartScreen

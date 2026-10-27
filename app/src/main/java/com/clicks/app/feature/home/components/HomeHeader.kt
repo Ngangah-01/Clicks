@@ -1,0 +1,113 @@
+package com.clicks.app.feature.home.components
+
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Notifications
+import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material.icons.outlined.Menu
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.clicks.app.R
+import com.clicks.app.lib.theme.ClicksGreen
+
+@Composable
+fun HomeHeader(
+    onMenuClick: () -> Unit,
+    onSearchToggle: () -> Unit,
+    onNotificationClick: () -> Unit,
+    unreadNotificationCount: Int,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(start = 22.dp, end = 22.dp, top = 18.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Row(
+            modifier = Modifier.weight(1f),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start
+        ) {
+            IconButton(onClick = onMenuClick) {
+                Icon(
+                    imageVector = Icons.Outlined.Menu,
+                    contentDescription = "Menu",
+                    tint = ClicksGreen
+                )
+            }
+        }
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.image2),
+                contentDescription = "Clicks Logo",
+                modifier = Modifier
+                    .size(35.dp)
+                    .clip(CircleShape)
+            )
+            Spacer(modifier = Modifier.width(5.dp))
+            Text(
+                text = "Clicks",
+                fontSize = 35.sp,
+                fontWeight = FontWeight.W800,
+                color = ClicksGreen,
+                letterSpacing = 0.5.sp
+            )
+        }
+
+        Row(
+            modifier = Modifier.weight(1f),
+            horizontalArrangement = Arrangement.End,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(onClick = onSearchToggle) {
+                Icon(
+                    imageVector = Icons.Outlined.Search,
+                    contentDescription = "Search",
+                    tint = ClicksGreen
+                )
+            }
+
+            Box(
+                modifier = Modifier.clickable(onClick = onNotificationClick)
+            ) {
+                IconButton(onClick = onNotificationClick) {
+                    Icon(
+                        imageVector = Icons.Outlined.Notifications,
+                        contentDescription = "Notifications",
+                        tint = ClicksGreen
+                    )
+                }
+                if (unreadNotificationCount > 0) {
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .offset(x = (-4).dp, y = 4.dp)
+                            .size(10.dp)
+                            .clip(CircleShape)
+                            .background(Color(0xFFEF4444))
+                    )
+                }
+            }
+        }
+    }
+}
