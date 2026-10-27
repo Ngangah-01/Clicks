@@ -29,6 +29,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.clicks.app.R
+import com.clicks.app.feature.login.viewmodel.LoginViewModel
 import com.clicks.app.lib.components.ClicksButton
 import com.clicks.app.lib.components.ClicksTextField
 import com.clicks.app.lib.components.ToastBanner

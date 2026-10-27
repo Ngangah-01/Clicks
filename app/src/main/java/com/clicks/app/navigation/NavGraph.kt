@@ -12,7 +12,7 @@ import com.clicks.app.lib.session.SessionManager
 import com.clicks.app.lib.session.TokenStorage
 import com.clicks.app.lib.session.SessionRepository
 import com.clicks.app.feature.login.ui.LoginScreen
-import com.clicks.app.feature.login.ui.LoginViewModel
+import com.clicks.app.feature.login.viewmodel.LoginViewModel
 import com.clicks.app.feature.onboarding.OnboardingContainerScreen
 import com.clicks.app.feature.register.ui.RegisterScreen
 import com.clicks.app.feature.register.ui.RegisterViewModel

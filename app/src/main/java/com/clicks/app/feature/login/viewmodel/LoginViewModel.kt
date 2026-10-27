@@ -1,4 +1,4 @@
-package com.clicks.app.feature.login.ui
+package com.clicks.app.feature.login.viewmodel
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
