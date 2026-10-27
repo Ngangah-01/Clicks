@@ -1,9 +1,10 @@
-package com.clicks.app.feature.login
+package com.clicks.app.feature.login.ui
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clicks.app.feature.login.data.AuthRepository
+import com.clicks.app.feature.login.data.LoginRequest
 import com.clicks.app.network.ApiResult
 import kotlinx.coroutines.launch
 

@@ -1,7 +1,5 @@
 package com.clicks.app.feature.login.data
 
-import com.clicks.app.feature.login.AuthResponse
-import com.clicks.app.feature.login.LoginRequest
 import com.clicks.app.feature.register.data.RegisterRequest
 import com.clicks.app.feature.register.data.UserResponse
 import com.clicks.app.lib.session.TokenStorage
@@ -13,7 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class AuthRepository(
-    private val authApi: AuthApi = ApiClient.authApi,
+    private val authApi: AuthApi = ApiClient.createService<AuthApi>(),
     private val tokenStorage: TokenStorage = ApiClient.tokenStorage
 ) {
 

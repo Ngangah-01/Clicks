@@ -4,7 +4,6 @@ import android.util.Patterns
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideInVertically
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -14,9 +13,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.CheckCircle
-import androidx.compose.material.icons.outlined.Close
-import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.outlined.VisibilityOff
 import androidx.compose.material3.*
@@ -28,7 +24,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -36,9 +31,13 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.zIndex
 import com.clicks.app.R
-import kotlinx.coroutines.delay
+import com.clicks.app.lib.components.ClicksButton
+import com.clicks.app.lib.components.ClicksTextField
+import com.clicks.app.lib.components.ToastBanner
+import com.clicks.app.lib.theme.BrandGreen
+import com.clicks.app.lib.theme.TextDark
+import com.clicks.app.lib.theme.TextMuted
 
 @Composable
 fun RegisterScreen(
@@ -64,12 +63,6 @@ fun RegisterScreen(
     LaunchedEffect(Unit) {
         isVisible = true
     }
-
-    val brandGreen = Color(0xFF0B6638)
-    val textDark = Color(0xFF111111)
-    val textMuted = Color(0xFF6B7280)
-    val labelColor = Color(0xFF9CA3AF)
-    val borderColor = Color(0xFFE5E7EB)
 
     Box(
         modifier = Modifier
@@ -128,7 +121,7 @@ fun RegisterScreen(
                             text = "Clicks",
                             fontSize = 40.sp,
                             fontWeight = FontWeight.Bold,
-                            color = textDark,
+                            color = TextDark,
                             letterSpacing = 0.5.sp
                         )
                     }
@@ -152,13 +145,13 @@ fun RegisterScreen(
                         text = "Create An Account",
                         fontSize = 30.sp,
                         fontWeight = FontWeight.Bold,
-                        color = textDark
+                        color = TextDark
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
                         text = "Lorem Ipsum Dolor Sit Amet, Consectetur Adipiscing Elit, Sed Do Eiusmod Tempor",
                         fontSize = 15.sp,
-                        color = textMuted,
+                        color = TextMuted,
                         lineHeight = 18.sp
                     )
                 }
@@ -171,220 +164,76 @@ fun RegisterScreen(
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     // First Name Field
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = "First Name",
-                            fontSize = 15.sp,
-                            color = labelColor,
-                            fontWeight = FontWeight.Medium
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        OutlinedTextField(
-                            value = firstName,
-                            onValueChange = {
-                                firstName = it
-                                firstNameError = null
-                            },
-                            modifier = Modifier.fillMaxWidth(),
-                            singleLine = true,
-                            isError = firstNameError != null,
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedContainerColor = Color.Transparent,
-                                unfocusedContainerColor = Color.Transparent,
-                                disabledContainerColor = Color.Transparent,
-                                errorContainerColor = Color.Transparent,
-                                focusedBorderColor = Color.Transparent,
-                                unfocusedBorderColor = Color.Transparent,
-                                errorBorderColor = Color.Transparent,
-                                focusedTextColor = textDark,
-                                unfocusedTextColor = textDark
-                            ),
-                            textStyle = TextStyle(
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Medium,
-                                color = textDark
-                            )
-                        )
-                        HorizontalDivider(
-                            thickness = 1.dp,
-                            color = if (firstNameError != null) Color(0xFFEF4444) else borderColor
-                        )
-                        if (firstNameError != null) {
-                            Text(
-                                text = firstNameError ?: "",
-                                color = Color(0xFFEF4444),
-                                fontSize = 12.sp,
-                                modifier = Modifier.padding(top = 4.dp)
-                            )
-                        }
-                    }
+                    ClicksTextField(
+                        value = firstName,
+                        onValueChange = {
+                            firstName = it
+                            firstNameError = null
+                        },
+                        label = "First Name",
+                        errorMessage = firstNameError,
+                        modifier = Modifier.weight(1f),
+                        labelFontSize = 15
+                    )
 
                     // Last Name Field
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = "Last Name",
-                            fontSize = 15.sp,
-                            color = labelColor,
-                            fontWeight = FontWeight.Medium
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        OutlinedTextField(
-                            value = lastName,
-                            onValueChange = {
-                                lastName = it
-                                lastNameError = null
-                            },
-                            modifier = Modifier.fillMaxWidth(),
-                            singleLine = true,
-                            isError = lastNameError != null,
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedContainerColor = Color.Transparent,
-                                unfocusedContainerColor = Color.Transparent,
-                                disabledContainerColor = Color.Transparent,
-                                errorContainerColor = Color.Transparent,
-                                focusedBorderColor = Color.Transparent,
-                                unfocusedBorderColor = Color.Transparent,
-                                errorBorderColor = Color.Transparent,
-                                focusedTextColor = textDark,
-                                unfocusedTextColor = textDark
-                            ),
-                            textStyle = TextStyle(
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Medium,
-                                color = textDark
-                            )
-                        )
-                        HorizontalDivider(
-                            thickness = 1.dp,
-                            color = if (lastNameError != null) Color(0xFFEF4444) else borderColor
-                        )
-                        if (lastNameError != null) {
-                            Text(
-                                text = lastNameError ?: "",
-                                color = Color(0xFFEF4444),
-                                fontSize = 12.sp,
-                                modifier = Modifier.padding(top = 4.dp)
-                            )
-                        }
-                    }
+                    ClicksTextField(
+                        value = lastName,
+                        onValueChange = {
+                            lastName = it
+                            lastNameError = null
+                        },
+                        label = "Last Name",
+                        errorMessage = lastNameError,
+                        modifier = Modifier.weight(1f),
+                        labelFontSize = 15
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(24.dp))
 
                 // Email Field
-                Column(modifier = Modifier.fillMaxWidth()) {
-                    Text(
-                        text = "Email",
-                        fontSize = 15.sp,
-                        color = labelColor,
-                        fontWeight = FontWeight.Medium
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    OutlinedTextField(
-                        value = email,
-                        onValueChange = {
-                            email = it
-                            emailError = null
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                        singleLine = true,
-                        isError = emailError != null,
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedContainerColor = Color.Transparent,
-                            unfocusedContainerColor = Color.Transparent,
-                            disabledContainerColor = Color.Transparent,
-                            errorContainerColor = Color.Transparent,
-                            focusedBorderColor = Color.Transparent,
-                            unfocusedBorderColor = Color.Transparent,
-                            errorBorderColor = Color.Transparent,
-                            focusedTextColor = textDark,
-                            unfocusedTextColor = textDark
-                        ),
-                        textStyle = TextStyle(
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = textDark
-                        )
-                    )
-                    HorizontalDivider(
-                        thickness = 1.dp,
-                        color = if (emailError != null) Color(0xFFEF4444) else borderColor
-                    )
-                    if (emailError != null) {
-                        Text(
-                            text = emailError ?: "",
-                            color = Color(0xFFEF4444),
-                            fontSize = 13.sp,
-                            modifier = Modifier.padding(top = 4.dp)
-                        )
-                    }
-                }
+                ClicksTextField(
+                    value = email,
+                    onValueChange = {
+                        email = it
+                        emailError = null
+                    },
+                    label = "Email",
+                    errorMessage = emailError,
+                    labelFontSize = 15
+                )
 
                 Spacer(modifier = Modifier.height(24.dp))
 
                 // Password Field
-                Column(modifier = Modifier.fillMaxWidth()) {
-                    Text(
-                        text = "Password",
-                        fontSize = 15.sp,
-                        color = labelColor,
-                        fontWeight = FontWeight.Medium
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    OutlinedTextField(
-                        value = password,
-                        onValueChange = {
-                            password = it
-                            passwordError = null
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                        visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                        singleLine = true,
-                        isError = passwordError != null,
-                        trailingIcon = {
-                            IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                                Icon(
-                                    imageVector = if (passwordVisible) Icons.Outlined.Visibility else Icons.Outlined.VisibilityOff,
-                                    contentDescription = "Toggle password visibility",
-                                    tint = brandGreen
-                                )
-                            }
-                        },
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedContainerColor = Color.Transparent,
-                            unfocusedContainerColor = Color.Transparent,
-                            disabledContainerColor = Color.Transparent,
-                            errorContainerColor = Color.Transparent,
-                            focusedBorderColor = Color.Transparent,
-                            unfocusedBorderColor = Color.Transparent,
-                            errorBorderColor = Color.Transparent,
-                            focusedTextColor = textDark,
-                            unfocusedTextColor = textDark
-                        ),
-                        textStyle = TextStyle(
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = textDark
-                        )
-                    )
-                    HorizontalDivider(
-                        thickness = 1.dp,
-                        color = if (passwordError != null) Color(0xFFEF4444) else borderColor
-                    )
-                    if (passwordError != null) {
-                        Text(
-                            text = passwordError ?: "",
-                            color = Color(0xFFEF4444),
-                            fontSize = 12.sp,
-                            modifier = Modifier.padding(top = 4.dp)
-                        )
+                ClicksTextField(
+                    value = password,
+                    onValueChange = {
+                        password = it
+                        passwordError = null
+                    },
+                    label = "Password",
+                    errorMessage = passwordError,
+                    visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                    labelFontSize = 15,
+                    trailingIcon = {
+                        IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                            Icon(
+                                imageVector = if (passwordVisible) Icons.Outlined.Visibility else Icons.Outlined.VisibilityOff,
+                                contentDescription = "Toggle password visibility",
+                                tint = BrandGreen
+                            )
+                        }
                     }
-                }
+                )
 
                 Spacer(modifier = Modifier.height(36.dp))
 
                 // SIGN UP Button
-                Button(
+                ClicksButton(
+                    text = "SIGN UP",
+                    isLoading = uiState.isLoading,
                     onClick = {
                         var valid = true
                         if (firstName.isBlank()) {
@@ -412,34 +261,8 @@ fun RegisterScreen(
                                 onSuccess = onRegisterSuccess
                             )
                         }
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(52.dp),
-                    enabled = !uiState.isLoading,
-                    shape = RoundedCornerShape(26.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = brandGreen,
-                        contentColor = Color.White,
-                        disabledContainerColor = brandGreen.copy(alpha = 0.6f),
-                        disabledContentColor = Color.White
-                    )
-                ) {
-                    if (uiState.isLoading) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(24.dp),
-                            color = Color.White,
-                            strokeWidth = 2.5.dp
-                        )
-                    } else {
-                        Text(
-                            text = "SIGN UP",
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.Bold,
-                            letterSpacing = 1.sp
-                        )
                     }
-                }
+                )
 
                 Spacer(modifier = Modifier.height(24.dp))
 
@@ -447,15 +270,15 @@ fun RegisterScreen(
                 Text(
                     text = buildAnnotatedString {
                         append("By tapping “Sign Up” you accept our ")
-                        withStyle(style = SpanStyle(color = brandGreen, fontWeight = FontWeight.SemiBold)) {
+                        withStyle(style = SpanStyle(color = BrandGreen, fontWeight = FontWeight.SemiBold)) {
                             append("terms")
                         }
                         append(" and ")
-                        withStyle(style = SpanStyle(color = brandGreen, fontWeight = FontWeight.SemiBold)) {
+                        withStyle(style = SpanStyle(color = BrandGreen, fontWeight = FontWeight.SemiBold)) {
                             append("condition")
                         }
                     },
-                    color = textMuted,
+                    color = TextMuted,
                     fontSize = 12.sp,
                     modifier = Modifier.padding(horizontal = 8.dp)
                 )
@@ -469,12 +292,12 @@ fun RegisterScreen(
                 ) {
                     Text(
                         text = "Already have an account? ",
-                        color = textMuted,
+                        color = TextMuted,
                         fontSize = 14.sp
                     )
                     Text(
                         text = "Sign in",
-                        color = brandGreen,
+                        color = BrandGreen,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.clickable { onLoginClick() }
@@ -482,66 +305,6 @@ fun RegisterScreen(
                 }
 
                 Spacer(modifier = Modifier.height(24.dp))
-            }
-        }
-    }
-}
-
-@Composable
-fun ToastBanner(
-    message: String,
-    isError: Boolean,
-    onDismiss: () -> Unit
-) {
-    LaunchedEffect(message) {
-        delay(4000L)
-        onDismiss()
-    }
-
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 24.dp, vertical = 16.dp)
-            .zIndex(10f),
-        contentAlignment = Alignment.TopCenter
-    ) {
-        Surface(
-            shape = RoundedCornerShape(16.dp),
-            color = if (isError) Color(0xFFFEF2F2) else Color(0xFFF0FDF4),
-            border = BorderStroke(1.dp, if (isError) Color(0xFFFCA5A5) else Color(0xFF86EFAC)),
-            shadowElevation = 8.dp
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 14.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    imageVector = if (isError) Icons.Outlined.ErrorOutline else Icons.Outlined.CheckCircle,
-                    contentDescription = null,
-                    tint = if (isError) Color(0xFFDC2626) else Color(0xFF16A34A),
-                    modifier = Modifier.size(22.dp)
-                )
-                Spacer(Modifier.width(12.dp))
-                Text(
-                    text = message,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = if (isError) Color(0xFF991B1B) else Color(0xFF166534),
-                    modifier = Modifier.weight(1f)
-                )
-                IconButton(
-                    onClick = onDismiss,
-                    modifier = Modifier.size(24.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.Close,
-                        contentDescription = "Close",
-                        tint = if (isError) Color(0xFFDC2626) else Color(0xFF16A34A),
-                        modifier = Modifier.size(16.dp)
-                    )
-                }
             }
         }
     }

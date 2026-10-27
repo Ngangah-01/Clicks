@@ -1,4 +1,4 @@
-package com.clicks.app.feature.login
+package com.clicks.app.feature.login.data
 
 import com.clicks.app.feature.register.data.UserResponse
 

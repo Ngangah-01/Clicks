@@ -1,7 +1,5 @@
 package com.clicks.app.feature.login.data
 
-import com.clicks.app.feature.login.AuthResponse
-import com.clicks.app.feature.login.LoginRequest
 import com.clicks.app.feature.register.data.RegisterRequest
 import com.clicks.app.feature.register.data.UserResponse
 import com.clicks.app.network.dto.ApiResponse

@@ -1,7 +1,6 @@
 package com.clicks.app.network
 
 import android.content.Context
-import com.clicks.app.feature.login.data.AuthApi
 import com.clicks.app.lib.session.TokenStorage
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -10,10 +9,7 @@ import java.util.concurrent.TimeUnit
 
 object ApiClient {
 
-//    private const val BASE_URL = "http://10.0.2.2:8080/"
     private const val BASE_URL = "https://minishop-backend-mi7h.onrender.com/"
-
-
 
     lateinit var tokenStorage: TokenStorage
         private set
@@ -22,7 +18,7 @@ object ApiClient {
     private var initialized = false
 
     @Volatile
-    private var authApiInstance: AuthApi? = null
+    private var retrofitInstance: Retrofit? = null
 
     fun initialize(context: Context) {
         if (initialized) return
@@ -42,19 +38,22 @@ object ApiClient {
                 .readTimeout(20, TimeUnit.SECONDS)
                 .build()
 
-            authApiInstance = Retrofit.Builder()
+            retrofitInstance = Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .client(client)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
-                .create(AuthApi::class.java)
 
             initialized = true
         }
     }
 
-    val authApi: AuthApi
-        get() = checkNotNull(authApiInstance) {
+    val retrofit: Retrofit
+        get() = checkNotNull(retrofitInstance) {
             "ApiClient is not initialized. Call initialize(context) first."
         }
+
+    fun <T> createService(serviceClass: Class<T>): T = retrofit.create(serviceClass)
+
+    inline fun <reified T> createService(): T = createService(T::class.java)
 }

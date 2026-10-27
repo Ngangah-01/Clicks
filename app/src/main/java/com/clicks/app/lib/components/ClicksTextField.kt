@@ -1,13 +1,27 @@
 package com.clicks.app.lib.components
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.clicks.app.lib.theme.BorderColor
+import com.clicks.app.lib.theme.ClicksTextPlaceholder
+import com.clicks.app.lib.theme.Error
+import com.clicks.app.lib.theme.LabelColor
+import com.clicks.app.lib.theme.TextDark
 
 @Composable
 fun ClicksTextField(
@@ -16,27 +30,74 @@ fun ClicksTextField(
     label: String,
     modifier: Modifier = Modifier,
     placeholder: String? = null,
+    errorMessage: String? = null,
     visualTransformation: VisualTransformation = VisualTransformation.None,
+    trailingIcon: @Composable (() -> Unit)? = null,
+    singleLine: Boolean = true,
     enabled: Boolean = true,
-    isError: Boolean = false
+    isError: Boolean = errorMessage != null,
+    labelFontSize: Int = 13,
+    valueFontSize: Int = 16
 ) {
-    OutlinedTextField(
-        value = value,
-        onValueChange = onValueChange,
-        modifier = modifier
-            .fillMaxWidth()
-            .height(56.dp),
-        label = {
-            Text(text = label)
-        },
-        placeholder = {
-            placeholder?.let {
-                Text(text = it)
-            }
-        },
-        visualTransformation = visualTransformation,
-        enabled = enabled,
-        isError = isError,
-        singleLine = true
-    )
+    Column(modifier = modifier.fillMaxWidth()) {
+        if (label.isNotBlank()) {
+            Text(
+                text = label,
+                fontSize = labelFontSize.sp,
+                color = LabelColor,
+                fontWeight = FontWeight.Medium
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+        }
+
+        OutlinedTextField(
+            value = value,
+            onValueChange = onValueChange,
+            placeholder = {
+                placeholder?.let {
+                    Text(
+                        text = it,
+                        color = ClicksTextPlaceholder,
+                        fontSize = valueFontSize.sp
+                    )
+                }
+            },
+            modifier = Modifier.fillMaxWidth(),
+            visualTransformation = visualTransformation,
+            trailingIcon = trailingIcon,
+            singleLine = singleLine,
+            enabled = enabled,
+            isError = isError,
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedContainerColor = Color.Transparent,
+                unfocusedContainerColor = Color.Transparent,
+                disabledContainerColor = Color.Transparent,
+                errorContainerColor = Color.Transparent,
+                focusedBorderColor = Color.Transparent,
+                unfocusedBorderColor = Color.Transparent,
+                errorBorderColor = Color.Transparent,
+                focusedTextColor = TextDark,
+                unfocusedTextColor = TextDark
+            ),
+            textStyle = TextStyle(
+                fontSize = valueFontSize.sp,
+                fontWeight = FontWeight.Medium,
+                color = TextDark
+            )
+        )
+
+        HorizontalDivider(
+            thickness = 1.dp,
+            color = if (isError) Error else BorderColor
+        )
+
+        if (!errorMessage.isNullOrBlank()) {
+            Text(
+                text = errorMessage,
+                color = Error,
+                fontSize = 12.sp,
+                modifier = Modifier.padding(top = 4.dp)
+            )
+        }
+    }
 }
