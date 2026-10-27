@@ -1,4 +1,4 @@
-package com.clicks.app.lib.components
+package com.clicks.app.feature.menu.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -24,7 +24,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.clicks.app.feature.menu.StoreProduct
+import com.clicks.app.feature.menu.model.StoreProduct
+import com.clicks.app.lib.components.SquircleShape
 import com.clicks.app.lib.theme.ClicksGreen
 import com.clicks.app.lib.theme.ClicksImageBackground
 import com.clicks.app.lib.theme.ClicksMint
@@ -68,10 +69,10 @@ fun ProductCard(
                 onClick = onFavoriteClick,
                 modifier = Modifier
                     .align(Alignment.TopEnd)
-                    .padding(8.dp)
-                    .size(35.dp)
+                    .padding(12.dp)
+                    .size(28.dp)
                     .background(
-                        Color.White.copy(alpha = 0.94f),
+                        Color.White.copy(alpha = 0.84f),
                         shape = SquircleShape(radius = 10.dp)
                     )
             ) {
@@ -87,7 +88,7 @@ fun ProductCard(
                         "Add to favorites"
                     },
                     tint = if (isFavorite) Error else ClicksText,
-                    modifier = Modifier.size(21.dp)
+                    modifier = Modifier.size(17.dp)
                 )
             }
 

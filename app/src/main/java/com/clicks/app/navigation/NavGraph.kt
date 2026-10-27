@@ -1,12 +1,14 @@
 package com.clicks.app.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.clicks.app.lib.session.SessionManager
 import com.clicks.app.lib.session.TokenStorage
 import com.clicks.app.lib.session.SessionRepository
 import com.clicks.app.feature.login.ui.LoginScreen
@@ -15,18 +17,18 @@ import com.clicks.app.feature.onboarding.OnboardingContainerScreen
 import com.clicks.app.feature.register.ui.RegisterScreen
 import com.clicks.app.feature.register.ui.RegisterViewModel
 import com.clicks.app.feature.home.HomeScreen
-import com.clicks.app.feature.menu.CategoryProductsScreen
-import com.clicks.app.feature.menu.ProductDetailsScreen
+import com.clicks.app.feature.menu.ui.CategoryProductsScreen
+import com.clicks.app.feature.menu.ui.ProductDetailsScreen
 import com.clicks.app.feature.cart.CartScreen
 import com.clicks.app.feature.favorites.FavoritesScreen
-import com.clicks.app.feature.checkout.CheckoutScreen
+import com.clicks.app.feature.checkout.ui.CheckoutScreen
 import com.clicks.app.feature.location.ui.DeliveryLocationViewModel
 import com.clicks.app.feature.location.ui.LocationPickerScreen
 import com.clicks.app.feature.location.ui.LocationPickerViewModel
 import com.clicks.app.feature.profile.ProfileScreen
 import com.clicks.app.feature.profile.ProfileViewModel
 import com.clicks.app.feature.orders.OrdersScreen
-import com.clicks.app.lib.viewmodel.StoreViewModel
+import com.clicks.app.feature.menu.viewmodel.StoreViewModel
 
 @Composable
 fun NavGraph() {
@@ -35,6 +37,7 @@ fun NavGraph() {
     val sessionRepository = remember { SessionRepository(TokenStorage(context)) }
     val storeViewModel: StoreViewModel = viewModel()
     val deliveryLocationViewModel: DeliveryLocationViewModel = viewModel()
+    val profileViewModel: ProfileViewModel = viewModel()
 
     val startDestination = when {
         !sessionRepository.isOnboardingCompleted() -> Routes.Onboarding.route
@@ -45,6 +48,13 @@ fun NavGraph() {
     val goToLogin = {
         navController.navigate(Routes.Login.route) {
             popUpTo(Routes.Onboarding.route) { inclusive = true }
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        SessionManager.sessionExpiredEvent.collect {
+            sessionRepository.clearSession()
+            goToLogin()
         }
     }
 
@@ -102,7 +112,6 @@ fun NavGraph() {
         }
 
         composable(Routes.Home.route) {
-            val profileViewModel: ProfileViewModel = viewModel()
             HomeScreen(
                 storeViewModel = storeViewModel,
                 profileViewModel = profileViewModel,
@@ -211,13 +220,11 @@ fun NavGraph() {
         }
 
         composable(Routes.Profile.route) {
-            val profileViewModel: ProfileViewModel = viewModel()
             ProfileScreen(
                 viewModel = profileViewModel,
                 onBackClick = { navController.popBackStack() },
                 onOrdersClick = { navController.navigate(Routes.Orders.route) },
-                onLogoutClick = { profileViewModel.logout(); goToLogin() },
-                onSessionExpired = { goToLogin() }
+                onLogoutClick = { profileViewModel.logout(); goToLogin() }
             )
         }
 

@@ -1,4 +1,4 @@
-package com.clicks.app.feature.checkout
+package com.clicks.app.feature.checkout.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

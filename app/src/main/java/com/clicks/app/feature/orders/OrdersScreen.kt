@@ -27,7 +27,7 @@ import com.clicks.app.lib.theme.InfoText
 import com.clicks.app.lib.theme.SurfaceLight
 import com.clicks.app.lib.theme.Warning
 import com.clicks.app.lib.theme.WarningBg
-import com.clicks.app.lib.viewmodel.StoreViewModel
+import com.clicks.app.feature.menu.viewmodel.StoreViewModel
 
 @Composable
 fun OrdersScreen(

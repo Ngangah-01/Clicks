@@ -6,11 +6,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.HelpOutline
 import androidx.compose.material.icons.automirrored.outlined.Logout
 import androidx.compose.material.icons.outlined.ChevronRight
 import androidx.compose.material.icons.outlined.FavoriteBorder
-import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.PersonOutline
 import androidx.compose.material.icons.outlined.ShoppingBag
 import androidx.compose.material.icons.outlined.ShoppingCart
@@ -33,8 +31,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.clicks.app.feature.profile.ProfileViewModel
-import com.clicks.app.feature.profile.displayName
-import com.clicks.app.feature.profile.initials
 import com.clicks.app.lib.theme.ClicksGreen
 import com.clicks.app.lib.theme.ClicksMint
 import com.clicks.app.lib.theme.ClicksMuted
@@ -94,7 +90,7 @@ fun ClicksDrawerSheet(
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
-                                    text = user.initials(),
+                                    text = user.initials,
                                     fontSize = 18.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = Color.White
@@ -105,7 +101,7 @@ fun ClicksDrawerSheet(
 
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
-                                    text = user.displayName(),
+                                    text = user.displayName,
                                     fontSize = 15.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = ClicksText,

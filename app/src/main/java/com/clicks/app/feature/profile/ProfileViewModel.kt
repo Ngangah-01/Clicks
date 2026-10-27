@@ -6,7 +6,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clicks.app.feature.login.data.AuthRepository
-import com.clicks.app.feature.register.data.UserResponse
+import com.clicks.app.feature.profile.model.User
+import com.clicks.app.lib.session.SessionManager
 import com.clicks.app.network.ApiErrorType
 import com.clicks.app.network.ApiResult
 import kotlinx.coroutines.Job
@@ -14,9 +15,8 @@ import kotlinx.coroutines.launch
 
 data class ProfileUiState(
     val isLoading: Boolean = true,
-    val user: UserResponse? = null,
-    val errorMessage: String? = null,
-    val isSessionExpired: Boolean = false
+    val user: User? = null,
+    val errorMessage: String? = null
 )
 
 class ProfileViewModel(
@@ -47,7 +47,7 @@ class ProfileViewModel(
                 is ApiResult.Error -> {
                     if (result.isAuthFailure()) {
                         authRepository.logout()
-                        uiState = ProfileUiState(isLoading = false, isSessionExpired = true)
+                        SessionManager.triggerSessionExpired()
                     } else {
                         uiState = uiState.copy(
                             isLoading = false,

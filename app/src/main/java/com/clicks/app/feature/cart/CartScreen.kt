@@ -35,8 +35,8 @@ import com.clicks.app.lib.theme.Error
 import com.clicks.app.lib.theme.StarGold
 import com.clicks.app.lib.theme.SurfaceLight
 import com.clicks.app.lib.theme.SurfaceLightAlt
-import com.clicks.app.lib.viewmodel.CartItem
-import com.clicks.app.lib.viewmodel.StoreViewModel
+import com.clicks.app.feature.menu.viewmodel.CartItem
+import com.clicks.app.feature.menu.viewmodel.StoreViewModel
 
 @Composable
 fun CartScreen(

@@ -1,9 +1,9 @@
-package com.clicks.app.lib.viewmodel
+package com.clicks.app.feature.menu.viewmodel
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
-import com.clicks.app.feature.menu.StoreProduct
-import com.clicks.app.feature.menu.sampleProducts
+import com.clicks.app.feature.menu.model.StoreProduct
+import com.clicks.app.feature.menu.model.sampleProducts
 
 data class CartItem(
     val product: StoreProduct,
@@ -76,7 +76,8 @@ class StoreViewModel : ViewModel() {
         val product = sampleProducts.firstOrNull { it.id == productId } ?: return
         val index = cartItems.indexOfFirst { it.product.id == productId }
         if (index >= 0) {
-            cartItems[index] = cartItems[index].copy(quantity = cartItems[index].quantity + quantity)        } else {
+            cartItems[index] = cartItems[index].copy(quantity = cartItems[index].quantity + quantity)
+        } else {
             cartItems.add(CartItem(product, quantity))
         }
     }
@@ -108,6 +109,4 @@ class StoreViewModel : ViewModel() {
         orders.add(0, newOrder)
         cartItems.clear()
     }
-
-
 }

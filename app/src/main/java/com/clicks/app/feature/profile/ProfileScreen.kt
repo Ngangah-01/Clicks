@@ -22,8 +22,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.clicks.app.feature.register.data.UserResponse
-
 import com.clicks.app.lib.theme.ClicksGreen
 import com.clicks.app.lib.theme.ClicksMint
 import com.clicks.app.lib.theme.ClicksMuted
@@ -36,16 +34,10 @@ fun ProfileScreen(
     viewModel: ProfileViewModel,
     onBackClick: () -> Unit = {},
     onOrdersClick: () -> Unit = {},
-    onLogoutClick: () -> Unit = {},
-    onSessionExpired: () -> Unit = {}
+    onLogoutClick: () -> Unit = {}
 ) {
     val uiState = viewModel.uiState
     val user = uiState.user
-
-    // The ViewModel has already cleared the token; the screen only navigates.
-    LaunchedEffect(uiState.isSessionExpired) {
-        if (uiState.isSessionExpired) onSessionExpired()
-    }
 
     var notificationsEnabled by remember { mutableStateOf(true) }
     var emailAlertsEnabled by remember { mutableStateOf(true) }
@@ -124,7 +116,7 @@ fun ProfileScreen(
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
-                                    text = user.initials(),
+                                    text = user.initials,
                                     fontSize = 22.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = Color.White
@@ -135,7 +127,7 @@ fun ProfileScreen(
 
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
-                                    text = user.displayName(),
+                                    text = user.displayName,
                                     fontSize = 18.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = ClicksText
@@ -437,14 +429,6 @@ fun ProfileScreen(
         )
     }
 }
-
-fun UserResponse.displayName(): String =
-    "$firstName $lastName".trim()
-
-fun UserResponse.initials(): String =
-    listOfNotNull(firstName.firstOrNull(), lastName.firstOrNull())
-        .joinToString("")
-        .uppercase()
 
 @Composable
 private fun AccountInfoRow(label: String, value: String) {

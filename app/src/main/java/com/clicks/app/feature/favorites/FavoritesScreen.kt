@@ -16,12 +16,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.clicks.app.lib.components.ProductCard
-import com.clicks.app.feature.menu.sampleProducts
+import com.clicks.app.feature.menu.model.sampleProducts
+import com.clicks.app.feature.menu.ui.components.ProductCard
+import com.clicks.app.feature.menu.viewmodel.StoreViewModel
 import com.clicks.app.lib.theme.BorderColor
 import com.clicks.app.lib.theme.ClicksMuted
 import com.clicks.app.lib.theme.ClicksText
-import com.clicks.app.lib.viewmodel.StoreViewModel
 
 @Composable
 fun FavoritesScreen(

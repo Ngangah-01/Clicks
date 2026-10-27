@@ -1,7 +1,8 @@
 package com.clicks.app.feature.login.data
 
 import com.clicks.app.feature.register.data.RegisterRequest
-import com.clicks.app.feature.register.data.UserResponse
+import com.clicks.app.feature.profile.model.User
+import com.clicks.app.feature.profile.model.toDomain
 import com.clicks.app.lib.session.TokenStorage
 import com.clicks.app.network.ApiClient
 import com.clicks.app.network.ApiResult
@@ -43,9 +44,13 @@ class AuthRepository(
         return persistSession(result)
     }
 
-    suspend fun getCurrentUser(): ApiResult<UserResponse> {
-        return safeApiCall {
+    suspend fun getCurrentUser(): ApiResult<User> {
+        val result = safeApiCall {
             authApi.getCurrentUser()
+        }
+        return when (result) {
+            is ApiResult.Success -> ApiResult.Success(result.data.toDomain(), result.message)
+            is ApiResult.Error -> result
         }
     }
 

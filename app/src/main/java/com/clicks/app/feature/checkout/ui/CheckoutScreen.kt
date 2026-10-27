@@ -1,4 +1,4 @@
-package com.clicks.app.feature.checkout
+package com.clicks.app.feature.checkout.ui
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -29,7 +29,7 @@ import com.clicks.app.lib.theme.ClicksGreen
 import com.clicks.app.lib.theme.ClicksMuted
 import com.clicks.app.lib.theme.ClicksText
 import com.clicks.app.lib.theme.SurfaceLight
-import com.clicks.app.lib.viewmodel.StoreViewModel
+import com.clicks.app.feature.menu.viewmodel.StoreViewModel
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
 

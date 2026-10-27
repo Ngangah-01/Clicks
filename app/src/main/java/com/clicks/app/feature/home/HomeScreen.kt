@@ -13,19 +13,13 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.HelpOutline
-import androidx.compose.material.icons.automirrored.outlined.Logout
 import androidx.compose.material.icons.outlined.*
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -36,17 +30,14 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import com.clicks.app.R
 import com.clicks.app.feature.profile.ProfileViewModel
-import com.clicks.app.feature.profile.displayName
-import com.clicks.app.feature.profile.initials
-import com.clicks.app.lib.viewmodel.StoreViewModel
-import com.clicks.app.feature.menu.sampleProducts
+import com.clicks.app.feature.menu.model.sampleProducts
+import com.clicks.app.feature.menu.ui.components.ProductCard
+import com.clicks.app.feature.menu.viewmodel.StoreViewModel
 import com.clicks.app.lib.components.ClicksBottomBar
 import com.clicks.app.lib.components.ClicksDrawerSheet
-import com.clicks.app.lib.components.ProductCard
 import com.clicks.app.lib.components.SearchBar
 import com.clicks.app.lib.theme.ClicksCream
 import com.clicks.app.lib.theme.ClicksGreen
-import com.clicks.app.lib.theme.ClicksGreenInactive
 import com.clicks.app.lib.theme.ClicksMint
 import com.clicks.app.lib.theme.ClicksMuted
 import com.clicks.app.lib.theme.ClicksText
@@ -112,12 +103,6 @@ fun HomeScreen(
     var searchText by remember { mutableStateOf("") }
     var isSearchOpen by remember { mutableStateOf(false) }
     var selectedTab by remember { mutableStateOf("Home") }
-
-    LaunchedEffect(profileViewModel.uiState.isSessionExpired) {
-        if (profileViewModel.uiState.isSessionExpired) {
-            onLogoutClick()
-        }
-    }
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -584,10 +569,10 @@ fun HomeScreen(
 
 @Composable
 private fun SectionHeading(
+    modifier: Modifier = Modifier,
     title: String,
     action: String,
-    onActionClick: () -> Unit = {},
-    modifier: Modifier = Modifier
+    onActionClick: () -> Unit = {}
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),

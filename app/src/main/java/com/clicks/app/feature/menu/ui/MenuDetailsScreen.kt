@@ -1,4 +1,4 @@
-package com.clicks.app.feature.menu
+package com.clicks.app.feature.menu.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -32,7 +32,8 @@ import com.clicks.app.lib.theme.ClicksText
 import com.clicks.app.lib.theme.Error
 import com.clicks.app.lib.theme.ProductBgLight
 import com.clicks.app.lib.theme.StarGold
-import com.clicks.app.lib.viewmodel.StoreViewModel
+import com.clicks.app.feature.menu.model.sampleProducts
+import com.clicks.app.feature.menu.viewmodel.StoreViewModel
 import com.clicks.app.lib.components.QuantityPill
 import kotlinx.coroutines.launch
 
