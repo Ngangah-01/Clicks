@@ -11,11 +11,11 @@ import androidx.navigation.compose.rememberNavController
 import com.clicks.app.lib.session.SessionManager
 import com.clicks.app.lib.session.TokenStorage
 import com.clicks.app.lib.session.SessionRepository
-import com.clicks.app.feature.login.ui.LoginScreen
-import com.clicks.app.feature.login.viewmodel.LoginViewModel
+import com.clicks.app.feature.auth.ui.login.LoginScreen
+import com.clicks.app.feature.auth.ui.login.LoginViewModel
 import com.clicks.app.feature.onboarding.OnboardingContainerScreen
-import com.clicks.app.feature.register.ui.RegisterScreen
-import com.clicks.app.feature.register.ui.RegisterViewModel
+import com.clicks.app.feature.auth.ui.register.RegisterScreen
+import com.clicks.app.feature.auth.ui.register.RegisterViewModel
 import com.clicks.app.feature.home.ui.HomeScreen
 import com.clicks.app.feature.menu.ui.CategoryProductsScreen
 import com.clicks.app.feature.menu.ui.ProductDetailsScreen
@@ -25,8 +25,8 @@ import com.clicks.app.feature.checkout.ui.CheckoutScreen
 import com.clicks.app.feature.location.ui.DeliveryLocationViewModel
 import com.clicks.app.feature.location.ui.LocationPickerScreen
 import com.clicks.app.feature.location.ui.LocationPickerViewModel
-import com.clicks.app.feature.profile.ProfileScreen
-import com.clicks.app.feature.profile.ProfileViewModel
+import com.clicks.app.feature.auth.ui.profile.ProfileScreen
+import com.clicks.app.feature.auth.ui.profile.ProfileViewModel
 import com.clicks.app.feature.orders.OrdersScreen
 import com.clicks.app.feature.menu.viewmodel.StoreViewModel
 
@@ -51,10 +51,16 @@ fun NavGraph() {
         }
     }
 
+    val performLogout = {
+        storeViewModel.clearSession()
+        profileViewModel.clearSession()
+        sessionRepository.clearSession()
+        goToLogin()
+    }
+
     LaunchedEffect(Unit) {
         SessionManager.sessionExpiredEvent.collect {
-            sessionRepository.clearSession()
-            goToLogin()
+            performLogout()
         }
     }
 
@@ -137,8 +143,7 @@ fun NavGraph() {
                     navController.navigate(Routes.Orders.route)
                 },
                 onLogoutClick = {
-                    sessionRepository.clearSession()
-                    goToLogin()
+                    performLogout()
                 },
             )
         }
@@ -224,7 +229,10 @@ fun NavGraph() {
                 viewModel = profileViewModel,
                 onBackClick = { navController.popBackStack() },
                 onOrdersClick = { navController.navigate(Routes.Orders.route) },
-                onLogoutClick = { profileViewModel.logout(); goToLogin() }
+                onLogoutClick = {
+                    profileViewModel.logout()
+                    performLogout()
+                }
             )
         }
 

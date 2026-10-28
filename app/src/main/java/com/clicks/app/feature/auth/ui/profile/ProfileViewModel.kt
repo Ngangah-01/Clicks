@@ -1,12 +1,12 @@
-package com.clicks.app.feature.profile
+package com.clicks.app.feature.auth.ui.profile
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.clicks.app.feature.login.data.AuthRepository
-import com.clicks.app.feature.profile.model.User
+import com.clicks.app.feature.auth.data.UserRepository
+import com.clicks.app.feature.auth.model.User
 import com.clicks.app.lib.session.SessionManager
 import com.clicks.app.network.ApiErrorType
 import com.clicks.app.network.ApiResult
@@ -20,7 +20,7 @@ data class ProfileUiState(
 )
 
 class ProfileViewModel(
-    private val authRepository: AuthRepository = AuthRepository()
+    private val userRepository: UserRepository = UserRepository()
 ) : ViewModel() {
 
     var uiState by mutableStateOf(ProfileUiState())
@@ -39,14 +39,13 @@ class ProfileViewModel(
         uiState = uiState.copy(isLoading = true, errorMessage = null)
 
         loadJob = viewModelScope.launch {
-            when (val result = authRepository.getCurrentUser()) {
+            when (val result = userRepository.getCurrentUser()) {
                 is ApiResult.Success -> {
                     uiState = ProfileUiState(isLoading = false, user = result.data)
                 }
 
                 is ApiResult.Error -> {
                     if (result.isAuthFailure()) {
-                        authRepository.logout()
                         SessionManager.triggerSessionExpired()
                     } else {
                         uiState = uiState.copy(
@@ -60,7 +59,11 @@ class ProfileViewModel(
     }
 
     fun logout() {
-        authRepository.logout()
+        SessionManager.triggerSessionExpired()
+    }
+
+    fun clearSession() {
+        uiState = ProfileUiState(isLoading = true, user = null)
     }
 
     private fun ApiResult.Error.isAuthFailure() =

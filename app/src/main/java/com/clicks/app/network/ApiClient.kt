@@ -1,7 +1,6 @@
 package com.clicks.app.network
 
 import android.content.Context
-import com.clicks.app.lib.session.TokenStorage
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -9,29 +8,30 @@ import java.util.concurrent.TimeUnit
 
 object ApiClient {
 
-    private const val BASE_URL = "https://minishop-backend-mi7h.onrender.com/"
+//    private const val BASE_URL = "https://minishop-backend-mi7h.onrender.com/"
+//    local db
+    private const val BASE_URL = "http://10.100.8.6:8080/"
 
-    lateinit var tokenStorage: TokenStorage
-        private set
-
+    lateinit var appContext: Context
+    private set
     @Volatile
     private var initialized = false
 
     @Volatile
     private var retrofitInstance: Retrofit? = null
 
-    fun initialize(context: Context) {
+    fun initialize(context: Context, tokenProvider: () -> String?) {
         if (initialized) return
 
         synchronized(this) {
             if (initialized) return
 
-            tokenStorage = TokenStorage(context.applicationContext)
+            appContext = context.applicationContext
 
             val client = OkHttpClient.Builder()
                 .addInterceptor(
                     AuthInterceptor(
-                        tokenProvider = { tokenStorage.getToken() }
+                        tokenProvider = tokenProvider
                     )
                 )
                 .connectTimeout(15, TimeUnit.SECONDS)

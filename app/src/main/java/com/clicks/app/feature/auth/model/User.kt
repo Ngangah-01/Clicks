@@ -1,6 +1,4 @@
-package com.clicks.app.feature.profile.model
-
-import com.clicks.app.feature.register.data.UserResponse
+package com.clicks.app.feature.auth.model
 
 data class User(
     val id: Long,
@@ -17,11 +15,3 @@ data class User(
             .joinToString("")
             .uppercase()
 }
-
-fun UserResponse.toDomain(): User = User(
-    id = id,
-    firstName = firstName,
-    lastName = lastName,
-    email = email,
-    role = role
-)

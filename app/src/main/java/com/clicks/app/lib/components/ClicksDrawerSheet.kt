@@ -12,15 +12,7 @@ import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.PersonOutline
 import androidx.compose.material.icons.outlined.ShoppingBag
 import androidx.compose.material.icons.outlined.ShoppingCart
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.ModalDrawerSheet
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,17 +22,16 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.clicks.app.feature.profile.ProfileViewModel
-import com.clicks.app.lib.theme.ClicksGreen
-import com.clicks.app.lib.theme.ClicksMint
-import com.clicks.app.lib.theme.ClicksMuted
-import com.clicks.app.lib.theme.ClicksText
-import com.clicks.app.lib.theme.Error
-import com.clicks.app.lib.theme.SurfaceLight
+import com.clicks.app.lib.theme.*
 
 @Composable
 fun ClicksDrawerSheet(
-    profileViewModel: ProfileViewModel,
+    userName: String,
+    userEmail: String,
+    userInitials: String,
+    isLoading: Boolean,
+    errorMessage: String?,
+    onRetryLoad: () -> Unit,
     onProfileClick: () -> Unit,
     onOrdersClick: () -> Unit,
     onFavoritesClick: () -> Unit,
@@ -49,9 +40,6 @@ fun ClicksDrawerSheet(
     onCloseDrawer: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val uiState = profileViewModel.uiState
-    val user = uiState.user
-
     ModalDrawerSheet(
         drawerContainerColor = Color.White,
         modifier = modifier.width(300.dp)
@@ -75,7 +63,35 @@ fun ClicksDrawerSheet(
                     }
             ) {
                 when {
-                    user != null -> {
+                    isLoading -> {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(20.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(color = ClicksGreen, modifier = Modifier.size(24.dp))
+                        }
+                    }
+
+                    !errorMessage.isNullOrBlank() -> {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(14.dp)
+                        ) {
+                            Text(
+                                text = errorMessage,
+                                fontSize = 12.sp,
+                                color = Error
+                            )
+                            TextButton(onClick = onRetryLoad) {
+                                Text("Retry", color = ClicksGreen, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                            }
+                        }
+                    }
+
+                    else -> {
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -90,7 +106,7 @@ fun ClicksDrawerSheet(
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
-                                    text = user.initials,
+                                    text = userInitials,
                                     fontSize = 18.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = Color.White
@@ -101,7 +117,7 @@ fun ClicksDrawerSheet(
 
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
-                                    text = user.displayName,
+                                    text = userName,
                                     fontSize = 15.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = ClicksText,
@@ -109,39 +125,11 @@ fun ClicksDrawerSheet(
                                 )
                                 Spacer(Modifier.height(2.dp))
                                 Text(
-                                    text = user.email,
+                                    text = userEmail,
                                     fontSize = 12.sp,
                                     color = ClicksMuted,
                                     maxLines = 1
                                 )
-                            }
-                        }
-                    }
-
-                    uiState.isLoading -> {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(20.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator(color = ClicksGreen, modifier = Modifier.size(24.dp))
-                        }
-                    }
-
-                    else -> {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(14.dp)
-                        ) {
-                            Text(
-                                text = uiState.errorMessage ?: "Could not load profile",
-                                fontSize = 12.sp,
-                                color = Error
-                            )
-                            TextButton(onClick = profileViewModel::loadProfile) {
-                                Text("Retry", color = ClicksGreen, fontSize = 12.sp, fontWeight = FontWeight.Bold)
                             }
                         }
                     }

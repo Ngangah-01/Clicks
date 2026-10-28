@@ -1,4 +1,4 @@
-package com.clicks.app.feature.register.data
+package com.clicks.app.feature.auth.data.dto
 
 data class RegisterRequest(
     val firstName: String,

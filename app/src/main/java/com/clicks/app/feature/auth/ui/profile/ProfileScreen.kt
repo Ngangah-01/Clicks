@@ -1,4 +1,4 @@
-package com.clicks.app.feature.profile
+package com.clicks.app.feature.auth.ui.profile
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

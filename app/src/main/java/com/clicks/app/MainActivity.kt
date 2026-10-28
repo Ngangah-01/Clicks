@@ -27,7 +27,8 @@ class MainActivity : ComponentActivity() {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
 
-        ApiClient.initialize(applicationContext)
+        val tokenStorage = com.clicks.app.lib.session.TokenStorage(applicationContext)
+        ApiClient.initialize(applicationContext) { tokenStorage.getToken() }
 
         splashScreen.setKeepOnScreenCondition {
             splashViewModel.state.value == SplashState.Loading

@@ -1,4 +1,4 @@
-package com.clicks.app.feature.register.ui
+package com.clicks.app.feature.auth.ui.register
 
 import android.util.Patterns
 import androidx.compose.animation.AnimatedVisibility

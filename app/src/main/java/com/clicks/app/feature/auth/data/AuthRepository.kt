@@ -1,8 +1,8 @@
-package com.clicks.app.feature.login.data
+package com.clicks.app.feature.auth.data
 
-import com.clicks.app.feature.register.data.RegisterRequest
-import com.clicks.app.feature.profile.model.User
-import com.clicks.app.feature.profile.model.toDomain
+import com.clicks.app.feature.auth.data.dto.AuthResponse
+import com.clicks.app.feature.auth.data.dto.LoginRequest
+import com.clicks.app.feature.auth.data.dto.RegisterRequest
 import com.clicks.app.lib.session.TokenStorage
 import com.clicks.app.network.ApiClient
 import com.clicks.app.network.ApiResult
@@ -13,7 +13,7 @@ import kotlinx.coroutines.withContext
 
 class AuthRepository(
     private val authApi: AuthApi = ApiClient.createService<AuthApi>(),
-    private val tokenStorage: TokenStorage = ApiClient.tokenStorage
+    private val tokenStorage: TokenStorage = TokenStorage(ApiClient.appContext)
 ) {
 
     suspend fun register(
@@ -42,16 +42,6 @@ class AuthRepository(
         }
 
         return persistSession(result)
-    }
-
-    suspend fun getCurrentUser(): ApiResult<User> {
-        val result = safeApiCall {
-            authApi.getCurrentUser()
-        }
-        return when (result) {
-            is ApiResult.Success -> ApiResult.Success(result.data.toDomain(), result.message)
-            is ApiResult.Error -> result
-        }
     }
 
     fun logout() {

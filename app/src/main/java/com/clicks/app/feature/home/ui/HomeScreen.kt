@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
 import com.clicks.app.feature.home.components.*
 import com.clicks.app.feature.menu.model.sampleProducts
 import com.clicks.app.feature.menu.viewmodel.StoreViewModel
-import com.clicks.app.feature.profile.ProfileViewModel
+import com.clicks.app.feature.auth.ui.profile.ProfileViewModel
 import com.clicks.app.lib.components.ClicksBottomBar
 import com.clicks.app.lib.components.ClicksDrawerSheet
 import com.clicks.app.lib.components.SearchBar
@@ -174,7 +174,12 @@ fun HomeScreen(
         drawerState = drawerState,
         drawerContent = {
             ClicksDrawerSheet(
-                profileViewModel = profileViewModel,
+                userName = profileViewModel.uiState.user?.displayName ?: "",
+                userEmail = profileViewModel.uiState.user?.email ?: "",
+                userInitials = profileViewModel.uiState.user?.initials ?: "",
+                isLoading = profileViewModel.uiState.isLoading,
+                errorMessage = profileViewModel.uiState.errorMessage,
+                onRetryLoad = profileViewModel::loadProfile,
                 onProfileClick = onProfileClick,
                 onOrdersClick = onOrdersClick,
                 onFavoritesClick = onFavoritesClick,

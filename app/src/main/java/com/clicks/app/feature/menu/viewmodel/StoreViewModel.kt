@@ -34,6 +34,18 @@ class StoreViewModel : ViewModel() {
         OrderItem("ORD-78390", "Sep 15, 2023", 26.00, "In Transit", "Wood-Fired Margherita Pizza, Berry Smoothie")
     )
 
+    fun clearSession() {
+        favorites.clear()
+        cartItems.clear()
+        orders.clear()
+        orders.addAll(
+            listOf(
+                OrderItem("ORD-78421", "Oct 24, 2023", 34.50, "Delivered", "Truffle Burger & Fries, Caramel Iced Latte"),
+                OrderItem("ORD-78390", "Sep 15, 2023", 26.00, "In Transit", "Wood-Fired Margherita Pizza, Berry Smoothie")
+            )
+        )
+    }
+
     val notifications = mutableStateListOf(
         NotificationItem(1, "Order Delivered", "Your order #ORD-78421 has been successfully delivered.", "2h ago", false),
         NotificationItem(2, "Special Offer", "Flash sale! Enjoy 40% off on all new summer arrivals.", "1d ago", false),
