@@ -4,7 +4,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clicks.app.feature.auth.data.AuthRepository
-import com.clicks.app.feature.auth.data.dto.LoginRequest
 import com.clicks.app.network.ApiResult
 import kotlinx.coroutines.launch
 
@@ -33,10 +32,8 @@ class LoginViewModel(
         viewModelScope.launch {
             when (
                 val result = authRepository.login(
-                    LoginRequest(
-                        email = email.trim(),
-                        password = password
-                    )
+                    email = email.trim(),
+                    password = password
                 )
             ) {
                 is ApiResult.Success -> {

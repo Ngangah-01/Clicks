@@ -4,7 +4,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clicks.app.feature.auth.data.AuthRepository
-import com.clicks.app.feature.auth.data.dto.RegisterRequest
 import com.clicks.app.network.ApiResult
 import kotlinx.coroutines.launch
 
@@ -35,12 +34,10 @@ class RegisterViewModel(
         viewModelScope.launch {
             when (
                 val result = authRepository.register(
-                    RegisterRequest(
-                        firstName = firstName.trim(),
-                        lastName = lastName.trim(),
-                        email = email.trim(),
-                        password = password
-                    )
+                    firstName = firstName.trim(),
+                    lastName = lastName.trim(),
+                    email = email.trim(),
+                    password = password
                 )
             ) {
                 is ApiResult.Success -> {

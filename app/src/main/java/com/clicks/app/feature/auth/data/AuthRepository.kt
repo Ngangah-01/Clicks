@@ -17,28 +17,34 @@ class AuthRepository(
 ) {
 
     suspend fun register(
-        request: RegisterRequest
+        firstName: String,
+        lastName: String,
+        email: String,
+        password: String
     ): ApiResult<AuthResponse> {
+        val request = RegisterRequest(
+            firstName = firstName.trim(),
+            lastName = lastName.trim(),
+            email = email.trim(),
+            password = password
+        )
         val result = safeApiCall {
-            authApi.register(
-                request.copy(
-                    firstName = request.firstName.trim(),
-                    lastName = request.lastName.trim(),
-                    email = request.email.trim()
-                )
-            )
+            authApi.register(request)
         }
 
         return persistSession(result)
     }
 
     suspend fun login(
-        request: LoginRequest
+        email: String,
+        password: String
     ): ApiResult<AuthResponse> {
+        val request = LoginRequest(
+            email = email.trim(),
+            password = password
+        )
         val result = safeApiCall {
-            authApi.login(
-                request.copy(email = request.email.trim())
-            )
+            authApi.login(request)
         }
 
         return persistSession(result)
