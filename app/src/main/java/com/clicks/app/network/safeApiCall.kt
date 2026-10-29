@@ -23,7 +23,7 @@ suspend fun <T> safeApiCall(
     val response = call()
     val data = response.data
 
-    if (response.success && data != null) {
+    if (response.isSuccessful && data != null) {
         ApiResult.Success(data = data, message = response.message.orEmpty())
     } else {
         ApiResult.Error(
@@ -44,7 +44,7 @@ suspend fun safeApiCallNoData(
 ): ApiResult<Unit> = guardedCall {
     val response = call()
 
-    if (response.success) {
+    if (response.isSuccessful) {
         ApiResult.Success(data = Unit, message = response.message.orEmpty())
     } else {
         ApiResult.Error(

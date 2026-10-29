@@ -1,43 +1,32 @@
 package com.clicks.app.feature.auth.data
 
-import com.clicks.app.feature.auth.data.dto.AuthResponse
-import com.clicks.app.feature.auth.data.dto.LoginRequest
-import com.clicks.app.feature.auth.data.dto.RegisterRequest
-import com.clicks.app.feature.auth.data.dto.ForgotPasswordRequest
-import com.clicks.app.feature.auth.data.dto.ResetPasswordRequest
-import com.clicks.app.feature.auth.data.dto.VerifyResetCodeRequest
-import com.clicks.app.feature.auth.data.dto.VerifyResetCodeResponse
+import com.clicks.app.feature.auth.data.dto.CustomerRegisterData
+import com.clicks.app.feature.auth.data.dto.CustomerRegisterRequest
+import com.clicks.app.feature.auth.data.dto.InitLoginRequest
+import com.clicks.app.feature.auth.data.dto.InitLoginResponseData
+import com.clicks.app.feature.auth.data.dto.VerificationCodeData
+import com.clicks.app.feature.auth.data.dto.VerificationCodeRequest
 import com.clicks.app.network.dto.ApiResponse
 import retrofit2.http.Body
 import retrofit2.http.POST
 
 interface AuthApi {
 
-    @POST("api/auth/register")
-    suspend fun register(
-        @Body request: RegisterRequest
-    ): ApiResponse<AuthResponse>
+    // Phone registration verification code request
+    @POST("customer/verification-code/request")
+    suspend fun requestVerificationCode(
+        @Body request: VerificationCodeRequest
+    ): ApiResponse<VerificationCodeData>
 
-    @POST("api/auth/login")
-    suspend fun login(
-        @Body request: LoginRequest
-    ): ApiResponse<AuthResponse>
+    // Customer phone registration
+    @POST("customer/auth/register")
+    suspend fun registerCustomer(
+        @Body request: CustomerRegisterRequest
+    ): ApiResponse<CustomerRegisterData>
 
-//    password recovery
-
-    @POST("api/auth/forgot-password")
-    suspend fun forgotPassword(
-        @Body request: ForgotPasswordRequest
-    ): ApiResponse<Unit>
-
-    @POST("api/auth/verify-reset-code")
-    suspend fun verifyResetCode(
-        @Body request: VerifyResetCodeRequest
-    ): ApiResponse<VerifyResetCodeResponse>
-
-    @POST("api/auth/reset-password")
-    suspend fun resetPassword(
-        @Body request: ResetPasswordRequest
-    ): ApiResponse<Unit>
-
+    // Customer init login (start login flow)
+    @POST("customer/auth/init-login")
+    suspend fun initLogin(
+        @Body request: InitLoginRequest
+    ): ApiResponse<InitLoginResponseData>
 }
