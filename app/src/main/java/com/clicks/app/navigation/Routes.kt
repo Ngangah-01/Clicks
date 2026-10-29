@@ -8,6 +8,8 @@ sealed class Routes(val route: String) {
 
     data object Register : Routes("register")
 
+    data object PasswordRecovery : Routes("password_recovery")
+
     data object Home : Routes("home")
 
     data object Products : Routes("products")

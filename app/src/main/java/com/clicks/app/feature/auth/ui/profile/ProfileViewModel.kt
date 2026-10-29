@@ -28,10 +28,6 @@ class ProfileViewModel(
 
     private var loadJob: Job? = null
 
-    init {
-        loadProfile()
-    }
-
     fun loadProfile() {
         if (loadJob?.isActive == true) return
 

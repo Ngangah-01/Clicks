@@ -14,30 +14,53 @@ private const val TAG = "SafeApiCall"
 private val errorGson = Gson()
 
 /**
- * Runs a Retrofit call that returns [ApiResponse] and converts every outcome
- * (success, server-side failure, HTTP error, no connection, unexpected crash)
- * into an [ApiResult]. Use it from any repository.
+ * For endpoints that must return data (login, register, verify code...).
+ * A response with success=true but no data is treated as an error.
  */
 suspend fun <T> safeApiCall(
     call: suspend () -> ApiResponse<T>
+): ApiResult<T> = guardedCall {
+    val response = call()
+    val data = response.data
+
+    if (response.success && data != null) {
+        ApiResult.Success(data = data, message = response.message.orEmpty())
+    } else {
+        ApiResult.Error(
+            message = response.message.orEmpty().ifBlank {
+                "The request could not be completed."
+            },
+            type = ApiErrorType.Server
+        )
+    }
+}
+
+/**
+ * For endpoints where success is just success=true and there is no payload
+ * (forgot-password, reset-password, logout...).
+ */
+suspend fun safeApiCallNoData(
+    call: suspend () -> ApiResponse<*>
+): ApiResult<Unit> = guardedCall {
+    val response = call()
+
+    if (response.success) {
+        ApiResult.Success(data = Unit, message = response.message.orEmpty())
+    } else {
+        ApiResult.Error(
+            message = response.message.orEmpty().ifBlank {
+                "The request could not be completed."
+            },
+            type = ApiErrorType.Server
+        )
+    }
+}
+
+private suspend fun <T> guardedCall(
+    block: suspend () -> ApiResult<T>
 ): ApiResult<T> {
     return try {
-        val response = call()
-        val data = response.data
-
-        if (response.success && data != null) {
-            ApiResult.Success(
-                data = data,
-                message = response.message
-            )
-        } else {
-            ApiResult.Error(
-                message = response.message.ifBlank {
-                    "The request could not be completed."
-                },
-                type = ApiErrorType.Server
-            )
-        }
+        block()
     } catch (exception: CancellationException) {
         throw exception
     } catch (exception: HttpException) {
@@ -89,9 +112,5 @@ private fun HttpException.toApiError(): ApiResult.Error {
         }
     }
 
-    return ApiResult.Error(
-        message = message,
-        type = type,
-        code = code
-    )
+    return ApiResult.Error(message = message, type = type, code = code)
 }

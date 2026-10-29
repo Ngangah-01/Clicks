@@ -16,6 +16,8 @@ import com.clicks.app.feature.auth.ui.login.LoginViewModel
 import com.clicks.app.feature.onboarding.OnboardingContainerScreen
 import com.clicks.app.feature.auth.ui.register.RegisterScreen
 import com.clicks.app.feature.auth.ui.register.RegisterViewModel
+import com.clicks.app.feature.auth.ui.recovery.PasswordRecoveryScreen
+import com.clicks.app.feature.auth.ui.recovery.PasswordRecoveryViewModel
 import com.clicks.app.feature.home.ui.HomeScreen
 import com.clicks.app.feature.menu.ui.CategoryProductsScreen
 import com.clicks.app.feature.menu.ui.ProductDetailsScreen
@@ -94,10 +96,24 @@ fun NavGraph() {
                 },
                 onRegisterClick = {
                     navController.navigate(Routes.Register.route)
+                },
+                onForgotPasswordClick = {
+                    navController.navigate(Routes.PasswordRecovery.route)
                 }
-            ) {
-                // Handle forgot password
-            }
+            )
+        }
+
+        composable(Routes.PasswordRecovery.route) {
+            val recoveryViewModel: PasswordRecoveryViewModel = viewModel()
+            PasswordRecoveryScreen(
+                viewModel = recoveryViewModel,
+                onBackClick = { navController.popBackStack() },
+                onBackToLogin = {
+                    navController.navigate(Routes.Login.route) {
+                        popUpTo(Routes.Login.route) { inclusive = true }
+                    }
+                }
+            )
         }
 
         composable(Routes.Register.route) {
@@ -118,6 +134,7 @@ fun NavGraph() {
         }
 
         composable(Routes.Home.route) {
+            LaunchedEffect(Unit) {profileViewModel.loadProfile()}
             HomeScreen(
                 storeViewModel = storeViewModel,
                 profileViewModel = profileViewModel,
