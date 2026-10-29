@@ -47,7 +47,7 @@ fun PhoneAuthScreen(
     onBackToLogin: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState
-    var authMode by rememberSaveable { mutableStateOf("REGISTER") } // "REGISTER" or "LOGIN"
+    var authMode by rememberSaveable { mutableStateOf("LOGIN") } // "LOGIN" or "REGISTER"
     var loginMethod by rememberSaveable { mutableStateOf("PHONE") } // "PHONE" or "EMAIL"
 
     var phoneNumber by rememberSaveable { mutableStateOf("") }
@@ -118,7 +118,7 @@ fun PhoneAuthScreen(
 
                 Spacer(modifier = Modifier.height(32.dp))
 
-                // Mode Tabs (Register vs Sign In)
+                // Mode Tabs (Sign In vs Register)
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -127,15 +127,15 @@ fun PhoneAuthScreen(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     TabButton(
-                        text = "Register",
-                        selected = authMode == "REGISTER",
-                        onClick = { authMode = "REGISTER" },
-                        modifier = Modifier.weight(1f)
-                    )
-                    TabButton(
                         text = "Sign In",
                         selected = authMode == "LOGIN",
                         onClick = { authMode = "LOGIN" },
+                        modifier = Modifier.weight(1f)
+                    )
+                    TabButton(
+                        text = "Register",
+                        selected = authMode == "REGISTER",
+                        onClick = { authMode = "REGISTER" },
                         modifier = Modifier.weight(1f)
                     )
                 }
@@ -302,7 +302,7 @@ fun PhoneAuthScreen(
                 Spacer(modifier = Modifier.height(40.dp))
 
                 ClicksButton(
-                    text = if (authMode == "REGISTER") "SEND CODE" else "START LOGIN",
+                    text = if (authMode == "REGISTER") "SEND CODE" else "LOGIN",
                     isLoading = uiState.isLoading,
                     onClick = {
                         val usernameType = if (authMode == "REGISTER" || loginMethod == "PHONE") "PHONE_NUMBER" else "EMAIL"
