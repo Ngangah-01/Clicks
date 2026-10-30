@@ -1,6 +1,7 @@
 package com.clicks.app
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -17,6 +18,8 @@ import com.clicks.app.network.ApiClient
 import com.clicks.app.navigation.NavGraph
 import com.clicks.app.feature.onboarding.splash.SplashState
 import com.clicks.app.feature.onboarding.splash.SplashViewModel
+import com.clicks.app.feature.auth.service.AuthenticationLocalSrc
+import com.clicks.app.lib.session.TokenStorage
 import com.clicks.app.lib.theme.ClicksTheme
 
 class MainActivity : ComponentActivity() {
@@ -27,8 +30,12 @@ class MainActivity : ComponentActivity() {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
 
-        val tokenStorage = com.clicks.app.lib.session.TokenStorage(applicationContext)
+        val tokenStorage = TokenStorage(applicationContext)
         ApiClient.initialize(applicationContext) { tokenStorage.getToken() }
+
+        // Log to verify caching of auth token
+        val roomAuth = AuthenticationLocalSrc(applicationContext).selectSync()
+        Log.d("AuthDebug", "Room DB Auth Token: ${roomAuth?.authToken}, Expiry: ${roomAuth?.expiryTime}, HasExpired: ${roomAuth?.hasExpired()}")
 
         splashScreen.setKeepOnScreenCondition {
             splashViewModel.state.value == SplashState.Loading
