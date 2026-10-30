@@ -23,6 +23,8 @@ data class CustomerRegisterData(
     val emailVerified: Boolean,
     val phoneNumberVerified: Boolean,
     val userStatus: String,
+    val authToken: String? = null,
+    val expiryTime: String? = null,
     val createdAt: String,
     val updatedAt: String
 )

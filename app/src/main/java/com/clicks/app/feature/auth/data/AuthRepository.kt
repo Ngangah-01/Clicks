@@ -10,7 +10,7 @@ import com.clicks.app.feature.auth.data.dto.VerificationCodeRequest
 import com.clicks.app.lib.session.TokenStorage
 import com.clicks.app.network.ApiClient
 import com.clicks.app.network.ApiResult
-import com.clicks.app.network.safeApiCall
+import com.clicks.app.network.safeEntityApiCall
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -31,7 +31,7 @@ class AuthRepository(
             username = username.trim(),
             verificationCodeUse = verificationCodeUse
         )
-        return safeApiCall {
+        return safeEntityApiCall {
             authApi.requestVerificationCode(request)
         }
     }
@@ -46,7 +46,7 @@ class AuthRepository(
             username = username.trim(),
             password = password
         )
-        return safeApiCall {
+        return safeEntityApiCall {
             authApi.initLogin(request)
         }
     }
@@ -54,7 +54,7 @@ class AuthRepository(
     suspend fun registerCustomer(
         request: CustomerRegisterRequest
     ): ApiResult<CustomerRegisterData> {
-        val result = safeApiCall {
+        val result = safeEntityApiCall {
             authApi.registerCustomer(request)
         }
 

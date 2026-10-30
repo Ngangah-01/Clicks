@@ -6,6 +6,8 @@ import androidx.lifecycle.viewModelScope
 import com.clicks.app.feature.auth.data.AuthRepository
 import com.clicks.app.feature.auth.data.dto.CustomerRegisterRequest
 import com.clicks.app.feature.auth.data.dto.PhoneVerificationCodePayload
+import com.clicks.app.feature.auth.service.AuthenticationLocalSrc
+import com.clicks.app.feature.auth.model.Authentication
 import com.clicks.app.lib.session.TokenStorage
 import com.clicks.app.network.ApiClient
 import com.clicks.app.network.ApiResult
@@ -13,6 +15,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.Date
+import kotlin.time.Duration.Companion.milliseconds
 
 data class PhoneAuthUiState(
     val isLoading: Boolean = false,
@@ -22,7 +26,8 @@ data class PhoneAuthUiState(
 )
 
 class PhoneAuthViewModel(
-    private val authRepository: AuthRepository = AuthRepository()
+    private val authRepository: AuthRepository = AuthRepository(),
+    private val authLocalSrc: AuthenticationLocalSrc = AuthenticationLocalSrc(ApiClient.appContext)
 ) : ViewModel() {
 
     var uiState = mutableStateOf(PhoneAuthUiState())
@@ -167,6 +172,20 @@ class PhoneAuthViewModel(
         viewModelScope.launch {
             when (val result = authRepository.registerCustomer(request)) {
                 is ApiResult.Success -> {
+                    // Cache Authentication entity into Room DB
+                    try {
+                        withContext(Dispatchers.IO) {
+                            val auth = Authentication().apply {
+                                authToken = result.data.authToken ?: "customer-token-${result.data.id}"
+                                expiryTime = Date(System.currentTimeMillis() + 30L * 24 * 60 * 60 * 1000)
+                            }
+                            authLocalSrc.insertSync(auth)
+                            TokenStorage(ApiClient.appContext).saveToken(auth.authToken)
+                        }
+                    } catch (e: Exception) {
+                        // ignore or log
+                    }
+
                     uiState.value = PhoneAuthUiState(
                         isLoading = false,
                         successMessage = result.message.ifBlank { "User registration success." }
@@ -204,10 +223,16 @@ class PhoneAuthViewModel(
         uiState.value = uiState.value.copy(isLoading = true, errorMessage = null)
 
         viewModelScope.launch {
-            delay(1000)
+            delay(1000.milliseconds)
             try {
                 withContext(Dispatchers.IO) {
-                    TokenStorage(ApiClient.appContext).saveToken("login-session-$verificationCodeId")
+                    val token = "login-session-$verificationCodeId"
+                    val auth = Authentication().apply {
+                        authToken = token
+                        expiryTime = Date(System.currentTimeMillis() + 30L * 24 * 60 * 60 * 1000)
+                    }
+                    authLocalSrc.insertSync(auth)
+                    TokenStorage(ApiClient.appContext).saveToken(token)
                 }
                 uiState.value = PhoneAuthUiState(
                     isLoading = false,
